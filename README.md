@@ -11,6 +11,7 @@ Broadly, this repository will include:
     * Linear Regression & Regularization
     * Naive Bayes & Logistic Regression
     * GLMs
+    * SVMs
     * Decision Trees
     * Ensemble Learning, Random Forests and Boosting
     * Dimensionality Reduction
