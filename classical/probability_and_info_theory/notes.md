@@ -2,11 +2,14 @@
 
 ## Probability
 
+* Joint Probability: $ \int \int p(x,y) dx dy = 1$
 * Marginal Probability: $P(X = x) = \sum_y P(X = x, Y = y) = \int p(x,y) dy$
 * Conditional Probability: 
   * Bayes: $P(X = x|Y = y) = \frac{P(Y = y, X = x)}{P(Y=y)} = \frac{P(Y = y|X = x)P(X = x)}{\sum_{x}(P(Y = y|X=x)P(X=x))}$
+    * Or in the continuous case: $p(x|y) = \frac{p(x,y)}{p(y)}$
   * Chain Rule: $P(X = x, Y = y, Z = z) = P(X = x | Y = y, Z = z)P(Y = y | Z = z)P(Z = z)$
   * Conditional Independence: $P(X = x, Y = y | Z = z) = P(X = x | Z = z)P(Y = y | Z = z)$
+  * Conditional Expectation: $E[X|Y=y]=\int xp(x|y)dx$
 * Transforming pdfs
   * Suppose $Y = g(X)$
   * Then $p_y(y)=p_x\left(g^{-1}(y)\right)/\left|\frac{\partial g(x)}{\partial x}\right|$ or $p_y(\mathbf{y})=p_x\left(g^{-1}(\mathbf{y})\right)/\left|det(\frac{\partial g(\mathbf{x})}{\partial \mathbf{x}})\right|$
@@ -26,10 +29,11 @@
     * (To add)
     * Also add why a sample covariance matrix is positive semidefinite by definition
 * CLT
-  * (To add)
+  * The CLT states that for $X_i$ with mean $\mu$ and variance $\sigma^2$, $\bar{X}_n=\frac{X_1+\ldots+X_n}{n} \rightarrow \sim N\left(\mu, \frac{\sigma^2}{n}\right)$ and hence $\frac{\bar{X}_n-\mu}{\sigma / \sqrt{n}} \sim N(0,1)$
 * Moment Generating Functions 
-  * (To add)
-
+  * The MGF of $X$ is $E[\exp(tX)]$.
+  * Given that $e^{tX} = 1 + tX + \frac{t^2X^2}{2!} + \ldots$, we can do consecutive differentiations to get the moments of a R.V.
+  
 ## Information Theory
 * Principles
   * Less likely events should have higher information content.
