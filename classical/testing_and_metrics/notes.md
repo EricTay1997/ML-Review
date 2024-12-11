@@ -1,5 +1,7 @@
 # Testing and Metrics
 
+* Losses
+  * MSE
 * t-stats
 * sample variance
 * z-score

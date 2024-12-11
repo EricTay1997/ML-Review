@@ -10,6 +10,7 @@
 * Transforming pdfs
   * Suppose $Y = g(X)$
   * Then $p_y(y)=p_x\left(g^{-1}(y)\right)/\left|\frac{\partial g(x)}{\partial x}\right|$ or $p_y(\mathbf{y})=p_x\left(g^{-1}(\mathbf{y})\right)/\left|det(\frac{\partial g(\mathbf{x})}{\partial \mathbf{x}})\right|$
+    * Intuition, if $y = 2x$, then we need to half the pdf for it to sum to integrate to 1.
 * Expectations and Variance
   * $E_{x \sim p}[x]=\sum_x x P(x) = \int f(x) p(x) d x$
   * $E_{x \sim p}[f(x)]=\sum_x f(x) P(x) = \int f(x) p(x) d x$ (Law of the unconscious statistician)
@@ -25,6 +26,8 @@
     * (To add)
     * Also add why a sample covariance matrix is positive semidefinite by definition
 * CLT
+  * (To add)
+* Moment Generating Functions 
   * (To add)
 
 ## Information Theory

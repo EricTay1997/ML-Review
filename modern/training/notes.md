@@ -14,9 +14,11 @@
 - 
 
 ## Optimization
+- Stochastic Gradient Descent (SGD) is mainly done for computational reasons. The expectation of a minibatch is still unbiased.
 
 ### Numerical Analysis Methods
 
 ## Regularization
+### See Statistical Learning Theory
 
 ## Additional Tricks

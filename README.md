@@ -2,12 +2,12 @@
 I am currently exploring a career pivot into Machine Learning roles. This repository will be used to help me consolidate my knowledge.
 
 Broadly, this repository will include: 
-* Notes on various topics
+* Notes on various topics (Edit: For some reason, markdown on Github isn't formatting the same as PyCharm)
   * Classical ML/Statistics
     * Linear Algebra and Calculus
     * Probability and Information Theory
     * Bayesian Statistics
-    * Generalization Theory
+    * Statistical Learning Theory
     * Statistical Testing and Metrics
     * Linear Regression & Regularization
     * Naive Bayes & Logistic Regression
