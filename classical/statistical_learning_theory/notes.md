@@ -24,7 +24,7 @@
     * $\hat{\mu} = x^{(1)}$
 * Maximum Likelihood Estimation
   * $\pmb{\theta}_{MLE} = \operatorname{argmax}_{\pmb{\theta}}p(\mathbf{x}; \pmb{\theta})=\underset{\pmb{\theta}}{\arg \max } \mathbb{E}_{\mathbf{x} \sim \hat{p}_{\text {data }}} [\log p_{\text {model }}(\mathbf{x} ; \pmb{\theta})]$
-    * Note that minimizing this is the same as minimizing $D_{\mathrm{KL}}\left(\hat{p}_{\text {data }} \| p_{\text {model }}\right)=\mathbb{E}_{\mathbf{x} \sim \hat{p}_{\text {data }}}\left[\log \hat{p}_{\text {data }}(\mathbf{x})-\log p_{\text {model }}(\mathbf{x})\right]$
+    * Note that minimizing this is the same as minimizing $D_{\mathrm{KL}}\left(\hat{p}_{\text {data }} \| p_{\text {model}}\right)=\mathbb{E}_{\mathbf{x} \sim \hat{p}_{\text {data }}}\left[\log \hat{p}_{\text {data }}(\mathbf{x})-\log p_{\text {model }}(\mathbf{x})\right]$
     * Which is also the same as minimizing the cross-entropy loss $-\mathbb{E}_{\mathbf{x} \sim \hat{p}_{\text {data }}}\left[\log p_{\text {model }}(\mathbf{x})\right]$
     * Note that in linear regression, this is the same as minimizing MSE.
   * Properties

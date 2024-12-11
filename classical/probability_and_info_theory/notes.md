@@ -10,6 +10,7 @@
   * Chain Rule: $P(X = x, Y = y, Z = z) = P(X = x | Y = y, Z = z)P(Y = y | Z = z)P(Z = z)$
   * Conditional Independence: $P(X = x, Y = y | Z = z) = P(X = x | Z = z)P(Y = y | Z = z)$
   * Conditional Expectation: $E[X|Y=y]=\int xp(x|y)dx$
+    * We often see the law of iterated expectation: $E[X] = E[E[X|Y]]$. This is essentially saying that $E[X] = \int p(y)E[X|Y=y]dy.$
 * Transforming pdfs
   * Suppose $Y = g(X)$
   * Then $p_y(y)=p_x\left(g^{-1}(y)\right)/\left|\frac{\partial g(x)}{\partial x}\right|$ or $p_y(\mathbf{y})=p_x\left(g^{-1}(\mathbf{y})\right)/\left|det(\frac{\partial g(\mathbf{x})}{\partial \mathbf{x}})\right|$
@@ -21,18 +22,48 @@
   * $\operatorname{Var}_{x \sim p}[f(x)]=E_{x \sim p}\left[f^2(x)\right]-E_{x \sim p}[f(x)]^2$
   * $\operatorname{Cov}(X, Y) = E[(X-E[X])(Y-E[Y])]$
   * $\operatorname{Cov}(f(X), g(Y)) = E[(f(X)-E[f(X)])(g(Y)-E[g(Y)])]$
-  * Suppose $\pmb{\mu} \stackrel{\text { def }}{=} E_{\mathbf{x} \sim p}[\mathbf{x}]$, then
-  * $\pmb{\Sigma} \stackrel{\text { def }}{=} \operatorname{Cov}_{\mathbf{x} \sim p}[\mathbf{x}]=E_{\mathbf{x} \sim p}\left[(\mathbf{x}-\pmb{\mu})(\mathbf{x}-\pmb{\mu})^{\top}\right]$ is the covariance matrix. 
-    * $\Sigma_{ij} = \operatorname{Cov}(x_i, x_j)$ (Remember that $x_i$ and $x_j$ are RVs) 
-    * This is closely related to the correlation matrix, where $\Sigma_{ij} = \frac{\operatorname{Cov}(x_i, x_j)}{\sigma(x_i)\sigma(x_j)}$
+  * Random Vector $\mathbf{x} = (X_1, \ldots, X_p)^{\top}$
+    * Suppose $\pmb{\mu} \stackrel{\text { def }}{=} E_{\mathbf{x} \sim p}[\mathbf{x}]$, then
+    * $\pmb{\Sigma} \stackrel{\text { def }}{=} \operatorname{Cov}_{\mathbf{x} \sim p}[\mathbf{x}]=E_{\mathbf{x} \sim p}\left[(\mathbf{x}-\pmb{\mu})(\mathbf{x}-\pmb{\mu})^{\top}\right]$ is the covariance matrix. 
+      * $\Sigma_{ij} = \operatorname{Cov}(X_i, X_j)$ 
+      * This is closely related to the correlation matrix, where $\Sigma_{ij} = \frac{\operatorname{Cov}(X_i, X_j)}{\sigma(X_i)\sigma(X_j)}$
+      * $\pmb{\Sigma}$ is positive semi-definite: 
   * These formulae are relatively easy to apply given a data generating process with specified parameters. In practice, we usually estimate parameters from data:
-    * (To add)
-    * Also add why a sample covariance matrix is positive semidefinite by definition
+    * Suppose $X_i$ are iid and $E[X] = \mu$ and $\operatorname{Var}(X) = \sigma^2$
+      * Then $\hat{\mu} = \bar{X}$ is unbiased (Of course, other estimators like $X_i$ are also unbiased but this estimator has lower variance, also reference CLT).
+      * $\hat{\sigma^2} = \frac{\sum_i\left(X_i-\mu\right)^2}{n}$ if $\mu$ is known is unbiased.
+      * $\hat{\sigma^2} = \frac{\sum_i\left(X_i-\bar{X}\right)^2}{n-1}$ if $\mu$ is unknown is unbiased. 
+        * Intuition: $\sum_i(X_i-\bar{X})^2 \leq \sum_i(X_i-\mu)^2$, and so we need to inflate this. 
+        * Proof: 
+          * $E(X^2) = \mu^2 + \sigma^2$
+          * $E(\bar{X}^2) = \mu^2 + \frac{\sigma^2}{n}$
+            * Since $\operatorname{Var}(\bar{X}) = \frac{\sigma^2}{n}$
+            * $E(\bar{X}^2) = E(\frac{\sum_i X_i^2}{n^2} + \frac{\sum_i\sum_{j\neq i} X_iX_j}{n^2}) = \frac{n(\mu^2 + \sigma^2) + (n^2 - n)\mu^2}{n^2} = \mu^2 + \frac{\sigma^2}{n}$
+          * Now $E((X_i - \bar{X})^2) = E(X_i^2 - 2X_i\bar{X} + \bar{X}^2) = E(\frac{n-2}{n}X_i^2 - 2\frac{n-1}{n}X_iX_j + \bar{X}^2)$
+          * Comparing coefficients, we see that the $\mu^2$ terms cancel out, so we're left with $(\frac{n-2+1}{n})\sigma^2$ as desired.
+    * Note that above, we did not specify the _distribution_ of $X$, but rather just its mean and variance. Now consider the multivariate linear regression case, where we switch conventions from $X$ to $\mathbf{Y}$.
+      * $\mathbf{Y = XB} + \pmb{\epsilon}, \pmb{\epsilon} \sim (0, \sigma^2\mathbf{I})$, and $\mathbf{B}$ and $\pmb{\epsilon}$ are unknown. Then:
+        * $E(\hat{\mathbf{B}}_{MLE}) = \mathbf{B}$
+        * $E(\frac{\mathbf{e}^{\top}\mathbf{e}}{n-rank(\mathbf{X})}) = \sigma^2$, where $\mathbf{e} = \mathbf{Y - X\hat{{B}}}_{MLE}$
+        * We include these formulae for completeness, and the proof for these can be found in the [linear regression notes](https://github.com/EricTay1997/Classical-and-Modern-Machine-Learning/blob/main/classical/linear_regression_and_regularization/notes.md).
+    * **Sample Covariance Matrix**
+      * Suppose we have data $\mathbf{X} \in \mathbb{R}^{n \times p}$, with $n$ rows and $p$ features. 
+      * We view each of these features as a random variable $X_j$, which together form the random vector $\mathbf{x} = (X_1, \ldots, X_p)^{\top}$
+        * We can view $\mathbf{X}$ as $n$ draws from $\mathbf{x}$, and we denote each draw (row) by $\mathbf{x}_i \in \mathbb{R}^p$, and their sample mean by $\bar{\mathbf{x}}$.
+      * The sample covariance matrix $\mathbf{S} \in \mathbb{R}^{p \times p}$ is an unbiased estimate of $\pmb{\Sigma} = \operatorname{Cov}(\mathbf{x})$. I.e. $E[S_{jk}] = \operatorname{Cov}(X_j, X_k)$.
+        * Concretely, $S_{jk} = S_{kj} :=\frac{1}{n-1} \sum_{i=1}^n[\left(X_{i j}-\bar{X}_j\right)\left(X_{i k}-\bar{X}_k\right)]$ (To avoid confusion, we're dealing with scalars here)
+          * Note that this extends the unbiased estimator for population variance above to the unbiased estimator of $\operatorname{Cov}(X_j, X_k)$.
+          * Note that this is also very similar to the $\mathbf{X^{\top}X}$ we often use in regression, except that $\mathbf{S}$ notably demeans the columns.
+        * Alternatively, $\mathbf{S} = \frac{1}{n-1} \sum_{i=1}^n\left(\mathbf{x}_i-\bar{\mathbf{x}}\right)\left(\mathbf{x}_i-\bar{\mathbf{x}}\right)^{\top}$,  where $\vec{x}_i \in \mathbb{R}^{p}$
+          * This form is very helpful to see why $\mathbf{S}$ is positive semi-definite.
+          * Even more interestingly, consider what it means for $\mathbf{v^{\top}Sv} = 0$
+            * $\sum_{i=1}^n\mathbf{v}^{\top}(\mathbf{x}_i-\bar{\mathbf{x}})$
 * CLT
   * The CLT states that for $X_i$ with mean $\mu$ and variance $\sigma^2$, $\bar{X}_n=\frac{X_1+\ldots+X_n}{n} \rightarrow \sim N\left(\mu, \frac{\sigma^2}{n}\right)$ and hence $\frac{\bar{X}_n-\mu}{\sigma / \sqrt{n}} \sim N(0,1)$
 * Moment Generating Functions 
   * The MGF of $X$ is $E[\exp(tX)]$.
   * Given that $e^{tX} = 1 + tX + \frac{t^2X^2}{2!} + \ldots$, we can do consecutive differentiations to get the moments of a R.V.
+  * The Characteristic Function of $X$ is $E[\exp(itX)]$, which is defined on the entire Real line (as opposed to the MGF). We tradeoff simplicity for this advantage.
   
 ## Information Theory
 * Principles
@@ -49,6 +80,7 @@
   * This is not symmetric and is therefore not a true distance metric. When then should we use $D_{\mathrm{KL}}(P \| Q)$ vs $D_{\mathrm{KL}}(Q \| P)$?
     * $D_{\mathrm{KL}}(P \| Q):$ $P$ is in numerator. Intuitively, when $P$ is large, we want $Q$ to be large too.  
     * $D_{\mathrm{KL}}(Q \| P):$ $P$ is in denominator. Intuitively, when $P$ is small, we want $Q$ to be small too. 
+    * Note: We often do $D_{\mathrm{KL}}\left(\hat{p}_{\text {data }} \| p_{\text {model}}\right)$
 * **Cross Entropy**: $H(P,Q)=-\mathbb{E}_{\mathbf{x} \sim P}\log Q(x)=H(P)+D_{\mathrm{KL}}(P \| Q)$
   * If we fix $P$, and we minimize the cross-entropy with respect to $Q$, this is the same as minimizing KL divergence.
 
