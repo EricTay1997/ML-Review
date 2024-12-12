@@ -43,6 +43,7 @@ x_{i-1}, x_i+h, x_{i+1}, \ldots, x_n\right)-f\left(x_1, \ldots, x_i, \ldots, x_n
 - For all $\mathbf{A} \in \mathbb{R}^{m \times n}$ we have $\nabla_{\mathbf{x}} \mathbf{A} \mathbf{x}=\mathbf{A}^{\top}$ and $\nabla_{\mathbf{x}} \mathbf{x}^{\top} \mathbf{A}^{\top}=\mathbf{A}^{\top}$.
   - This is saying that the jth entry of $\mathbf{A} \mathbf{x}$ varies by $A_{j,i}$ wrt $x_i$, which makes sense because this entry is the dot product of the jth row of $\mathbf{A}$ and $\mathbf{x}$.
 - For square matrices,  we have that $\nabla_{\mathbf{x}} \mathbf{x}^{\top} \mathbf{A} \mathbf{x}=\left(\mathbf{A}+\mathbf{A}^{\top}\right) \mathbf{x}$ and in particular, $\nabla_{\mathbf{x}}\|\mathbf{x}\|^2=\nabla_{\mathbf{x}} \mathbf{x}^{\top} \mathbf{x}=2 \mathbf{x}$.
+  - It will help to note that $ \mathbf{x}^{\top} \mathbf{A} \mathbf{x}= \sum_i\sum_jx_ix_jA_{ij}$
 - Similarly, for any matrix $\mathbf{X}$, we have $\nabla_{\mathbf{X}}\|\mathbf{X}\|_F^2=2 \mathbf{X}$.
 
 - Chain Rule: $\frac{\partial y}{\partial x_i}=\frac{\partial y}{\partial u_1} \frac{\partial u_1}{\partial x_i}+\frac{\partial y}{\partial u_2} \frac{\partial u_2}{\partial x_i}+\cdots+\frac{\partial y}{\partial u_m} \frac{\partial u_m}{\partial x_i}$ and so 

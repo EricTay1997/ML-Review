@@ -28,6 +28,8 @@
       * $\Sigma_{ij} = \operatorname{Cov}(X_i, X_j)$ 
       * This is closely related to the correlation matrix, where $\Sigma_{ij} = \frac{\operatorname{Cov}(X_i, X_j)}{\sigma(X_i)\sigma(X_j)}$
       * $\pmb{\Sigma}$ is positive semi-definite: 
+        * $\mathbf{v^{\top}}\pmb{\Sigma}\mathbf{v} = \sum_i\sum_j v_iv_jCov(X_i, X_j)$, which we recognize to be the formula of $\operatorname{Var}(\mathbf{v^{\top}x}) \geq 0.$
+        * In particular, if $\mathbf{v^{\top}}\pmb{\Sigma}\mathbf{v} = 0$, then there exists $X_i$ which is a linear combination of the other $X_j$s.
   * These formulae are relatively easy to apply given a data generating process with specified parameters. In practice, we usually estimate parameters from data:
     * Suppose $X_i$ are iid and $E[X] = \mu$ and $\operatorname{Var}(X) = \sigma^2$
       * Then $\hat{\mu} = \bar{X}$ is unbiased (Of course, other estimators like $X_i$ are also unbiased but this estimator has lower variance, also reference CLT).
@@ -41,6 +43,7 @@
             * $E(\bar{X}^2) = E(\frac{\sum_i X_i^2}{n^2} + \frac{\sum_i\sum_{j\neq i} X_iX_j}{n^2}) = \frac{n(\mu^2 + \sigma^2) + (n^2 - n)\mu^2}{n^2} = \mu^2 + \frac{\sigma^2}{n}$
           * Now $E((X_i - \bar{X})^2) = E(X_i^2 - 2X_i\bar{X} + \bar{X}^2) = E(\frac{n-2}{n}X_i^2 - 2\frac{n-1}{n}X_iX_j + \bar{X}^2)$
           * Comparing coefficients, we see that the $\mu^2$ terms cancel out, so we're left with $(\frac{n-2+1}{n})\sigma^2$ as desired.
+        * A kinda cool fact is that using [Cochran's theorem](https://en.wikipedia.org/wiki/Cochran%27s_theorem#Sample_mean_and_sample_variance), we have that $s^2 = \frac{1}{n-1}\sum^n (x_i - \bar{x})^2 \sim \frac{\sigma^2}{n-1}\chi^2_{n-1},$ 
     * Note that above, we did not specify the _distribution_ of $X$, but rather just its mean and variance. Now consider the multivariate linear regression case, where we switch conventions from $X$ to $\mathbf{Y}$.
       * $\mathbf{Y = XB} + \pmb{\epsilon}, \pmb{\epsilon} \sim (0, \sigma^2\mathbf{I})$, and $\mathbf{B}$ and $\pmb{\epsilon}$ are unknown. Then:
         * $E(\hat{\mathbf{B}}_{MLE}) = \mathbf{B}$
@@ -56,8 +59,11 @@
           * Note that this is also very similar to the $\mathbf{X^{\top}X}$ we often use in regression, except that $\mathbf{S}$ notably demeans the columns.
         * Alternatively, $\mathbf{S} = \frac{1}{n-1} \sum_{i=1}^n\left(\mathbf{x}_i-\bar{\mathbf{x}}\right)\left(\mathbf{x}_i-\bar{\mathbf{x}}\right)^{\top}$,  where $\vec{x}_i \in \mathbb{R}^{p}$
           * This form is very helpful to see why $\mathbf{S}$ is positive semi-definite.
-          * Even more interestingly, consider what it means for $\mathbf{v^{\top}Sv} = 0$
-            * $\sum_{i=1}^n\mathbf{v}^{\top}(\mathbf{x}_i-\bar{\mathbf{x}})$
+          * For real data, it is likely that $\mathbf{X}$ is rank $p$. This implies that $\mathbf{S}$ is often positive-definite.
+            * Proof: Suppose that $\mathbf{v^{\top}Sv} = 0$.
+            * $||\mathbf{v}^{\top}(\mathbf{x}_i-\bar{\mathbf{x}})||^2 = 0$ $\forall$ $i$.
+            * Let $\mathbf{y}_i = \mathbf{x}_i-\bar{\mathbf{x}}$. Now given that $\mathbf{y}_i$s span $\mathbb{R}^p$, let $\mathbf{v} = \sum_i \alpha_i \mathbf{y}_i$.
+            * We now have that $\mathbf{v}^{\top}\mathbf{v}=0$ since $\mathbf{v}^{\top}\mathbf{y}_i = 0$ $\forall$ $i$, which is a contradiction. 
 * CLT
   * The CLT states that for $X_i$ with mean $\mu$ and variance $\sigma^2$, $\bar{X}_n=\frac{X_1+\ldots+X_n}{n} \rightarrow \sim N\left(\mu, \frac{\sigma^2}{n}\right)$ and hence $\frac{\bar{X}_n-\mu}{\sigma / \sqrt{n}} \sim N(0,1)$
 * Moment Generating Functions 

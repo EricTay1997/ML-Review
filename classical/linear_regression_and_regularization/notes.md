@@ -13,3 +13,17 @@
 
 ## Regularitzation
 ### Bayesian perspective
+
+
+## Testing
+
+* F -tests
+* Homoskedasticity - scale/location plot
+* Normality - QQ plot
+* Outliers - cook's distance
+* Multicollinearity - VIF
+  * remove variables, linearly combine, PCA/PLS
+* Robust Standard Errors
+  * White's Estimator
+  * Newey-West Estimator (HAC Standard Errors)
+  * Driskoll and Kraay Standard Errors
