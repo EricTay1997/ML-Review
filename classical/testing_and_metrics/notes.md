@@ -7,10 +7,13 @@
       * Recall = TPR = Sensitivity
       * FPR = 1 - Specificity 
     * In cases where both precision and recall are equally important, we can try to optimize $F_1=2 * \frac{\text { precision * recall }}{\text { precision + recall }}$
+    * AUROC (Area under Receiver Operator Characteristic)
+      * The ROC curve plots TPR vs FPR, for varying "thresholds" of what constitutes a change in classification.
+    * Another common curve is the precision-recall curve.
   * Some other terms (that can be used both in/out of binary classification)
     * The **p-value** is the probability of observing the value of the calculated test statistic under the null hypothesis assumptions. We usually compare the observed p-value to a chosen level of alpha.
     * Alpha: The probability of a type 1 (false positive) error := 1 - Confidence Level.
-    * Beta: The probability of a type 2 (false negative) error := 1 - Power. With higher power, we generally get higher sensitivity/recall. However, we get lower specificity. 
+    * Beta: The probability of a type 2 (false negative) error := 1 - Power. With higher power, we generally get higher sensitivity/recall. However, we get lower specificity.
   * Losses
     * MSE
     * MAE
@@ -25,7 +28,10 @@
     * [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) is used when the two samples have unequal variance. 
   * Chi-squared test statistic
     * This is often used in the analysis of contingency tables to see whether two categorical variables are independent of each other.
-    * Importantly, we say that $\sum_i \frac{(O_i-E_i)^2}{E_i} \sim \chi^2,$ and [this example](https://en.wikipedia.org/wiki/Chi-squared_test#Example_chi-squared_test_for_categorical_data) is particularly instructive for how we might use this. 
+    * Importantly, we say that $\sum_i \frac{(O_i-E_i)^2}{E_i} \sim \chi^2,$ and [this example](https://en.wikipedia.org/wiki/Chi-squared_test#Example_chi-squared_test_for_categorical_data) is particularly instructive for how we might use this.
+  * ANOVA 
+    * In a one-way ANOVA, the F-statistic the ratio {variation between sample means}/{variation within the samples}. When the variation between sample means is higher than expected (where the denominator is an estimator for the amount of noise), we reject the null hypothesis that all means are the same. 
+    * In a two-way ANOVA, instead of having one categorical variable, we now have two. 
 * Multiple Hypothesis Testing
   * When $m > 1$ tests are done, the probability of rejecting the null hypothesis by chance alone can be too high. This is because the significance of individual tests do not represent the Family-Wise Error Rate (FWER).
   * Various correction techniques exist to reduce false positives, but we note that these naturally reduce power.

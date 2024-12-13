@@ -49,3 +49,4 @@ I shall try to be diligent in citing my sources. Due to visa-related time constr
 * [Distill](https://distill.pub)
 * [Lilian Weng's Blog](https://lilianweng.github.io)
 * [Christopher Olah's Blog](https://colah.github.io/about.html)
+* Notes / Code from classes I took at Duke.

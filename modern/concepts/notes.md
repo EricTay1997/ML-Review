@@ -15,3 +15,8 @@
   - I view this as the motivation for why we "encode" data into a lower-dimensional space. 
 - [Neural Networks, Manifolds, and Topology](https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/) mentions the inverse: All $n$-dimensional manifolds can be untangled in $2n+2$ dimensions. 
   - I wonder if this is good intuition for first increasing the number of hidden units and then going back down? Like the MLP layers of a transformer...
+
+## Optimization
+- Newton's method
+- Quasi-Newton's methods
+- Goodfellow's chapter 8 has a lot of interesting discussion here
