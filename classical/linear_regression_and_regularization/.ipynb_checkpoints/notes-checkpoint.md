@@ -89,11 +89,6 @@
 ## Polynomial Regression
 - When we include higher degrees of our input features
 
-## Weighted Least Squares
-- Instead of minimizing $\sum_i (y_i - \hat{y_i})^2$, we instead minimize $\sum_i w_i(y_i - \hat{y_i})^2$.
-  - Looking at the likelihood function, we can think of this as having heteroscedastic error terms, with $\operatorname{Var}(\epsilon_i) = \frac{\sigma^2}{w_i}$
-  - This permits the following solution $\mathbf{\hat{B} = (X^{\top}WX)^{-1}X^{\top}WY}$
-
 ## Regularization
 - Due to the [bias-variance tradeoff](../statistical_learning_theory/notes.md), we may opt for decreased variance at the cost of increased bias. 
 - Ridge Regression

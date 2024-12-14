@@ -1,5 +1,5 @@
 # Classical-and-Modern-Machine-Learning
-I am currently exploring a career pivot into Machine Learning roles. This repository will be used to help me consolidate my knowledge.
+This repository will be used to help me consolidate my knowledge regarding various ML topics.
 
 Broadly, this repository will include: 
 * Notes on various topics (Edit: For some reason, markdown on Github isn't formatting the same as PyCharm)
@@ -10,8 +10,7 @@ Broadly, this repository will include:
     * Statistical Learning Theory
     * Statistical Testing and Metrics
     * Linear Regression & Regularization
-    * Naive Bayes & Logistic Regression
-    * GLMs
+    * Naive Bayes & Logistic Regression & GLMs
     * SVMs
     * Decision Trees
     * Ensemble Learning, Random Forests and Boosting

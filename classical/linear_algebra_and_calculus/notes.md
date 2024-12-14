@@ -49,11 +49,21 @@ x_{i-1}, x_i+h, x_{i+1}, \ldots, x_n\right)-f\left(x_1, \ldots, x_i, \ldots, x_n
 - Chain Rule: $\frac{\partial y}{\partial x_i}=\frac{\partial y}{\partial u_1} \frac{\partial u_1}{\partial x_i}+\frac{\partial y}{\partial u_2} \frac{\partial u_2}{\partial x_i}+\cdots+\frac{\partial y}{\partial u_m} \frac{\partial u_m}{\partial x_i}$ and so 
 $\nabla_{\mathbf{x}} y=\nabla_{\mathbf{x}}\mathbf{u} \nabla_{\mathbf{u}} y$ 
 
-### Lagrangian Multipliers
-- Suppose we want to maximize $f(\mathbf{x})$ subject to $g(\mathbf{x}) = c$
-  - Maximizing $f(\mathbf{x})$ is equivalent to finding the level set of $f(\mathbf{x})$ that is tangent to the level set $g(\mathbf{x}) = c$.
+### Lagrangian And KKT Conditions
+- Simple case: Suppose we want to find $\hat{\mathbf{x}}$ that minimizes $f(\mathbf{x})$ subject to $g(\mathbf{x}) = c$
+  - Minimizing $f(\mathbf{x})$ is equivalent to finding the level set of $f(\mathbf{x})$ that is tangent to the level set $g(\mathbf{x}) = c$.
   - Equivalently, $\nabla f(\mathbf{x}) = \lambda\nabla g(\mathbf{x})$ (eqn 1).
   - To know what $\lambda$ is, we plug in $g(\mathbf{x}) = c$ (eqn 2) and we're done!
     - A pretty convoluted way of saying this is to define the Lagrangian $\mathcal{L}(\mathbf{x},\lambda)=f(\mathbf{x}) -\lambda(g(\mathbf{x}) -c)$
     - Then we have that $\nabla_{\mathbf{x}}\mathcal{L}(\mathbf{x},\lambda) = 0$ (eqn 1) and $\nabla_{\lambda}\mathcal{L}(\mathbf{x},\lambda) = 0$ (eqn 2)
   - Note that sometimes we get the constraint in the form $g(\mathbf{x}) \leq c$. A common trick is that when the constraint is binding, we set $g(\mathbf{x}) = c$.
+- Generalized Lagrangian
+  - Suppose now we want to find $\hat{\mathbf{x}}$ that minimizes $f(\mathbf{x})$ s.t. $g^{(i)}(\mathbf{x}) = 0$ and $h^{(i)}(\mathbf{x}) \leq 0$ $\forall$ $i,j$
+  - We now define the generalized Lagrangian $L(\mathbf{x}, \pmb{\lambda}, \pmb{\alpha})=f(\mathbf{x})+\sum_i \lambda_i g^{(i)}(\mathbf{x})+\sum_j \alpha_j h^{(j)}(\mathbf{x})$
+    - Then $\hat{\mathbf{x}} = \min _{\mathbf{x}} \max _{\pmb{\lambda}} \max _{\pmb{\alpha}, \pmb{\alpha} \geq 0} L(\mathbf{x}, \pmb{\lambda}, \pmb{\alpha})$ (If any constraint is violated, you can choose $\pmb\lambda, \pmb\alpha$ that makes the lagrangian go to $\infty$)
+  - The KKT conditions are necessary (but not always sufficient) conditions for a point to be optimal.
+    - Primal feasibility: $g^{(i)}(\mathbf{x^*}) = 0$ and $h^{(i)}(\mathbf{x^*}) \leq 0$ $\forall$ $i,j$
+    - Dual feasibility: $\pmb{\alpha^*} \geq 0$
+    - Lagrangian stationarity: $\nabla_{\mathbf{x}} \mathcal{L}\left(\mathbf{x}^*, \pmb{\alpha}^*, \pmb{\beta}^*\right)=\mathbf{0}$
+    - Complementary slackness: $\pmb{\alpha}$ $\odot$ $\mathbf{h(x^*)} = \mathbf{0}$
+      - This last condition essentially says that when $h^{(i)}(\mathbf{x^*}) < 0$ (the constraint is not binding), $\alpha_i = 0$ (See [Support Vectors](../svms/notes.md)) 

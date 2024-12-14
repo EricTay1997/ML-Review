@@ -44,3 +44,7 @@
   * Overfitting
     * To combat overfitting, we can use cross-validation and compare training and validation curves
     * AIC ($2k - 2\ln (\hat{L})$) and BIC ($k\ln n - 2\ln (\hat{L})$) are ways to tradeoff training performance and model complexity ($k$ is the number of estimated parameters).
+* Cross-Validation
+  * Cross-Validation is used for hyperparameter selection. When evaluating on a test set, we get an expectation for how a model performs for a given set of hyperparameters. 
+    * If we were critical of the _way_ we picked hyperparameters, then there is indeed a chance that another set of hyperparameters is "better", but didn't get selected due to our CV methodology - enter Nested CV.
+  * Nested CV is used for evaluation. Here, in each outer loop, a different set of hyperparameter selection is used. This therefore says that the model being evaluated includes the method of selecting hyperparameters. 
