@@ -30,7 +30,7 @@
     - $\nabla_{\pmb\theta}\mathcal{L}(\pmb\theta) = \mathbf{X^{\top}}(\pmb\pi - \mathbf{y})$
     - $\nabla^2_{\pmb\theta}\mathcal{L}(\pmb\theta) = \mathbf{X^{\top}DX}$, where $D_{ii} = \pi_i(1-\pi_i)$ 
   - With these forms, we can then use [Newton's method](../../modern/concepts/notes.md) to iteratively update $\mathbf{B}$.
-    - The update step turns out to take the form $\mathbf{\hat{B} = (X^{\top}DX)^{-1}X^{\top}DZ}$ ([look familiar?](../linear_regression_and_regularization/notes.md)), which is why this is often termed iterative re-weighted least squares
+    - The update step turns out to take the form $\mathbf{\hat{B} = (X^{\top}DX)^{-1}X^{\top}DZ}$ ([look familiar?](../06_linear_regression_and_regularization/notes.md)), which is why this is often termed iterative re-weighted least squares
 - Multiple classes
   - The extention of logistic regression to multiple classes is termed softmax regression, which can be viewed as a one-layer neural network. 
   - To compute the probabilities over $k$ classes for $y_i$, we do $\operatorname{softmax}(\mathbf{W}x_i)$, where $W \in \mathbb{R}^{k \times p}$, and $[\operatorname{softmax}(\mathbf{x})]_i = \frac{\exp(x_i)}{\sum_i \exp(x_i)}$

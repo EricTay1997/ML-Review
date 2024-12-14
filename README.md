@@ -6,9 +6,9 @@ Broadly, this repository will include:
   * Classical ML/Statistics
     * Linear Algebra and Calculus
     * Probability and Information Theory
-    * Bayesian Statistics
     * Statistical Learning Theory
     * Statistical Testing and Metrics
+    * Bayesian Statistics
     * Linear Regression & Regularization
     * Naive Bayes & Logistic Regression & GLMs
     * SVMs
@@ -17,6 +17,7 @@ Broadly, this repository will include:
     * Dimensionality Reduction
     * K-means
     * Gaussian Mixtures and EM
+    * Gaussian Process
     * Causal Inference
   * Modern ML (Note that the delineation is not super clear here and this separation is purely made for organizational purposes)
     * Concepts Around Training DNNs

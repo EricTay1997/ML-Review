@@ -48,7 +48,7 @@
       * $\mathbf{Y = XB} + \pmb{\epsilon}, \pmb{\epsilon} \sim (0, \sigma^2\mathbf{I})$, and $\mathbf{B}$ and $\pmb{\epsilon}$ are unknown. Then:
         * $E(\hat{\mathbf{B}}_{MLE}) = \mathbf{B}$
         * $E(\frac{\mathbf{e}^{\top}\mathbf{e}}{n-rank(\mathbf{X})}) = \sigma^2$, where $\mathbf{e} = \mathbf{Y - X\hat{{B}}}_{MLE}$
-        * We include these formulae for completeness, and the proof for these can be found in the [linear regression notes](../linear_regression_and_regularization/notes.md).
+        * We include these formulae for completeness, and the proof for these can be found in the [linear regression notes](../06_linear_regression_and_regularization/notes.md).
     * **Sample Covariance Matrix**
       * Suppose we have data $\mathbf{X} \in \mathbb{R}^{n \times p}$, with $n$ rows and $p$ features. 
       * We view each of these features as a random variable $X_j$, which together form the random vector $\mathbf{x} = (X_1, \ldots, X_p)^{\top}$

@@ -62,7 +62,7 @@
 
 * Model Selection
   * Since every additional feature would increase $R^2$, how do we combat over-fitting?
-  * [AIC and BIC](../probability_and_info_theory/notes.md)
+  * [AIC and BIC](../02_probability_and_info_theory/notes.md)
   * Adjusted $R^2_{adj} = 1 - \frac{(1-R^2)(n-1)}{n-p-1}$
   * Chow Test (F-test)
     * If a reduced model $R$ with $p_R$ parameters is nested in the full model $F$ with $p_F$ parameters, then 
@@ -81,7 +81,7 @@
   * Detection
     * VIF = $\frac{\operatorname{Var}(B_j)_{full}}{\operatorname{Var}(B_j)_{reduced}}$, where the reduced model only has parameter $j$.
     * Another way to detect multicollinearity is with condition numbers, the ratio between the largest and smallest eigenvalue of $\mathbf{X^{\top}X}$. To better understand this relationship, [this discussion](https://stats.stackexchange.com/questions/20386/understanding-condition-index-used-for-finding-multicollinearity) is helpful.
-  * Remedies: [Dimensionality Reduction](../dimensionality_reduction/notes.md)
+  * Remedies: [Dimensionality Reduction](../11_dimensionality_reduction/notes.md)
     * Removing correlated variables
     * PCA
     * Partial Least Squares
@@ -95,7 +95,7 @@
   - This permits the following solution $\mathbf{\hat{B} = (X^{\top}WX)^{-1}X^{\top}WY}$
 
 ## Regularization
-- Due to the [bias-variance tradeoff](../statistical_learning_theory/notes.md), we may opt for decreased variance at the cost of increased bias. 
+- Due to the [bias-variance tradeoff](../03_statistical_learning_theory/notes.md), we may opt for decreased variance at the cost of increased bias. 
 - Ridge Regression
   - $\mathcal{L}(\mathbf{B}) = ||\mathbf{Y} - \mathbf{XB}||^2_2 + \lambda||\mathbf{B}||^2_2$
   - $\hat{\mathbf{B}} = (\mathbf{X}^{\top}\mathbf{X} + \lambda \mathbf{I})^{-1}\mathbf{X}^{\top}\mathbf{y}$
@@ -115,6 +115,6 @@
   - Note that the loss functions above permit Bayesian interpretations, where if our prior on $\mathbf{B}$ is a Laplace/Normal zero-mean distribution, we get the lasso/ridge loss functions when computing the posterior likelihood. 
   - This provides additional insight as to why ridge shrinks parameters and lasso induces sparsity. 
 - Lagrangian Perspective
-  - Note that per our discussion around the [Lagrangian](../linear_algebra_and_calculus/notes.md), our loss functions above are the "dual" interpretation of the respective optimization problems.
+  - Note that per our discussion around the [Lagrangian](../01_linear_algebra_and_calculus/notes.md), our loss functions above are the "dual" interpretation of the respective optimization problems.
   - We can also think of these problems in their "primal" form, e.g. Minimize $||\mathbf{Y} - \mathbf{XB}||^2_2$ subject to $||\mathbf{B}||^2_2 \leq c$.
   - This helps motivate the effect of these methods on $\mathbf{B}$. In particular, ridge regression shrinks coefficients to 0, while lasso regression induces sparsity. ![regularization.png](regularization.png)
