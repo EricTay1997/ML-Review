@@ -1,5 +1,53 @@
 # Dimensionality Reduction
 
-## PCA
-
-## Partial Least Squares
+- Motivation
+  - Recall the [Curse of Dimensionality](../../modern/concepts/notes.md) - as $p$ increases, training samples are far apart and this makes it hard to train a model that will give good predictions on new training points (which are also likely to be far away from our training points).
+  - Combining this with the [Manifold Hypothesis](../../modern/concepts/notes.md), that our data naturally llives in a lower dimensional space, we have a motivation to project our high-dimensional data into a lower-dimensional space.
+- PCA
+  - PCA converts $\mathbf{X} \in \mathbb{R}^{n \times p}$ to $\mathbf{V^k} \in \mathbb{R}^{n \times k}$, $k < p$, such that the variance between points is maximized. Intuitively, we try to retain as much information as we possibly can. 
+  - A cool result is that $\mathbf{Z}$ are the first $k$ eigenvectors of $\mathbf{Z^{\top}}{\mathbf{Z}}$, where $\mathbf{Z}$ is $\mathbf{X}$ with demeaned columns, and we have ordered the eigenvectors in decreasing eigenvalue order. 
+    - Also, the proportion of variance retained is given by $\frac{\sum_i^k \lambda_i}{\sum_i^p \lambda_i}$
+  - Proof:
+    - $\arg\max _{\mathbf{u}:\|\mathbf{u}\|=1} \mathbf{u}^{\top} \mathbf{S u}$ gives us the direction that projecting $\mathbf{X}$ onto would maximize variance. ($\mathbf{S} = \mathbf{Z^{\top}Z}$ is our sample covariance matrix, where $\mathbf{Z}$ is $\mathbf{X}$ with demeaned columns)
+      - We start by trying to find $\mathbf{u} \in \mathbb{R}^p$ such that projecting $\mathbf{X}$ onto $\mathbf{u}$ maximizes variance. 
+      - Note that $\mathbf{Xu} \in \mathbb{R}^n$ is this projection. 
+        - Why? Each entry is the dot product of a row (sample) with $\mathbf{u}$, and the dot product is the cosine distance, where the sample is the hypotenuse and $\mathbf{u}$ is the adjacent. 
+      - Now $\operatorname{Var}(\mathbf{Xu}) = \mathbf{uSu}$.
+    - Next, differentiating our Lagrangian $\mathcal{L}=\mathbf{u}^{\top} \mathbf{S u}+\lambda\left(1-\mathbf{u}^{\top} \mathbf{u}\right)$ and setting it to zero gives
+      - $\mathbf{Su} = \lambda\mathbf{u} \rightarrow \mathbf{u}$ is an eigenvector.
+    - $\therefore \mathbf{u}^{\top} \mathbf{S u} = \lambda \rightarrow$ The variance explained is its associated eigenvalue. 
+    - An [inductive proof](https://rich-d-wilkinson.github.io/MATH3030/4.2-pca-a-formal-description-with-proofs.html) is used for the other columns. 
+  - SVD: $\mathbf{Z} = \mathbf{UDV^{\top}}$. The eigenvectors we want are the columns of $\mathbf{V}$. 
+  - PC Regression
+    - $\mathbf{B} = (\mathbf{V^{k\top}V^k})^{-1}\mathbf{V^{k\top}Y}$
+  - Computational Complexity
+    - Scikit-Learn has a stochastic algorithm that finds the first $k$ eigenvectors in $O(nk^2) + O(k^3)$ time. 
+- Random Projection
+  - Johnson and Lindenstrauss proved that random projections do not distort squared distances significantly. 
+  - To take it one step further, sparse matrices also have some distance-preserving guarantees!
+- Locally Linear Embedding
+  - LLE is a nonlinear dimensionality reduction technique (NDRT):
+    - First, measure how each training instance linearly relates to its nearest neighbors.
+    - Then, look for a low-dimensional representation of the training set where these local relationships are best preserved
+  - Algorithm:
+    - Set $k$, the number of nearest neighbors to consider
+    - For each point $\mathbf{x}_i$, find $S_i$, the set of $k$ points closest to $\mathbf{x}_i$.
+    - Find $\hat{w}_{ij}$ such that $(\mathbf{x}_i - \sum_{j \in S_i}^k (w_{ij}\mathbf{x}_j))^2$ is minimized, subject to $\sum_{j \in S_i}^k w_{ij} = 1$
+    - Now, find a $d$-dimension representation $\mathbf{z}_i$ such that $(\mathbf{z}_i - \sum_{j \in S_i}^k (\hat{w}_{ij}\mathbf{z}_j))^2$ is minimized.
+  - Computational Complexity is dominated by the last step that takes $O(n^2d)$ time.
+- t-SNE
+  - t-distributed stochastic neighbor embedding (t-SNE) reduces dimensionality while trying to keep similar distances close and dissimilar instances apart.
+  - It is mostly used for visualization.
+  - Overview: The process is extremely similar to LLE, but because it doesn't do an "average weighting" step in $d$ dimensions, it only preserves distance between points. 
+    - First, calculate the pairwise similarity between all data points in the high-dimensional space using a Gaussian kernel.
+    - Then, map the higher-dimensional data points onto a lower-dimensional space while preserving the pairwise similarities. 
+  - Algorithm:
+    - For each point $i$, calculate the "conditional probability" of each neighboring point $j$. 
+    - $p_{j \mid i}=\frac{\exp \left(-\left\|x_i-x_j\right\|^2 / 2 \sigma_i^2\right)}{\sum_{k \neq i} \exp \left(-\left\|x_i-x_k\right\|^2 / 2 \sigma_i^2\right)}$
+      - $\sigma_i$ is chosen to match a level of fixed perplexity defined by the user $= 2^{-\sum_j p_{j \mid i} \log_{2 p j \mid i}}$
+      - Intuition: The higher the perplexity, the higher the entropy, the more uncertain we are, the lower variance the $p_{j \mid i}$ values, the larger $\sigma_i$ is / the more neighbors we're considering. 
+    - Calculate $p_{ij} = \frac{p_{j \mid i} + p_{i \mid j}}{2}$
+    - Then, define distances in the low-dimesional space with a Student t-distribution with one degree of freedom.
+    - $q_{i j}=\frac{\left(1+\left\|y_i-y_j\right\|^2\right)^{-1}}{\sum_{k \neq l}\left(1+\left\|y_k-y_l\right\|^2\right)^{-1}}$
+      - The choice of the heavier-tailed distribution is so that dissimilar points are spread out further apart ([vis](https://www.linkedin.com/posts/avi-chawla_why-t-sne-algorithm-uses-t-distribution-instead-activity-7206974556593410048-wbIM/)).
+    - Finally, use gradient descent to minimize $C=K L(P \| Q)=\sum_i \sum_j p_{i j} \log \frac{p_{i j}}{q_{i j}}$.

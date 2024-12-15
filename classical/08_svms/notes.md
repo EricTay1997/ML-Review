@@ -7,6 +7,13 @@
   - $\pmb{\lambda} = \sum_i \alpha_iy_i\mathbf{x_i^{\top}}, \alpha_i \geq 0$. This hyperplane is determined by the "support vectors" $\mathbf{x_i}$ for which $\alpha_i > 0$. The number of these vectors typically $\ll n$.
   - Another interpretation is that a prediction is the weighted sum of $y_i\mathbf{x_i^{\top}x}$, where $y_i$ conveys class information and $\mathbf{x_i^{\top}x}$ is the similarity between points
   - Note that the _only_ parameters to estimate are therefore $\pmb\alpha$ and $\lambda_0$. 
+- Pros and Cons
+  - Pros:
+    - Works well when data is linearly separable, or linearly separable in a higher dimension
+  - Cons:
+    - Long training time, and possibly long-ish inference time if kernel is used
+    - Separability is harder with larger data sets
+    - Less interpretable than other models
 - The prospective reader is encouraged to check out [Lagrangian and KKT Conditions](../01_linear_algebra_and_calculus/notes.md) before continuing.
 
 ## Hard Margin SVMs

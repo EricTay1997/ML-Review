@@ -54,10 +54,12 @@
       * We view each of these features as a random variable $X_j$, which together form the random vector $\mathbf{x} = (X_1, \ldots, X_p)^{\top}$
         * We can view $\mathbf{X}$ as $n$ draws from $\mathbf{x}$, and we denote each draw (row) by $\mathbf{x}_i \in \mathbb{R}^p$, and their sample mean by $\bar{\mathbf{x}}$.
       * The sample covariance matrix $\mathbf{S} \in \mathbb{R}^{p \times p}$ is an unbiased estimate of $\pmb{\Sigma} = \operatorname{Cov}(\mathbf{x})$. I.e. $E[S_{jk}] = \operatorname{Cov}(X_j, X_k)$.
-        * Concretely, $S_{jk} = S_{kj} :=\frac{1}{n-1} \sum_{i=1}^n[\left(X_{i j}-\bar{X}_j\right)\left(X_{i k}-\bar{X}_k\right)]$ (To avoid confusion, we're dealing with scalars here)
+        * Concretely, 
+          * $\mathbf{S} = \mathbf{Z^{\top}Z},$ where $\mathbf{Z}$ is $\mathbf{X}$ with demeaned columns.
+          * $S_{jk} = S_{kj} :=\frac{1}{n-1} \sum_{i=1}^n[\left(X_{i j}-\bar{X}_j\right)\left(X_{i k}-\bar{X}_k\right)]$ (To avoid confusion, we're dealing with scalars here)
           * Note that this extends the unbiased estimator for population variance above to the unbiased estimator of $\operatorname{Cov}(X_j, X_k)$.
           * Note that this is also very similar to the $\mathbf{X^{\top}X}$ we often use in regression, except that $\mathbf{S}$ notably demeans the columns.
-        * Alternatively, $\mathbf{S} = \frac{1}{n-1} \sum_{i=1}^n\left(\mathbf{x}_i-\bar{\mathbf{x}}\right)\left(\mathbf{x}_i-\bar{\mathbf{x}}\right)^{\top}$,  where $\vec{x}_i \in \mathbb{R}^{p}$
+        * Alternatively, $\mathbf{S} = \frac{1}{n-1} \sum_{i=1}^n\left(\mathbf{x}_i-\bar{\mathbf{x}}\right)\left(\mathbf{x}_i-\bar{\mathbf{x}}\right)^{\top}$,  where $\vec{x}_i \in \mathbb{R}^{p}.$ It is helpful to remember that $(\mathbf{x}_i-\bar{\mathbf{x}})$ is the $i^{th}$ row vector of $\mathbf{Z}$, defined as $\mathbf{X}$ with demeaned columns. 
           * This form is very helpful to see why $\mathbf{S}$ is positive semi-definite.
           * For real data, it is likely that $\mathbf{X}$ is rank $p$. This implies that $\mathbf{S}$ is often positive-definite.
             * Proof: Suppose that $\mathbf{v^{\top}Sv} = 0$.
@@ -81,6 +83,7 @@
 * **Shannon entropy**: The uncertainty in an entire probability distribution
   * $H(P)=\mathbb{E}_{\mathrm{x} \sim P}[I(x)]=-\mathbb{E}_{\mathrm{x} \sim P}[\log P(x)]$
   * If $P(x)$ can take on many values, this is high. If not, this is low. 
+* **Perplexity**: $2^{H(P)} = \pi_x p(x)^{-p(x)}$ for the discrete case.
 * **KL divergence**: The difference between two probability distributions $P(x)$ and $Q(x)$
   * $D_{\mathrm{KL}}(P \| Q)=\mathbb{E}_{\mathbf{x} \sim P}\left[\log \frac{P(x)}{Q(x)}\right]=\mathbb{E}_{\mathbf{x} \sim P}[\log P(x)-\log Q(x)]$
   * This is guaranteed to be nonnegative is 0 $\iff$ the distributions are equal. 

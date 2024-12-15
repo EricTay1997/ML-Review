@@ -1,0 +1,27 @@
+# Gaussian Process
+
+- A stochastic process is a collection of random variables, $\{h(x): x\in \mathcal{X}\}$, where $\mathcal{X}$ is known as an index set. 
+- A Gaussian Process is a stochastic process such that any finite subcollection of random variables has a multivariate Gaussian distribution. 
+  - $h(\cdot) \sim \mathcal{G P}(m(\cdot), k(\cdot, \cdot))$, which means
+  - $\left[\begin{array}{c}h\left(x_1\right) \\ \vdots \\ h\left(x_m\right)\end{array}\right] \sim \mathcal{N}\left(\left[\begin{array}{c}m\left(x_1\right) \\ \vdots \\ m\left(x_m\right)\end{array}\right],\left[\begin{array}{ccc}k\left(x_1, x_1\right) & \cdots & k\left(x_1, x_m\right) \\ \vdots & \ddots & \vdots \\ k\left(x_m, x_1\right) & \cdots & k\left(x_m, x_m\right)\end{array}\right]\right)$
+- A result from conditional Normal distributions
+  - Suppose $\left[\begin{array}{c}x_A \\ x_B\end{array}\right] = \sim \mathcal{N}\left(\left[\begin{array}{c}\mu_A \\ \mu_B\end{array}\right],\left[\begin{array}{cc} \Sigma_{AA} & \Sigma_{AB} \\ \Sigma_{BA} & \Sigma_{BB} \end{array}\right]\right)$, then 
+  - $x_A \mid x_B \sim \mathcal{N}\left(\mu_A+\Sigma_{A B} \Sigma_{B B}^{-1}\left(x_B-\mu_B\right), \Sigma_{A A}-\Sigma_{A B} \Sigma_{B B}^{-1} \Sigma_{B A}\right)$
+    - [Proof](https://see.stanford.edu/materials/aimlcs229/cs229-gp.pdf)
+- Prediction:
+  - For a Gaussian Process, we have:
+  - $\left.\left[\begin{array}{c}\vec{y} \\ \vec{y}_*\end{array}\right] \right\rvert\, X, X_*=\left[\begin{array}{c}\vec{h} \\ \vec{h}_*\end{array}\right]+\left[\begin{array}{c}\vec{\varepsilon} \\ \vec{\varepsilon}_*\end{array}\right] \sim \mathcal{N}\left(\overrightarrow{0},\left[\begin{array}{cc}K(X, X)+\sigma^2 I & K\left(X, X_*\right) \\ K\left(X_*, X\right) & K\left(X_*, X_*\right)+\sigma^2 I\end{array}\right]\right)$
+  - This yields $\overrightarrow{y_*} \mid \vec{y}, X, X_* \sim \mathcal{N}\left(\mu^*, \Sigma^*\right),$ where $K\left(X, X_*\right) \in \mathbf{R}^{m \times m_*}$, where $\left(K\left(X, X_*\right)\right)_{i j}=k\left(x^{(i)}, x_*^{(j)}\right)$
+  - $\mu^*=K\left(X_*, X\right)\left(K(X, X)+\sigma^2 I\right)^{-1} \vec{y}$ and
+  - $\Sigma^*=K\left(X_*, X_*\right)+\sigma^2 I-K\left(X_*, X\right)\left(K(X, X)+\sigma^2 I\right)^{-1} K\left(X, X_*\right)$
+- What does this mean?
+  - Intuition: We often see this picture for a GP:
+    - ![gp_posterior.svg](gp_posterior.svg)
+    - To motivate this, note that when $X_* = x^{(i)} \in \mathbb{R}^{1 \times p}, K\left(X_*, X\right) \in \mathbb{R}^{1 \times n}$ and would have it's $i^{th}$ value be very large. 
+      - Then $\mu^* \approx y_i$ and $\Sigma^*$ would be small since $K\left(X_*, X\right)\left(K(X, X)+\sigma^2 I\right)^{-1} K\left(X, X_*\right)$ would be large.
+  - Kernel Trick
+    - Let us interpret GPs in another way. Our kernel is a similarity measure s.t. $k(x^{(i)}, x^{(j)})$ large $\rightarrow$ $f(x^{(i)}) \approx f(x^{(j)})$.
+    - Now as per [SVMs](../08_svms/notes.md), we can interpret a kernel as projecting similar points which may be too close to each other in their embedded space, into a high dimensional one where we can better express our priors. 
+    - Having said so, we recognize that for a more complicated problem, we probably need to use our priors to create a more complicated $k$. 
+- Computational Complexity
+  - This takes $O(n^3)$ time.
