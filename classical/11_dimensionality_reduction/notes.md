@@ -3,6 +3,15 @@
 - Motivation
   - Recall the [Curse of Dimensionality](../../modern/concepts/notes.md) - as $p$ increases, training samples are far apart and this makes it hard to train a model that will give good predictions on new training points (which are also likely to be far away from our training points).
   - Combining this with the [Manifold Hypothesis](../../modern/concepts/notes.md), that our data naturally llives in a lower dimensional space, we have a motivation to project our high-dimensional data into a lower-dimensional space.
+  - Pros:
+    - Speed up or aid performance of subsequent training algorithm
+    - Visualize data and gain insights on most important features
+    - Save Space
+  - Cons:
+    - Loss of information
+    - Loss of interpretability
+    - Computational cost
+    - Additional complexity
 - PCA
   - PCA converts $\mathbf{X} \in \mathbb{R}^{n \times p}$ to $\mathbf{V^k} \in \mathbb{R}^{n \times k}$, $k < p$, such that the variance between points is maximized. Intuitively, we try to retain as much information as we possibly can. 
   - A cool result is that $\mathbf{Z}$ are the first $k$ eigenvectors of $\mathbf{Z^{\top}}{\mathbf{Z}}$, where $\mathbf{Z}$ is $\mathbf{X}$ with demeaned columns, and we have ordered the eigenvectors in decreasing eigenvalue order. 

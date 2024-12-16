@@ -6,7 +6,8 @@
 - Computational Complexity
   - Supposing we have $n$ samples and $m$ nodes, training is generally $O(nm\log m)$ and inference is $O(\log m)$.
 - Sensitivity to Axis Orientation
-  - We can only split based on input features and in some circumstances, a change of basis may be appropriate.  
+  - We can only split based on input features and in some circumstances, a change of basis may be appropriate. 
+- Invariant to feature scaling / centering.
 - High Variance
   - Trees can change drastically based on hyperparameter choice (Scikit-Learn also naturally incorporates stochasticity). One method of combating this is with [Random Forests](../10_ensemble_learning/notes.md).
 - Two common algorithms used here are C4.5 and CART. 

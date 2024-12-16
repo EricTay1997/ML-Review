@@ -39,7 +39,8 @@
 - Gradient Boosting
   - For gradient boosting, instead of tweaking the sample weights at every iteration, we fit a new predictor to the residual errors made by the previous predictor. 
   - Note that this permits continuous outputs.
-- Stacking
+- Computational Complexity: Due to the sequential nature of the algorithm, we cannot parallelize training.
+## Stacking
   - What if we train a model to aggregate these weak classifiers? Two layer neural network?
 
 ## Generalized Additive Models
