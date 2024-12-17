@@ -13,7 +13,8 @@
 - Eigenvectors and eigenvalues
   - The (right) eigenvector of a square matrix $\mathbf{A}$ is a nonzero vector $\mathbf{v}$ s.t. $\mathbf{Av}$ = $\lambda\mathbf{v}$. $\lambda$ is known as the eigenvalue associated with that eigenvector.
     - Think of $\mathbf{A}$ scaling space in the direction of $\mathbf{v}_i$ by $\lambda_i$.
-  - Suppose that $\mathbf{A}$ has $n$ linearly independent eigenvectors with eigenvalues $\lambda_i$
+  - Eigendecomposition
+    - Suppose that $\mathbf{A}$ has $n$ linearly independent eigenvectors with eigenvalues $\lambda_i$
     - We concatenante these vectors and values together to form $\mathbf{V}$ and $\mathbf{\lambda}$.
     - Then the eigendecomposition of $\mathbf{A}$ is given by $\mathbf{V}diag(\mathbf{\lambda})\mathbf{V}^{-1}$ (since $\mathbf{AV=V\Lambda}$).
     - Spectral Theorem: Every real symmetric matrix can be decomposed into $\mathbf{Q}\mathbf{\Lambda}\mathbf{Q}^{\top}$, where $\mathbf{Q}$ is an orthogonal matrix comprising of only real-valued eigenvectors and our eigenvalues are also real-valued.
@@ -29,6 +30,7 @@
 - Trace
   - Tr($\mathbf{A}$)$=\sum_i A_{ii}$
   - When the product is a square matrix, $\operatorname{Tr}\left(\prod_{i=1}^n \mathbf{F}^{(i)}\right)=\operatorname{Tr}\left(\mathbf{F}^{(n)} \prod_{i=1}^{n-1} \mathbf{F}^{(i)}\right)$
+  - The trace of a square matrix is equal to the sum of its eigenvalues. 
 - Determinant
   - The determinant is the product of all eigenvalues and can be thought of how much a matrix expands or contracts space.
 

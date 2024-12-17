@@ -1,7 +1,7 @@
 # A Broad Review of Classical and Modern ML Algorithms
 This repository will be used to help me consolidate my knowledge regarding various ML topics.
 
-Broadly, this repository will include: 
+This repository will include: 
 * Notes on various topics (Edit: For some reason, markdown on Github isn't formatting the same as PyCharm)
   * Classical ML/Statistics
     * Linear Algebra and Calculus
@@ -52,6 +52,7 @@ I shall try to be diligent in citing my sources. Due to visa-related time constr
 * [Designing Machine Learning Systems by Huyen](https://www.amazon.com/Designing-Machine-Learning-Systems-Production-Ready/dp/1098107969)
 * [Machine Learning System Design Interview by Aminian and Xu](https://bytebytego.com/intro/machine-learning-system-design-interview)
 * [Machine Learning System Design Interview by Pham](https://www.amazon.com/Machine-Learning-Design-Interview-System/dp/B09YQWX59Z)
+* [System Design Interview by Xu](https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF)
 * [Distill](https://distill.pub)
 * [Lilian Weng's Blog](https://lilianweng.github.io)
 * [Christopher Olah's Blog](https://colah.github.io/about.html)

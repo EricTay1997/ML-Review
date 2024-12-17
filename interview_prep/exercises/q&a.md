@@ -1,9 +1,80 @@
-# Questions and Answers
+# Questions 
 
-- Why do we need to scale our features?
-  - Gradient descent and regularization
-- How does changing $C$ change the results of an SVM?
-- Is a node’s Gini impurity generally lower or higher than its parent’s? Is it generally lower/higher, or always lower/higher?
-  - Generally lower
-- In what cases would you use regular PCA, incremental PCA, randomized PCA, or random projection?
-- 
+## Notes
+- General Statistics
+  - What is the $L^p, L^{\infty}$ and Frobenius norm?
+  - What is the formula for conditional expectation and the law of iterated expectation?
+  - What's the pdf of $Y = g(X)$, given $p(x)$?
+  - What's the formula for $\operatorname{Cov}(f(X), g(Y))$?
+  - What's the formula for $\pmb{\Sigma} \stackrel{\text { def }}{=} \operatorname{Cov}_{\mathbf{x} \sim p}[\mathbf{x}]$? 
+  - Suppose $X_i$ are iid and $E[X] = \mu$ and $\operatorname{Var}(X) = \sigma^2$.
+    - What's an unbiased estimate of $\sigma^2$?
+    - What's the variance of this estimate? (Hint: What's its distribution?)
+  - What's the CLT?
+  - What's the MGF? Calculate the MGF of a univariate normal. 
+  - What is Entropy, Perplexity, Cross-Entropy, KL Divergence and Gini Impurity?
+  - Decompose MSE in both the model prediction case and the parameter estimation case. 
+  - What is a consistent estimator? Give an example of a consistent but biased estimator. What about an unbiased by inconsistent estimator?
+  - What are the two formulae for Fisher's Information? What does it mean for an estimator to be efficient?
+  - Write out formulae for Sensitivity, Specificity, Accuracy, Precision, Recall, FPR.
+  - What is Alpha and Beta in a test?
+  - What is the Chi-squared test statistic?
+  - What is an ANOVA?
+  - What is Multiple Hypothesis Testing and what are ways to correct for it? 
+  - What are the formulae for AIC and BIC?
+  - What is the probability distribution of a Poisson, Geometric, Exponential, Normal and Multivariate Normal distribution?
+  - What is the mean and variance of a Binomial, Poisson, Geometric, Exponential, Beta, Gamma, Chi-Squared distribution?
+  - What is the formula for a Jeffrey's Prior?
+  - What is the taylor expansion for $e^x$?.
+- Linear Regression
+  - What are the model specifications and associated assumptions?
+  - What is the MLE estimate for $\mathbf{B}$? In 2D? With weights?
+  - What is the MLE and unbiased estimate for $\sigma^2$?
+  - What is the gradient and hessian of the loss function with respect to $\mathbf{B}$?
+  - What is the variance of $\hat{\mathbf{B}}$?
+  - What is the formula of a t-stat and why is it low with multicollinearity?
+  - What is the formula for $R^2$, and that of the sample Pearson correlation coefficient? 
+  - What is the chow test?
+  - How would you detect for multicollinearity?
+- Naive Bayes, Logistic Regression and GLMs
+  - What is the model for Naive Bayes and what are its assumptions?
+  - What are the model specifications for Logistic Regression and what are its assumptions?
+  - What is the loss for Logistic Regression? What about softmax regression?
+  - What is the gradient and hessian of the loss function with respect to $\mathbf{B}$? What about softmax regression?
+  - Compare Naive Bayes to Logistic Regression.
+  - What is the formula for GLMs?
+- SVMs
+  - What are the model specifications and associated assumptions?
+  - Give a form that the hyperplane takes. 
+  - Write down the equation that needs to be optimized to solve the problem. What about soft-margin SVMs?
+  - How does changing $C$ change the results of an SVM?
+- Decision Trees
+  - Write down the loss used for node splitting.
+  - Write down the loss used by CART for pruning.
+  - Is a node’s Gini impurity generally lower or higher than its parent’s? Is it generally lower/higher, or always lower/higher? Generally lower.
+- Ensemble Learning
+  - What are two ways of calculating feature importance in an RF?
+  - Sketch the pseudo algorithm of AdaBoost
+  - Write the general formulae of GAMs
+  - Compare Boosting with RFs
+- Dimensionality Reduction
+  - Write down the PCA algorithm
+  - Describe LLE and t-SNE
+  - In what cases would you use regular PCA, incremental PCA, randomized PCA, or random projection?
+- Unsupervised Clustering
+  - Describe K-means, DBSCAN, Spectral Clustering, Agglomerative Clustering, Hierarchical clustering
+  - Write down the model specification, Auxiliary Function and update steps of a GMM
+- Gaussian Process
+  - Write down the model specification of a GP
+- Causal Inference
+  - Write down both the Outcome Modeling and IPW estimates for ATE in an Observational Study. 
+  - When would you use a regression, 2-step least squares, or Double ML?
+- Optimization
+  - What's Newton's method?
+  - What is the general equation for Quasi-Newton methods?
+
+## Code
+
+- Design an LRU Cache (Ordered Dict)
+- Code up an attention head
+- Code up the transformer architecture

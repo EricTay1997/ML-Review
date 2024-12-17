@@ -8,7 +8,7 @@
   - Algorithm:
     - Initialize $k$ centers randomly. 
     - Assign each point to the center closest to it. 
-    - Update the center to the centroid of all points assigned to it.
+    - Update the center to the centroid of all points assigned to it. (Which corresponds if our loss is the sum of squared distances between points and their centers)
     - Repeat from step 2 until converge.
   - To pick $k$
     - We can plot the loss versus $k$ and use the "elbow" method.
