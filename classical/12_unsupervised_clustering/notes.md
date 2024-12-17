@@ -53,7 +53,7 @@
         - Suppose we start with $\pmb\theta_t$
         - Find $\pmb\theta_{t+1} = \arg\max_{\pmb\theta} A(\pmb\theta, \pmb\theta_t)$.
         - Then $\log \operatorname{likelihood} (\pmb\theta_t) \leq A(\pmb\theta_t, \pmb\theta_t) \leq A(\pmb\theta_{t+1}, \pmb\theta_t) \leq \log \operatorname{likelihood} (\pmb\theta_{t+1})$
-        - <img src="em.png" width="200">
+        - <img src="em.png" width="200">[Source](https://people.duke.edu/~ccc14/sta-663-2016/14_ExpectationMaximization.html)
         - Note that we are not guaranteed to find the global maxima. 
       - E-step: Compute $\gamma_{ik\pmb\theta_t}$. 
         - $P(Z_i = k \mid \mathbf{X}_i = \mathbf{x}_i, \pmb\theta_t) = \frac{P(\mathbf{X}_i = \mathbf{x}_i \mid Z_i = k, \pmb\theta_t) P(Z_i = k \mid \pmb\theta_t)}{P(\mathbf{X}_i = \mathbf{x}_i \mid \pmb\theta_t)} = \frac{w_{kt}\mathcal{N}(\mathbf{x}_i ; \pmb\mu_{kt}, \pmb\Sigma_{kt})}{\sum_{k'}w_{k't}\mathcal{N}(\mathbf{x}_i ; \pmb\mu_{k't}, \pmb\Sigma_{k't})}$

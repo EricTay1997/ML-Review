@@ -84,7 +84,7 @@ Note: This was written with reference to [Li's notes](https://www2.stat.duke.edu
 ## Natural/Quasi-Experiments
 - To handle unmeasured confounding, we use instrumental variables (IV), which influence treatment assignment but is independent of unmeasured confounders, and has no direct effect on the outcome except through its effect on treatment.
   - One such instrumental variable is say, the distance from a hospital, when studying the effect of cardiac catheterization on patients suffering a heart attack. 
-  - ![iv.png](iv.png)
+  - ![iv.png](iv.png)[Source](https://link.springer.com/referenceworkentry/10.1007/978-1-4939-6704-9_7-1)
 - A 2 stage regression is appropriate here:
   - Estimate the "unconfounded portion" of $Z_i$, $\hat{Z}_i$
     - $\hat{Z}_i = \hat{\alpha}_0 + \hat{\alpha}_1D_i+\hat{\alpha}_2X_i$

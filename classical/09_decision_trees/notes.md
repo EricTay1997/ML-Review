@@ -44,7 +44,7 @@
 - A simpler way to reduce model capacity would be to reduce properties like max_depth, max_features, max_leaf_nodes, min_samples_split, min_samples_leaf, etc. 
 ## Regression
 - While we have focused on the classification problem, trees can also output continuous values, where the value for each leaf is the same. 
-- ![regression_trees.png](regression_trees.png)
+- ![regression_trees.png](regression_trees.png)[Source](https://link.springer.com/chapter/10.1007/978-3-031-49529-8_8)
 - CART
   - Essentially, we replace entropy and misclassification error with MSE. 
   - For splitting, we greedily choose feature $j$ and split point $s$ solving

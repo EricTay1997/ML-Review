@@ -68,7 +68,7 @@
   - Kernel regression uses a kernel as a weighting function: $\operatorname{pred}(x) = \frac{\sum_i y_ik(x, x_i)}{\sum_i k(x, x_i)}$
   - Note that this is similar to what we're doing, where $\pmb{\lambda}^{\top}\mathbf{x}+\lambda_0 = \sum_{i=1}^n \alpha_i y_i \mathbf{x}_i^{\top}\mathbf{x}+\lambda_0$
   - The intuition of kernel methods is to map the points to a higher dimensional space to more easily separate the data.
-  - ![higher_dim.png](higher_dim.png)
+  - ![higher_dim.png](higher_dim.png)[Source](https://behesht.medium.com/support-vector-machies-part1-classification-fc1cc382b8a4)
 - Back to SVM: Note that when solving for $\hat{\pmb\alpha}$, we see the equation $\mathcal{L}(\pmb{\alpha})= \sum_{i=1}^n \alpha_i-\frac{1}{2} \sum_{i, k=1}^n \alpha_i \alpha_k y_i y_k \mathbf{x}_i^T \mathbf{x}_k$
 - The kernel trick replaces $\mathbf{x}_i^T \mathbf{x}_k$ with $k(\mathbf{x}_i, \mathbf{x}_k) = \phi(\mathbf{x_i})^{\top}\phi(\mathbf{x_k})$. 
 - We then solve for a new $\hat{\pmb\alpha}$, which we use to solve for a new $\hat{\lambda_0} = 1 - \sum_i \hat{\alpha}_i y_i k(\mathbf{x_i}, \mathbf{x_{sv}})$

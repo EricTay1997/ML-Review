@@ -16,7 +16,7 @@
   - $\Sigma^*=K\left(X_*, X_*\right)+\sigma^2 I-K\left(X_*, X\right)\left(K(X, X)+\sigma^2 I\right)^{-1} K\left(X, X_*\right)$
 - What does this mean?
   - Intuition: We often see this picture for a GP:
-    - ![gp_posterior.svg](gp_posterior.svg)
+    - ![gp_posterior.svg](gp_posterior.svg)[Source](https://d2l.ai/chapter_gaussian-processes/gp-intro.html)
     - To motivate this, note that when $X_* = x^{(i)} \in \mathbb{R}^{1 \times p}, K\left(X_*, X\right) \in \mathbb{R}^{1 \times n}$ and would have it's $i^{th}$ value be very large. 
       - Then $\mu^* \approx y_i$ and $\Sigma^*$ would be small since $K\left(X_*, X\right)\left(K(X, X)+\sigma^2 I\right)^{-1} K\left(X, X_*\right)$ would be large.
   - Kernel Trick

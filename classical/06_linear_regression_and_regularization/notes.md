@@ -117,4 +117,4 @@
 - Lagrangian Perspective
   - Note that per our discussion around the [Lagrangian](../01_linear_algebra_and_calculus/notes.md), our loss functions above are the "dual" interpretation of the respective optimization problems.
   - We can also think of these problems in their "primal" form, e.g. Minimize $||\mathbf{Y} - \mathbf{XB}||^2_2$ subject to $||\mathbf{B}||^2_2 \leq c$.
-  - This helps motivate the effect of these methods on $\mathbf{B}$. In particular, ridge regression shrinks coefficients to 0, while lasso regression induces sparsity. ![regularization.png](regularization.png)
+  - This helps motivate the effect of these methods on $\mathbf{B}$. In particular, ridge regression shrinks coefficients to 0, while lasso regression induces sparsity. ![regularization.png](regularization.png)[Source](https://medium.com/codex/understanding-l1-and-l2-regularization-the-guardians-against-overfitting-175fa69263dd)
