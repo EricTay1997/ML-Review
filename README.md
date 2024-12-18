@@ -37,7 +37,7 @@ This repository will include:
 * Code implementation for various algorithms, which will mostly come from online resources/tutorials. 
   * The first priority would be to get implementations that work.
   * If time permits, a stretch goal would be to refactor the code with a greater emphasis on OOP, e.g. [John's repo](https://github.com/johnma2006/candle/tree/main)
-  * I want to emphasize that the goal of these implementations would be to ensure that I have a thorough understanding of topics, rather than being the most involved projects. Notebooks may be more sparse if I believe my understanding to be sufficient.
+  * I want to emphasize that the goal of these implementations would be to ensure that I have a thorough understanding of topics, rather than being the most involved projects. Notebooks may be more sparse if I believe my understanding to be sufficient. To that effect, notebooks for the classical ML topics will largely be calling scikit-learn libraries (from-scratch implementations of algorithms like SVMs, AdaBoost and K-means can be found in my other repos). 
 * Interview Preparation
 
 I shall try to be diligent in citing my sources. Due to visa-related time constraints, I do apologize for any lapses in citation. At the current moment, I envision pulling most heavily from the following sources:

@@ -56,6 +56,7 @@
   - What are two ways of calculating feature importance in an RF?
   - Sketch the pseudo algorithm of AdaBoost
   - Write the general formulae of GAMs
+  - Name features about XGBoost and LightGBM
   - Compare Boosting with RFs
 - Dimensionality Reduction
   - Write down the PCA algorithm
@@ -72,6 +73,9 @@
 - Optimization
   - What's Newton's method?
   - What is the general equation for Quasi-Newton methods?
+- System Design
+  - Write down the steps/template for a typical SWE SD interview 
+  - Write down the steps/template for a typical ML SD interview 
 
 ## Code
 

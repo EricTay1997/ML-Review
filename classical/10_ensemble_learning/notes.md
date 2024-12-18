@@ -39,6 +39,18 @@
 - Gradient Boosting
   - For gradient boosting, instead of tweaking the sample weights at every iteration, we fit a new predictor to the residual errors made by the previous predictor. 
   - Note that this permits continuous outputs.
+- Gradient Boosted Trees
+  - There are two versions of GBTs that are commonly used now: XGBoost and LightGBM
+  - XGBoost
+    - Regularization: L1 and L2 loss, applied to leaf values.
+    - Parallelization within each learner
+    - Missing Data Handling: Model assigns which branch missing data should go down to minimize impurity
+    - Pruning: XGBoost doesn't employ early stoppage. It grows to max depth first and then prunes, ensuring that each split leads to a impurity decrease of at least $\gamma$
+    - Builds tree level-wise
+    - In-Built Cross Validation
+  - LightGBM
+    - Histogram-based outputs: Faster training speed
+    - Builds tree leaf-wise
 - Computational Complexity: Due to the sequential nature of the algorithm, we cannot parallelize training.
 ## Stacking
   - What if we train a model to aggregate these weak classifiers? Two layer neural network?

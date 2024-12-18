@@ -19,6 +19,8 @@
     - Yields static features e.g. driver ratings
   - Stream: Processing data in real-time transports, e.g. checking which drivers are available
     - Yields dynamic features
+- Data Types
+  - ![data_types.png](data_types.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/introduction-and-overview)
 
 ## Data Cleaning
 - Sampling
@@ -46,7 +48,9 @@
   - MAR (at random): Reason for missing data not due to the value itself, but another observable variable.
   - MCAR (completely at random)
 - Categorical Data
-  - Combine one-hot encoding with hashing
+  - Integer encoding with hashing, one-hot encoding, embedding learning
+- Feature Scaling
+  - Normalization, standardization, log scaling, discretization
 - Data Leaks
   - Suppose a variable causes two samples to be correlated to each other. If we one sample is in train, the other is in test, we would have falsely given credit to our model if we don't expect similar samples to continue occuring in production. Drawing this distinction, however, is tricky.
 
@@ -74,11 +78,7 @@
   - Pruning: Removing nodes, or setting weights to 0. We can also retrain the sparse network.
   - Quantization, which also improves computation speed
 - Cloud / Edge / Browsers
-  - Arguments for Edge
-    - Cost of compute
-    - Need for network stability
-    - Network latency
-    - User data 
+  - ![cloud_edge.png](cloud_edge.png)
   - WASM is an open standard that allows you to run executable programs in browsers. However, it is slow.
 
 ## Data Distribution Shifts and Monitoring

@@ -4,7 +4,7 @@
 - Framework
   - Understand the problem and establish scope and requirements
     - Problem:
-      - Why do we want to build this feature?
+      - Why do we want to build this feature? What business value would this bring?
       - What feature do we want to build?
     - Requirements
       - Functional
@@ -103,31 +103,56 @@
   - Here, the ML Service can be a few components, e.g. both a Candidate and Ranking service for a recommendation system. 
   - The item and feature store is used as a lookup table for faster inference.
 - Framework
-  - Understand the problem and establish design scope
-    - Why do we want to build this feature? What value would this bring?
-    - Why do we need an ML solution?
-    - Based on the problem, what are the specs? Num users, latency requirements (batch or online), bandwidth/throughput requirements, compute restrictions, accuracy, retraining frequency, bandwidth and scale?
-  - Propose a high-level design and get buy in
+  - Understand the problem and establish scope and requirements
+    - Problem
+      - Why do we want to build this feature? What business value would this bring?
+      - Why do we need an ML solution?
+      - What is the (geographical) scope? 
+      - What are the data sources? How large is the dataset? Is it labelled? 
+    - Requirements
+      - Accuracy 
+      - Performance (latency), batch or online predictions
+      - Throughput (num users)
+      - Compute (cloud or device)
+      - Retraining frequency
+      - Privacy
+      - Availability (downtime)
   - Design deep dive (look for guidance here). 
-    - Offline and Online Metrics
+    - Frame the problem
+      - Input and output
+      - Offline and online metrics (see [Testing and Metrics](../../classical/04_testing_and_metrics/notes.md))
+        - Convert business objective to appropriate online metric
+        - Convert online metric to offline metric
+        - Offline metric and ml training loss can be different too
+        - Should metrics be weighted? Ads by revenue per click, or harmfull posts by number of impressions.
     - Data
       - Data collection
-      - Feature engineering
-      - Handling missing values or outliers
       - Handling data imbalance
-    - Model details
-    - Deployment details
-      - Scalability
+      - Split data
+      - Handling missing values or outliers
+      - Feature engineering
+    - Model development
+      - Establish a baseline
+      - Start with a simple model and go from there
+      - Regularization
+    - Deployment design (figures)
+      - Batch or online predictions? Latency?
+      - Serving scalability and reliability
+      - Retraining
+      - Monitoring
+      - Infrastructure
       - Privacy
-      - Maintainability 
   - Recap
 
 ## Third-Party Resources
 - Load Balancer: AWS Elastic Load Balancing
 - DBs
-  - Amazon RedShift, Snowflake, Google BigQuery
-  - Relational: Amazon RDS
-  - NoSQL: MongoDB, AWS Dynamo
+  - Relational: Amazon RDS, MySQL, PostgreSQL
+  - NoSQL:
+    - Key/Value: Redis, DynamoDB
+    - Column-based: Cassandra, HBase
+    - Graph: Neo4J
+    - Document: MongoDB, CouchDB
 - Servers: AWS, Azure, GCP
 - CDNs: Akamai, AWS, Azure, Google Cloud
 - Service: Kubernetes can auto-scale the number of pods
@@ -148,3 +173,8 @@
 - Schedulers: Slurm, Google Borg
 - Orchesterators: K8, HashiCorp Nomad, Airflow 
 - Workflow management tools: Airflow, Argo, Prefect, Kubeflow, MLFlow, TFX
+- Encoders:
+  - Words - GLoVe
+  - Text - DistilmBERT
+  - Image - CLIP, SimCLR
+  - Video - VideoMoCo

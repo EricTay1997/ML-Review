@@ -1,22 +1,54 @@
 # Testing and Metrics
 
 * Metrics
-  * Binary classification
-    * ![Classification Statistics](classification_statistics.png)[Source](https://www.researchgate.net/publication/381097743_ECG_Classification_System_based_on_time_Domain_Features_with_Least_Square_Support_Vector_Machine_LS-SVM)
-    * Additionally, we have the following definitions:
-      * Recall = TPR = Sensitivity
-      * FPR = 1 - Specificity 
-    * In cases where both precision and recall are equally important, we can try to optimize $F_1=2 * \frac{\text { precision * recall }}{\text { precision + recall }}$
-    * AUROC (Area under Receiver Operator Characteristic)
-      * The ROC curve plots TPR vs FPR, for varying "thresholds" of what constitutes a change in classification.
-    * Another common curve is the precision-recall curve.
-  * Some other terms (that can be used both in/out of binary classification)
-    * The **p-value** is the probability of observing the value of the calculated test statistic under the null hypothesis assumptions. We usually compare the observed p-value to a chosen level of alpha.
-    * Alpha: The probability of a type 1 (false positive) error := 1 - Confidence Level.
-    * Beta: The probability of a type 2 (false negative) error := 1 - Power. With higher power, we generally get higher sensitivity/recall. However, we get lower specificity.
-  * Losses
-    * MSE
-    * MAE
+  * ![offline.png](offline.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/introduction-and-overview)
+  * ![online.png](online.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/introduction-and-overview)
+  * Details
+    * Classification
+      * ![Classification Statistics](classification_statistics.png)[Source](https://www.researchgate.net/publication/381097743_ECG_Classification_System_based_on_time_Domain_Features_with_Least_Square_Support_Vector_Machine_LS-SVM)
+      * Additionally, we have the following definitions:
+        * Recall = TPR = Sensitivity
+        * FPR = 1 - Specificity 
+      * In cases where both precision and recall are equally important, we can try to optimize $F_1=2 * \frac{\text { precision * recall }}{\text { precision + recall }}$
+      * AUROC (Area under Receiver Operator Characteristic)
+        * The ROC curve plots TPR vs FPR, for varying "thresholds" of what constitutes a change in classification.
+      * Another common curve is the precision-recall curve.
+      * Cross-Entropy loss: 
+        * $Loss =-\frac{1}{n}\sum_i\sum_k [y_{ik}\log(\hat{p}_{ik})$], where $y_i \in \mathbb{R}^k$ takes a one-hot encoding form and $\hat{p}_i$ represents our predictions for this data point.
+        * In the binary form, $-\frac{1}{n}\sum_i (y_i\log(\hat{p}_{i}) + (1-y_i)\log(1-\hat{p}_{i}))$
+        * Normalized: $\frac{CE}{-(p\log(p) + (1-p)\log(1-p))}$, where $p$ is the average probability over the training set. 
+          * 0 is perfect, <1 is better than predicting average. 
+        * Weight rare samples more with focal loss: Instead of $-\log(p)$, do $-(1-p)^\gamma \log(p)$.
+    * Losses
+      * Huber Loss: MSE if error is small, if not use MAE
+      * Quantile loss: $L(\hat{y}, y) = \max(q(y - \hat{y}), (q-1)(y - \hat{y}))$
+      * Hinge loss
+    * Forecast problems:
+      * Mean Absolute Percentage Error: $100 \frac{1}{n} \sum_{n=1}^n\left|\frac{A_k-F_5}{A_4}\right|$
+      * Symmetric MAPE: $\frac{100}{n} \sum_{t=1}^n \frac{\left|F_t-A_t\right|}{\left(\left|A_t\right|+\left|F_t\right|\right) / 2}$
+    * Ranking
+      * Mean Reciprocal Rank (MRR): $\frac{1}{n} \sum_i^n \frac{1}{rank_i}$ Average of the reciprocal of the first/top relevant item 
+      * Mean Average Precision (mAP): $\frac{1}{nk}\sum_{ik}(P@k_i)$ 
+      * Normalized Discounted Cumulated Gain (nDCG):
+        * DCG: $\sum_i^n \frac{rel_i}{\log_2(i+1)}$
+        * nDCG: $\frac{DCG}{Ideal DCG}$
+    * Image generation
+      * FID: $d_F\left(\mathcal{N}(\mu, \Sigma), \mathcal{N}\left(\mu^{\prime}, \Sigma^{\prime}\right)\right)^2=\left\|\mu-\mu^{\prime}\right\|_2^2+\operatorname{tr}\left(\Sigma+\Sigma^{\prime}-2\left(\Sigma \Sigma^{\prime}\right)^{\frac{1}{2}}\right)$
+      * Inception score: $I S\left(p_{\text {gen }}, p_{\text {dis }}\right):=\exp \left(\mathbb{E}_{x \sim p_{g e n}}\left[D_{K L}\left(p_{\text {dis }}(\cdot \mid x) \| \int p_{\text {dis }}(\cdot \mid x) p_{g e n}(x) d x\right)\right]\right)$
+    * NLP
+      * BLEU: $p_n(\hat{S} ; S):=\frac{\sum_{i=1}^M \sum_{s \in G_n\left(\hat{y}^{(i)}\right)} \min \left(C\left(s, \hat{y}^{(i)}\right), \max _{y \in S_i} C(s, y)\right)}{\sum_{i=1}^M \sum_{s \in G_n\left(\hat{y}^{(i)}\right)} C\left(s, \hat{y}^{(i)}\right)}$ (comparing translated sentence and reference sentence). Intelligibility/grammatical correctness is not taken into account.  
+      * METEOR: Maps unigrams in candidate and reference. Idea is to increase score with more matches, and penalize chunks, where chunks are defined as a set of unigrams that are adjacent in the candidate and in the reference.
+      * ROUGE: Overlap of n-grams between candidate and reference. 
+      * CIDEr: 
+        * Uses TF-IDF to weight n-grams
+        * Computes the cosine distance between candidate and reference sentence
+      * SPICE: 
+        * Deals with image labeling.
+        * Is an F1 score, where we're matching the number of tuples in the actual and predicted labels. 
+    * Some other terms (that can be used both in/out of binary classification)
+      * The **p-value** is the probability of observing the value of the calculated test statistic under the null hypothesis assumptions. We usually compare the observed p-value to a chosen level of alpha.
+      * Alpha: The probability of a type 1 (false positive) error := 1 - Confidence Level.
+      * Beta: The probability of a type 2 (false negative) error := 1 - Power. With higher power, we generally get higher sensitivity/recall. However, we get lower specificity.
 * Tests
   * z-test
     * We use the z-test when the population variance $\sigma^2$ is known. 
