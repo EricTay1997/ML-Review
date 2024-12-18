@@ -20,20 +20,38 @@ This repository will include:
     * Gaussian Process
     * Causal Inference
   * Modern ML (Note that the delineation is not super clear here and this separation is purely made for organizational purposes)
-    * Concepts Around Training DNNs
-    * Practical Considerations
-    * AI Safety
-    * MLP
-    * CNN Architectures
-    * Autoencoders
-    * GANs
-    * Diffusion Models
-    * Normalizing Flows
+    * Basics
+      * PyTorch
+      * Activation Functions
+      * Initialization (and optimization?)
+    * Coding Practices
+    * CNNs
     * RNNs & LSTMs
     * Attention & Transformers
-    * Modern LLMs
+    * Autoencoders
+    * Generative Adversarial Networks
+    * Diffusion Models
+    * Graph Neural Networks
+    * Normalizing Flows
+    * Meta-Learning
+    * Self-Supervised Contrastive Learning
+    * Optimization
+    * Computer Vision
+    * Natural Language Processing
+      * Text Processing
+      * LLMs From Scratch
+      * Pre-training
+      * Fine-tuning
+    * Recommender Systems
     * Reinforcement Learning
-    * Applied AI
+    * Hyperparameter Optimization
+    * Computational Performance
+      * JAX + Flax
+    * AI Safety
+    * Interpretability
+    * Applied Apps
+      * RAG?
+    * Misc
 * Code implementation for various algorithms, which will mostly come from online resources/tutorials. 
   * The first priority would be to get implementations that work.
   * If time permits, a stretch goal would be to refactor the code with a greater emphasis on OOP, e.g. [John's repo](https://github.com/johnma2006/candle/tree/main)

@@ -16,3 +16,14 @@
   - $B_{k+1}\left[\mathbf{x}_{k+1}-\mathbf{x}_k\right]=\nabla f\left(\mathbf{x}_{k+1}\right)-\nabla f\left(\mathbf{x}_k\right)$
     - The intuition here is that we don't want to compute the inverse,  so we iterate on the equation before that.
 - Goodfellow's chapter 8 has a lot of interesting discussion here
+
+
+## Optimization
+- Stochastic Gradient Descent (SGD) is mainly done for computational reasons. The expectation of a minibatch is still unbiased.
+
+### Numerical Analysis Methods
+
+## Regularization
+### See Statistical Learning Theory
+
+## Additional Tricks
