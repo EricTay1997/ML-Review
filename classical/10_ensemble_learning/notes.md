@@ -15,7 +15,7 @@
     - At each split, we also typically search for the best feature out of $\sqrt{n}$ (rather than all) features.
       - We incur higher bias for lower variance.
 - Pruning: we generally do not prune individual trees, since our the combination of sampling methods and aggregation tends to guard against overfitting.
-- Feature Importance: Random forests can report how much a feature reduces impurity on average, across all trees in a forest.
+- Feature Importance: Random forests can report how much a feature reduces impurity on average (across nodes it's responsible for), across all trees in a forest.
 - Computational Complexity: We can reduce training and inference runtime significantly with parallelism.
 
 ## Boosting
