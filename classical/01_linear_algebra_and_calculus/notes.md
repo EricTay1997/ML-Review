@@ -50,6 +50,17 @@ x_{i-1}, x_i+h, x_{i+1}, \ldots, x_n\right)-f\left(x_1, \ldots, x_i, \ldots, x_n
 
 - Chain Rule: $\frac{\partial y}{\partial x_i}=\frac{\partial y}{\partial u_1} \frac{\partial u_1}{\partial x_i}+\frac{\partial y}{\partial u_2} \frac{\partial u_2}{\partial x_i}+\cdots+\frac{\partial y}{\partial u_m} \frac{\partial u_m}{\partial x_i}$ and so 
 $\nabla_{\mathbf{x}} y=\nabla_{\mathbf{x}}\mathbf{u} \nabla_{\mathbf{u}} y$ 
+- Taylor expansion: $f\left(x_k+\Delta x\right) \approx f\left(x_k\right)+\nabla f\left(x_k\right)^{\mathrm{T}} \Delta x+\frac{1}{2} \Delta x^{\mathrm{T}} H \Delta x$
+- Convexity:
+  - $f(\mathbf{x})$ is a local minimum $\iff$ $f$ is twice continuously differentiable with $\nabla^2f$ positive semi-definite in the neighborhood of $\mathbf{x}$ and that $\nabla f(\mathbf{x}) = \mathbf{0}$.
+  - A set $\mathcal{X} \subseteq \mathbb{R}^d$ is convex if $t\mathbf{x} + (1-t)\mathbf{y} \in \mathcal{X}$ for all $\mathbf{x, y} \in \mathcal{X}$ and all $t \in [0,1]$.
+  - $f$ is convex if $f(t\mathbf{x} + (1-t)\mathbf{y}) \leq tf(\mathbf{x}) + (1-t)f(\mathbf{y})$ for all $\mathbf{x, y} \in Domain(f)$ and all $t \in [0,1]$.
+    - E.g., Norms are convex
+  - Let $\mathcal{X}$ be a convex set. If f is convex, then any local minimum of $f$ in $\mathcal{X}$ is also a global minimum.
+  - $f$ is convex $\iff$ $\nabla^2f(\mathbf{x}) \geq 0$ for all $\mathbf{x} \in Domain(f)$
+  - If $f_i$ are convex, and $\alpha_i \geq0$, then $\sum_i \alpha_if_i$ is convex.
+  - If $f$ is convex, then $g(\mathbf{x}) = f(\mathbf{Ax + b)})$ is convex.
+  - If $f$ and $g$ is convex, then $h(\mathbf{x}) = \max\{f(\mathbf{x}), g(\mathbf{x})\}$ is convex.
 
 ### Lagrangian And KKT Conditions
 - Simple case: Suppose we want to find $\hat{\mathbf{x}}$ that minimizes $f(\mathbf{x})$ subject to $g(\mathbf{x}) = c$
