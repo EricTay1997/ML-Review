@@ -9,9 +9,11 @@
   * The bias of an estimator $\hat{\pmb{\theta}}_m=\mathbb{E}\left(\hat{\pmb{\theta}}_m\right)-\pmb{\theta}_{true}$, where the expectation is over the data (seen as samples from a RV)
 * MSE & Bias-Variance Tradeoff
   * $\operatorname{MSE}= \mathbb{E}\left[\left(\hat{\theta}_m-\theta\right)^2\right] \\ =\operatorname{Bias}\left(\hat{\theta}_m\right)^2+\operatorname{Var}\left(\hat{\theta}_m\right)$
+    * The proof starts with $\mathbb{E}\left[\left(\hat{\theta}_m-\mathbb{E}(\hat{\theta}_m) + \mathbb{E}(\hat{\theta}_m) -\theta\right)^2\right]$
   * Desirable estimators keep MSE low, and therefore balance bias and variance (bias-variance tradeoff)
   * Note a similar decomposition of the data generating process $y = f(x) + \epsilon$, $\operatorname{Var}(\epsilon) = \sigma^2$
     * $\operatorname{MSE} = \mathbb{E}[(y-\hat{y})^2] = \operatorname{Bias}(\hat{y})^2+\operatorname{Var}(\hat{y})+\sigma^2$, where we term $\sigma^2$ as the irreducible error.
+      * We start by showing that $\mathbb{E}[(y-\hat{y})^2] = \mathbb{E}[(f(x)-\hat{f}(x))^2] + \mathbb{E}[\epsilon^2]$, then proceed as per the estimator case.
 * Consistency
   * $\operatorname{lim}_{m \rightarrow \infty} \hat{\theta}_m=\theta$
   * Biased but consistent: 

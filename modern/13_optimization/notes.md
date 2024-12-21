@@ -1,14 +1,25 @@
 # Optimization
 
-- Apologies for the bolding inconsistency in this section, I'll clean this up if time permits.
+- Gradient Descent
+  - Size of learning rate:
+    - To the extent that the function that we minimize can be approximated well by a quadratic function, 
+      - $f(\mathbf{x}-\epsilon\mathbf{g}) = f(\mathbf{x}) - \epsilon\mathbf{g^{\top}g}+\frac{1}{2}\epsilon^2\mathbf{g^{\top}Hg}$
+      - Optimal step size $\epsilon^* = \frac{\mathbf{g^{\top}g}}{\mathbf{g^{\top}Hg}}$
+      - In the worst case when $\mathbf{g}$ aligns with the corresponding eigenvector, $\epsilon^* = \frac{1}{\lambda_{max}}$
+  - Condition number
+    - When the condition number of the Hessian is high, gradient descent performs poorly. 
+    - Gradient descent is unaware of the difference in second derivatives, so it does not know to explore in the direction where the derivative remains negative for longer.
+    - ![canyon.png](canyon.png)[Source](https://www.deeplearningbook.org/contents/numerical.html)
 - Newton's method
   - Suppose we want to minimize $f(\mathbf{x})$.
   - We use the following update rule: $\mathbf{x}_{k+1}=\mathbf{x}_k-H\left(\mathbf{x}_k\right)^{-1} \nabla f\left(\mathbf{x}_k\right)$
-    - $f\left(x_k+\Delta x\right) \approx f\left(x_k\right)+\nabla f\left(x_k\right)^{\mathrm{T}} \Delta x+\frac{1}{2} \Delta x^{\mathrm{T}} H \Delta x$
-    - $\nabla f\left(x_k+\Delta x\right) \approx \nabla f\left(x_k\right)+H \Delta x$
+    - $f\left(\mathbf{x}_k+\Delta \mathbf{x}\right) \approx f\left(\mathbf{x}_k\right)+\nabla f\left(\mathbf{x}_k\right)^{\mathrm{T}} \Delta \mathbf{x}+\frac{1}{2} \Delta \mathbf{x}^{\mathrm{T}} H \Delta \mathbf{x}$
+    - $\nabla f\left(\mathbf{x}_k+\Delta \mathbf{x}\right) \approx \nabla f\left(\mathbf{x}_k\right)+H \Delta \mathbf{x}$
     - Setting the gradient to be zero gives our update function.
-  - When the loss function is nonconvex, this method could instead get us to local **maxima**
-    - Regularization methods are used to prevent this
+  - Nature of stationary point
+    - While in gradient descent, we can ensure that we're moving toward a minima, Newton's method is attracted to all stationary points.
+    - Therefore, when the loss function is nonconvex, this method could instead get us to local **maxima**
+      - Regularization methods are used to prevent this
   - The time complexity is understandably dominated by inverting the Hessian, which we try to address in Quasi-Newton methods
 - Fisher's scoring replaces $H$ with it's expectation, the negative of the Fisher's Information matrix. The advantage of doing so is that this is always positive semi-definite and therefore can aid convergence issues.
 - Quasi-Newton methods

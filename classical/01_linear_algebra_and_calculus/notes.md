@@ -1,11 +1,15 @@
 # Linear Algebra and Calculus
 
 ## Linear Algebra
+- Geometric intuition
+  - I really like thinking of linear algebra in geometric terms. I think [Zhang, Lipton, Li and Smola](http://d2l.ai/chapter_appendix-mathematics-for-deep-learning/geometry-linear-algebraic-ops.html) does an amazing job of explaining this.
 - Interpretation of matrix multiplication: Consider $\mathbf{Ax} = \mathbf{b}$ for $\mathbf{A} \in \mathbb{R}^{n \times m}, \mathbf{x} \in \mathbb{R}^{m \times 1}$
   - Column interpretation: $\mathbf{Ax} = \sum_i^m x_i\mathbf{A}_{:,i}$, a linear combination of the columns of $\mathbf{A}$ 
   - Row interpretation: $b_j = \mathbf{A}_{j,:}\mathbf{x}$, how similar are the rows of $\mathbf{A}$ to $\mathbf{x}$?
 - Definitions
   - For an inverse to exist, the columns of $\mathbf{A}$ need to span $\mathbb{R}^n$, and they have to be linearly independent, i.e. the matrix is nonsingular.
+    - Note that if columns are not independent, then a combination of standard basis vectors would map to the same line as another standard basis vector that's not included in that set.
+    - Invertibility: If you have "collapsed" the space, how are you going to recreate it? 
   - $L^p$ norm: $\|\mathbf{x}\|_p=\left(\sum_i\left|x_i\right|^p\right)^{\frac{1}{p}}$
   - $L^{\infty}$ = $\|\mathbf{x}\|_{\infty}=\max _i\left|x_i\right|$.
   - Frobenius norm: $\|\mathbf{A}\|_F=\sqrt{\sum_{i, j} A_{i, j}^2}$
@@ -32,7 +36,8 @@
   - When the product is a square matrix, $\operatorname{Tr}\left(\prod_{i=1}^n \mathbf{F}^{(i)}\right)=\operatorname{Tr}\left(\mathbf{F}^{(n)} \prod_{i=1}^{n-1} \mathbf{F}^{(i)}\right)$
   - The trace of a square matrix is equal to the sum of its eigenvalues. 
 - Determinant
-  - The determinant is the product of all eigenvalues and can be thought of how much a matrix expands or contracts space.
+  - The determinant of a square matrix is the product of all eigenvalues and can be thought of how much a matrix expands or contracts space. 
+  - In the event that matrix is not full rank, then we're "collapsing" space and the determinant is 0. 
 
 ## Calculus
 
@@ -50,9 +55,16 @@ x_{i-1}, x_i+h, x_{i+1}, \ldots, x_n\right)-f\left(x_1, \ldots, x_i, \ldots, x_n
 
 - Chain Rule: $\frac{\partial y}{\partial x_i}=\frac{\partial y}{\partial u_1} \frac{\partial u_1}{\partial x_i}+\frac{\partial y}{\partial u_2} \frac{\partial u_2}{\partial x_i}+\cdots+\frac{\partial y}{\partial u_m} \frac{\partial u_m}{\partial x_i}$ and so 
 $\nabla_{\mathbf{x}} y=\nabla_{\mathbf{x}}\mathbf{u} \nabla_{\mathbf{u}} y$ 
+- Hessian: The Hessian $\mathbf{H}$ of $f(\mathbf{x})$ is such that $H_{ij} = \frac{\partial^2}{\partial x_i \partial x_j}f(\mathbf{x})$
+  - It specifies the curvature in the direction of the basis vectors. 
+  - It's bounded by the minimum and maximum eigenvalues.
 - Taylor expansion: $f\left(x_k+\Delta x\right) \approx f\left(x_k\right)+\nabla f\left(x_k\right)^{\mathrm{T}} \Delta x+\frac{1}{2} \Delta x^{\mathrm{T}} H \Delta x$
-- Convexity:
+- Hessian and the nature of a stationary point
   - $f(\mathbf{x})$ is a local minimum $\iff$ $f$ is twice continuously differentiable with $\nabla^2f$ positive semi-definite in the neighborhood of $\mathbf{x}$ and that $\nabla f(\mathbf{x}) = \mathbf{0}$.
+  - We can reason this geometrically. 
+  - Importantly, if there's one positive and one negative eigenvalue, we have a saddle point. 
+  - It is also possible for a point to be inconclusive (with all eigenvalues sharing the same sign and at least one zero).
+- Convexity:
   - A set $\mathcal{X} \subseteq \mathbb{R}^d$ is convex if $t\mathbf{x} + (1-t)\mathbf{y} \in \mathcal{X}$ for all $\mathbf{x, y} \in \mathcal{X}$ and all $t \in [0,1]$.
   - $f$ is convex if $f(t\mathbf{x} + (1-t)\mathbf{y}) \leq tf(\mathbf{x}) + (1-t)f(\mathbf{y})$ for all $\mathbf{x, y} \in Domain(f)$ and all $t \in [0,1]$.
     - E.g., Norms are convex
@@ -61,6 +73,9 @@ $\nabla_{\mathbf{x}} y=\nabla_{\mathbf{x}}\mathbf{u} \nabla_{\mathbf{u}} y$
   - If $f_i$ are convex, and $\alpha_i \geq0$, then $\sum_i \alpha_if_i$ is convex.
   - If $f$ is convex, then $g(\mathbf{x}) = f(\mathbf{Ax + b)})$ is convex.
   - If $f$ and $g$ is convex, then $h(\mathbf{x}) = \max\{f(\mathbf{x}), g(\mathbf{x})\}$ is convex.
+- Integrals:
+  - Fubini: $\iint_{X \times Y} f(x, y) \mathrm{d}(x, y)=\int_X\left(\int_Y f(x, y) \mathrm{d} y\right) \mathrm{d} x=\int_Y\left(\int_X f(x, y) \mathrm{d} x\right) \mathrm{d} y$ if $f$ is continuous over $X \times Y$. 
+  - Change of variables: $\int_{\phi(U)} f(\mathbf{x}) d \mathbf{x}=\int_U f(\phi(\mathbf{x}))|\operatorname{det}(D \phi(\mathbf{x}))| d \mathbf{x}$, where $D \pmb{\phi}=\left[\begin{array}{ccc}\frac{\partial \phi_1}{\partial x_1} & \cdots & \frac{\partial \phi_1}{\partial x_n} \\ \vdots & \ddots & \vdots \\ \frac{\partial \phi_n}{\partial x_1} & \cdots & \frac{\partial \phi_n}{\partial x_n}\end{array}\right]$
 
 ### Lagrangian And KKT Conditions
 - Simple case: Suppose we want to find $\hat{\mathbf{x}}$ that minimizes $f(\mathbf{x})$ subject to $g(\mathbf{x}) = c$
