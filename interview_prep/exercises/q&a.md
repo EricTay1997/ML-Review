@@ -80,5 +80,8 @@
 ## Code
 
 - Design an LRU Cache (Ordered Dict)
+- Code up various activation functions
+- Code up various initialization functions
+- Code up various optimization functions
 - Code up an attention head
 - Code up the transformer architecture

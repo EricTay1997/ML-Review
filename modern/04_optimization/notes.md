@@ -10,6 +10,35 @@
     - When the condition number of the Hessian is high, gradient descent performs poorly. 
     - Gradient descent is unaware of the difference in second derivatives, so it does not know to explore in the direction where the derivative remains negative for longer.
     - ![canyon.png](canyon.png)[Source](https://www.deeplearningbook.org/contents/numerical.html)
+      - [Philippe](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial4/Optimization_and_Initialization.ipynb) calls this a Pathological curve.
+- Momentum
+  - ToDo: Why?
+    - Re: pathogolocial curves, GD oscillates while momentum helps #%% md
+SGD oscillates while algorithms with momentum nicely converge because the changing direction of the gradient cancels itself out.
+- Adam 
+  - Algo
+    - $m^{(t)} = \beta_1 m^{(t-1)} + (1 - \beta_1)\cdot g^{(t)}$
+    - $v^{(t)} = \beta_2 v^{(t-1)} + (1 - \beta_2)\cdot \left(g^{(t)}\right)^2$
+    - $\hat{m}^{(t)} = \frac{m^{(t)}}{1-(\beta_1)^t}, \hat{v}^{(t)} = \frac{v^{(t)}}{1-(\beta_2)^t}$
+    - $w^{(t)} = w^{(t-1)} - \frac{\eta}{\sqrt{\hat{v}^{(t)}} + \epsilon}\circ \hat{m}^{(t)}$
+  - Intuition:
+    - We want the gradients of _each param to have similar norm, note that we're not replacing the overall $\eta$, but rather perturbing each term separately. 
+      - ToDo: Why?
+    - $m^{(t)}$ is an EMA of the gradients
+    - $v^{(t)}$ is an EMA of the gradient norms
+    - $\epsilon$ is a small constant used to improve numerical stability for very small gradient norms.
+    - $1-(\beta_1)^t$ and  $1-(\beta_2)^t$ add as a bias correction term and converge to 1 as $t$ increases. 
+      - Adaptive learning rate. ToDo: Understand more about this. 
+        - Note that implementation only increments $t$ whenever update_param is called. Curious to know how this interacts with say, dropout. Is this how PyTorch implements Adam?
+  - Vs other algorithms:
+    - Adam is the most commonly used optimizer in Deep Learning as it usually performs better than other optimizers, especially for deep networks.
+    - Adaptive learning rate helps when initialization is bad.
+    - Steep optima:
+      - SGD: Touches steep gradient and then overshoots 
+      - SGDM: Momentum overshoots 
+      - Adam: Adaptive learning rate allows it to stay in minimum - why?
+    - But there are scenarios that SGD (with momentum) may generalize better as Adam tends to overfit.
+      - ![adam_overfit.png](adam_overfit.png)(https://arxiv.org/pdf/1609.04836)
 - Newton's method
   - Suppose we want to minimize $f(\mathbf{x})$.
   - We use the following update rule: $\mathbf{x}_{k+1}=\mathbf{x}_k-H\left(\mathbf{x}_k\right)^{-1} \nabla f\left(\mathbf{x}_k\right)$
