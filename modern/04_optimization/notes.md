@@ -1,20 +1,25 @@
 # Optimization
 
-- Gradient Descent
-  - Size of learning rate:
-    - To the extent that the function that we minimize can be approximated well by a quadratic function, 
-      - $f(\mathbf{x}-\epsilon\mathbf{g}) = f(\mathbf{x}) - \epsilon\mathbf{g^{\top}g}+\frac{1}{2}\epsilon^2\mathbf{g^{\top}Hg}$
-      - Optimal step size $\epsilon^* = \frac{\mathbf{g^{\top}g}}{\mathbf{g^{\top}Hg}}$
-      - In the worst case when $\mathbf{g}$ aligns with the corresponding eigenvector, $\epsilon^* = \frac{1}{\lambda_{max}}$
-  - Condition number
-    - When the condition number of the Hessian is high, gradient descent performs poorly. 
-    - Gradient descent is unaware of the difference in second derivatives, so it does not know to explore in the direction where the derivative remains negative for longer.
-    - ![canyon.png](canyon.png)[Source](https://www.deeplearningbook.org/contents/numerical.html)
-      - [Philippe](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial4/Optimization_and_Initialization.ipynb) calls this a Pathological curve.
+## First-Order Methods
+
+- Stochastic Gradient Descent (SGD) is mainly done for computational reasons. The expectation of a minibatch is still unbiased.
+- Size of learning rate:
+  - To the extent that the function that we minimize can be approximated well by a quadratic function, 
+    - $f(\mathbf{x}-\epsilon\mathbf{g}) = f(\mathbf{x}) - \epsilon\mathbf{g^{\top}g}+\frac{1}{2}\epsilon^2\mathbf{g^{\top}Hg}$
+    - Optimal step size $\epsilon^* = \frac{\mathbf{g^{\top}g}}{\mathbf{g^{\top}Hg}}$
+    - In the worst case when $\mathbf{g}$ aligns with the corresponding eigenvector, $\epsilon^* = \frac{1}{\lambda_{max}}$
+- Condition number
+  - When the condition number of the Hessian is high, gradient descent performs poorly. 
+  - Gradient descent is unaware of the difference in second derivatives, so it does not know to explore in the direction where the derivative remains negative for longer.
+  - ![canyon.png](canyon.png)[Source](https://www.deeplearningbook.org/contents/numerical.html)
+    - [Philippe](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial4/Optimization_and_Initialization.ipynb) calls this a Pathological curve.
 - Momentum
   - ToDo: Why?
-    - Re: pathogolocial curves, GD oscillates while momentum helps #%% md
-SGD oscillates while algorithms with momentum nicely converge because the changing direction of the gradient cancels itself out.
+    - Re: pathogolocial curves, GD oscillates while momentum helps
+    - SGD oscillates while algorithms with momentum nicely converge because the changing direction of the gradient cancels itself out.
+- Regularization
+  - L2 regularization is often added which shows up in the `weight_decay` parameter.
+  - Some intuition for this is in [Statistical Learning Theory](../../classical/03_statistical_learning_theory/notes.md).
 - Adam 
   - Algo
     - $m^{(t)} = \beta_1 m^{(t-1)} + (1 - \beta_1)\cdot g^{(t)}$
@@ -38,7 +43,11 @@ SGD oscillates while algorithms with momentum nicely converge because the changi
       - SGDM: Momentum overshoots 
       - Adam: Adaptive learning rate allows it to stay in minimum - why?
     - But there are scenarios that SGD (with momentum) may generalize better as Adam tends to overfit.
-      - ![adam_overfit.png](adam_overfit.png)(https://arxiv.org/pdf/1609.04836)
+      - Adam can get stuck in local optima while SGD finds the wider minima that tend to generalize better.
+      - ![adam_overfit.png](adam_overfit.png)[Source](https://arxiv.org/pdf/1609.04836)
+
+## Second-Order Methods
+
 - Newton's method
   - Suppose we want to minimize $f(\mathbf{x})$.
   - We use the following update rule: $\mathbf{x}_{k+1}=\mathbf{x}_k-H\left(\mathbf{x}_k\right)^{-1} \nabla f\left(\mathbf{x}_k\right)$
@@ -56,14 +65,3 @@ SGD oscillates while algorithms with momentum nicely converge because the changi
   - $B_{k+1}\left[\mathbf{x}_{k+1}-\mathbf{x}_k\right]=\nabla f\left(\mathbf{x}_{k+1}\right)-\nabla f\left(\mathbf{x}_k\right)$
     - The intuition here is that we don't want to compute the inverse,  so we iterate on the equation before that.
 - Goodfellow's chapter 8 has a lot of interesting discussion here
-
-
-## Optimization
-- Stochastic Gradient Descent (SGD) is mainly done for computational reasons. The expectation of a minibatch is still unbiased.
-
-### Numerical Analysis Methods
-
-## Regularization
-### See Statistical Learning Theory
-
-## Additional Tricks
