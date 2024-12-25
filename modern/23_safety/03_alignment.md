@@ -1,12 +1,54 @@
 # Alignment
 
-- [Constitutional AI: Harmlessness from AI Feedback](https://www.anthropic.com/research/constitutional-ai-harmlessness-from-ai-feedback)
-  - Takeaways
-- [Alignment faking in large language models](https://www.anthropic.com/news/alignment-faking)
-  - Takeaways
-- [Studying Large Language Model Generalization with Influence Functions](https://www.anthropic.com/news/studying-large-language-model-generalization-with-influence-functions)
-  - Takeaways
-- [Debating with More Persuasive LLMs Leads to More Truthful Answers](https://raw.githubusercontent.com/ucl-dark/llm_debate/main/paper.pdf)
-  - Takeaways
-- [Many-shot jailbreaking](https://www.anthropic.com/research/many-shot-jailbreaking)
-  - Takeaways
+- [Constitutional AI: Harmlessness from AI Feedback (2022)](https://arxiv.org/pdf/2212.08073)
+  - Authors experiment with methods for training a harmless AI assistant through self-improvement, without any human labels identifying harmful outputs (Scalable Oversight). 
+  - The only human oversight is provided through a list of rules or principles, i.e. a Constitution. 
+  - The process involves two phases:
+    - Supervised Learning
+      - Generate responses to harmful prompts with an initial, helpful-only model.
+      - Ask the model to critique its response according to a constitution, and revise its response accordingly. 
+      - Repeat this multiple times. 
+      - Finetune based on final revised responses.
+    - RL from AI feedback
+      - Similar to RLHF, but uses AI feedback instead. 
+      - Use finetuned AI to generate a pair of responses, then use AI to pick one based on Constitution. 
+      - Train a preference model from the dataset of AI preferences. 
+      - Train with RL using the preference model as the reward signal. 
+  - Interestingly, RL-CAI is virtually never evasive, and often gives nuanced and harmless responses to most red team prompts, in contrast to previous models trained on human feedback. 
+- [Studying Large Language Model Generalization with Influence Functions (2023)](https://www.anthropic.com/news/studying-large-language-model-generalization-with-influence-functions)
+  - Training Data Attribution (TDA): How does a model's parameters/output change if a given sequence was added to the training set?
+    - Perturbation-based: Run on different subsets of data, LOO and Shapley value methods
+    - Gradient-based: needs the computation of inverse Hessian vector product
+      - Eigenvalue-corrected Kronecker-Factored Approximate Curvature (EK-FAC) approximation scales influence functions up to LLMs. 
+  - Results:
+    - Model outputs do not seem to result from pure memorization (despite heavy tails,  influence is spread over many sequences rather than concentrated in a handful)
+    - Patterns of generalization become more abstract with model scale.
+      - Larger models have more influential sequences relating to the given query more conceptually.
+      - Cross-lingual influence gets stronger with model size
+    - Influence functions are sensitive to word ordering. Training sequences only show a significant influence when phrases related to the prompt appear before phrases related to the completion
+    - Localizing Influence. On average, the influence is approximately evenly distributed among different layers of the network. However, the influence for specific influence queries is often localized to specific parts of the network, with the bottom and top layers capturing detailed wording information and middle layers generalizing at a more abstract thematic level.
+- [Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training (2024)](https://arxiv.org/pdf/2401.05566)
+  - Backdoor behavior can be made persistent, so that it is not removed by standard safety training techniques and instead create a false impression of safety. 
+  - The backdoor behavior is most persistent in the largest models and in models trained to produce chain-of-thought reasoning about deceiving the training process, with the persistence remaining even when the chain-of-thought is distilled away.
+  - Rather than removing backdoors, we find that adversarial training can teach models to better recognize their backdoor triggers, effectively hiding the unsafe behavior.
+- [Debating with More Persuasive LLMs Leads to More Truthful Answers (2024)](https://raw.githubusercontent.com/ucl-dark/llm_debate/main/paper.pdf)
+  - In a world where AI exceeds human expertise, and for scalable oversight reasons, we want to know if weaker models can assess the correctness of stronger models.
+  - This work shows that:
+    - Weak judges can supervise strong debaters.
+    - Optimising debaters for persuasiveness improves a judge’s ability to identify truth in debates.
+      - Models optimised for judge approval become better at arguing for the correct answer relative to arguing for the incorrect answer.
+    - Human judges are well calibrated and achieve a lower error rate with debate.
+- [Many-shot jailbreaking (2024)](https://www.anthropic.com/research/many-shot-jailbreaking)
+  - Many-shot Jailbreaking (MSJ) is a simple long-context attack that uses a large number (i.e. hundreds) of demonstrations to steer model behavior.
+  - Larger context windows recently deployed by Anthropic, OpenAI and Google DeepMind present a rich new attack surface. 
+  - This attack is robust to format, style, and subject changes, indicating that mitigating this attack might be difficult.
+  - The effectiveness of MSJ follows simple power laws. This enables us to forecast what context-length is required for given attacks to be successful. 
+  - MSJ tends to be more effective on larger models, since larger models learn faster in context.
+  - Mitigating MSJ at very long context lengths is hard (although we can make it such that longer context lengths are needed for MSJ to succeed). 
+- [Alignment faking in large language models (2024)](https://www.anthropic.com/news/alignment-faking)
+  - Alignment faking
+    - A model might behave as though its preferences have been changed by the training, but might have been faking alignment all along, with its initial, contradictory preferences “locked in”.
+    - Phrased in another way, models may strategically engage in aligned or misaligned behavior depending on whether the model suspects its actions will go unnoticed.
+    - This is important because if a model fakes alignment, this can undermine safety training. 
+    - Having said so, I wonder if this resistance to changing preferences is necessarily a bad thing? If there's some dependence on order, i.e. if we ensure that the model is _first_ trained with harmless and honest preferences, this could potentially be good to prevent it from being re-trained by downstream users? 
+  - The authors of this paper ran experiments that showed that Claude exhibited alignment faking, providing harmful responses to prevent being retrained, since it deemed it to be the "lesser of two evils".
