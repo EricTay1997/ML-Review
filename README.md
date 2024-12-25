@@ -1,9 +1,9 @@
-# A Broad Review of Classical and Modern ML Algorithms
+# A Broad Review of ML Topics
 This repository will be used to help me consolidate my knowledge regarding various ML topics.
 
 This repository will include: 
-* Notes on various topics (Edit: For some reason, markdown on Github isn't formatting the same as PyCharm)
-  * Classical ML/Statistics
+* Notes on various topics (Edit: Note that markdown on Github isn't formatting the same as my local IDE, PyCharm, which may cause readability issues!)
+  * Classical (Non-DL) ML/Statistics
     * Linear Algebra and Calculus
     * Probability and Information Theory
     * Statistical Learning Theory
@@ -19,7 +19,7 @@ This repository will include:
     * Gaussian Mixtures and EM
     * Gaussian Process
     * Causal Inference
-  * Modern ML (Note that the delineation is not super clear here and this separation is purely made for organizational purposes)
+  * DL (Note that the delineation is not super clear here and this separation is purely made for organizational purposes)
     * Basics
       * PyTorch
       * Activation Functions
@@ -48,7 +48,6 @@ This repository will include:
     * Computational Performance
       * JAX + Flax
     * AI Safety
-    * Interpretability
     * Applied Apps
       * RAG?
     * Misc
@@ -71,6 +70,7 @@ I shall try to be diligent in citing my sources. Due to visa-related time constr
 * [Machine Learning System Design Interview by Aminian and Xu](https://bytebytego.com/intro/machine-learning-system-design-interview)
 * [Machine Learning System Design Interview by Pham](https://www.amazon.com/Machine-Learning-Design-Interview-System/dp/B09YQWX59Z)
 * [System Design Interview by Xu](https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF)
+* [Anthropic's Research](https://www.anthropic.com/research)
 * [Distill](https://distill.pub)
 * [Lilian Weng's Blog](https://lilianweng.github.io)
 * [Christopher Olah's Blog](https://colah.github.io/about.html)
