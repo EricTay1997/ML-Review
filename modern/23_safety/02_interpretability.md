@@ -86,8 +86,45 @@ They correspond to directions.
 - [Towards Monosemanticity: Decomposing Language Models With Dictionary Learning (2023)](https://transformer-circuits.pub/2023/monosemantic-features/index.html)
   - Useful Videos
     - [Reading an AI's Mind with Sparse Autoencoders](https://www.youtube.com/watch?v=krINuMZhJmU&t=562s)
-  - Takeaways
-- [How to use and interpret activation patching (2024)](https://arxiv.org/pdf/2404.15255)
-  - Takeaways
-- [Mapping the Mind of a Large Language Model (2024)](https://www.anthropic.com/news/mapping-mind-language-model)
-  - Takeaways
+  - Authors use a sparse autoencoder (SAE) to decompose the MLP activations of a one-layer transformer into relatively interpretable features.
+    - The SAE has two layers:
+      - The first layer (“encoder”) maps the MLP activations to a higher-dimensional layer via a learned linear transformation followed by a ReLU nonlinearity. We refer to the units of this high-dimensional layer as “features.” 
+      - The second layer (“decoder”) attempts to reconstruct the model activations via a linear transformation of the feature activations. 
+    - The model is trained to minimize a combination of (1) reconstruction error and (2) an L1 regularization penalty on the feature activations, which incentivizes sparsity.
+  - Why not architectural approaches:
+    - Even without superposition, neurons are still polysemantic. 
+    - This is because in many cases models achieve lower loss by representing multiple features ambiguously (in a polysemantic neuron) than by representing a single feature unambiguously and ignoring the others.
+    - ToDo: I don't really understand this point nor the example given for why there is _no_ superposition...
+  - Results
+    - Sparse Autoencoders extract relatively monosemantic features
+    - Sparse autoencoders produce interpretable features that are effectively invisible in the neuron basis
+    - Sparse autoencoder features can be used to intervene on and steer transformer generation
+    - Sparse autoencoders produce relatively universal features
+    - Features appear to "split" as we increase autoencoder size
+    - Just 512 (MLP activation) neurons can represent tens of thousands of features
+    - Features connect in "finite-state automata"-like systems that implement complex behaviors
+- [How to use and interpret activation patching (2024)](https://arxiv.org/pdf/2404.15255) 
+  - Activation patching
+    - Technique of replacing internal activations of a neural net
+    - 2 types of experiments:
+      - Exploratory: patch components one at a time, get an idea of which parts of a model are involved in the task in question, and may be part of the corresponding circuit.
+      - Confirmatory: patch many model components at a time, confirm a hypothesised circuit by verifying that it actually covers all model components needed to perform the task in question.
+    - This work focuses on communicating useful practical advice for activation patching:
+      - What kind of patching experiments provide which evidence?
+      - How should you interpret activation patching results?
+      - What metrics you can use, what are common pitfalls?
+- [Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet (2024)](https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html)
+  - Useful Summary
+    - [Mapping the Mind of a Large Language Model](https://www.anthropic.com/news/mapping-mind-language-model)
+  - Researchers were able to scale SAEs to extract interpretable features from Claude 3 Sonnet. 
+  - Key Results
+    - Sparse autoencoders produce interpretable features for large models.
+    - Scaling laws can be used to guide the training of sparse autoencoders.
+      - Over the ranges tested, given the compute-optimal choice of training steps and number of features, loss decreases approximately according to a power law with respect to compute.
+      - As the compute budget increases, the optimal allocations of FLOPS to training steps and number of features both scale approximately as power laws.
+    - The resulting features are highly abstract: multilingual, multimodal, and generalizing between concrete and abstract references.
+    - Researchers were able to measure a kind of "distance" between features based on which neurons appeared in their activation patterns. Looking for features that are "close" to each other seemed to yield features that were conceptually related.
+    - There appears to be a systematic relationship between the frequency of concepts and the dictionary size needed to resolve features for them.
+      - If a concept is present in the training data only once in a billion tokens, then we should expect to need a dictionary with on the order of a billion alive features in order to find a feature which uniquely represents that specific concept. 
+    - **Features can be used to steer large models. This extends prior work on steering models using other methods. (!!)**
+    - **We observe features related to a broad range of safety concerns, including deception, sycophancy, bias, and dangerous content. (!!)**
