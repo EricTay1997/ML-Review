@@ -76,6 +76,7 @@
 - System Design
   - Write down the steps/template for a typical SWE SD interview 
   - Write down the steps/template for a typical ML SD interview 
+  - Name some common online and offline metrics that can be used for each use case
 
 ## Code
 
@@ -83,5 +84,5 @@
 - Code up various activation functions
 - Code up various initialization functions
 - Code up various optimization functions
-- Code up an attention head
+- Code up a self-attention head
 - Code up the transformer architecture
