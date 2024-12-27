@@ -28,3 +28,5 @@
     * $\operatorname{Var}(w_{ij}x_j) = \mathbb{E}(w_{ij}^2)\mathbb{E}(x_{j}^2) - \mathbb{E}(w_{ij})^2\mathbb{E}(x_{j})^2 = \operatorname{Var}(w_{ij})\mathbb{E}(x_{j}^2)$
     * Now taking $x_j$ as the post-ReLU output of the previous layer, we get that $\mathbb{E}(x^2) = \frac{1}{2}\operatorname{Var}(\tilde{y}),$ where $\tilde{y}$ is the pre-ReLU activations of the previous layer. 
     * Hence, our variance is now $\frac{2}{d_x}$, which gives us the Kainming initialization. In their paper, they argue that using $d_x$ or $d_y$ both lead to stable gradients throughout the network
+* PyTorch
+  * PyTorch ([per mrTsjolder](https://discuss.pytorch.org/t/how-are-layer-weights-and-biases-initialized-by-default/13073/33)) initializes linear layers with $\operatorname{Var}(w_{ij}) = \frac{1}{3d_x}$
