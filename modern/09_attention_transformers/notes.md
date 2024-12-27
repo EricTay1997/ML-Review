@@ -82,12 +82,21 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 - I don't believe that we have a good idea of what these linear layers are doing, although [this video](https://www.youtube.com/watch?v=9-Jl0dxWQs8&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&index=8) provides some useful intuition. 
 - Potentially unanswered question: Why do we need the MLP layers? What does it do that the attention heads cannot? 
 
-## Learning-Rate Warm Up
-
-- When training a transformer, we usually gradually increase the learning rate from 0 on to our originally specified learning rate in the first few iterations.
-- Explanations
-  - Adam uses the bias correction factors which however can lead to a higher variance in the adaptive learning rate during the first iterations. Improved optimizers like RAdam have been shown to overcome this issue.
-  - The iteratively applied Layer Normalization across layers can lead to very high gradients during the first iterations, which can be solved by using Pre-Layer Normalization.
+## Additional details
+- Residual connections
+  - This helps to mitigate the vanishing gradients problem. 
+  - This also helps us think of transfomers as "adding to the residual stream"
+- Layer Normalization
+  - This tends to stabilize the network and reduces the training time
+  - We don't use batch normalization here because batches tend to be small for language tasks
+- Initialization
+  - GPT2 initializes weights with and SD of 0.02, and scales weights of residual layers by $1/\sqrt{N}$, to account for the accumulation on the residual path. 
+  - ToDo: To understand this better. 
+- Learning-Rate Warm Up
+  - When training a transformer, we usually gradually increase the learning rate from 0 on to our originally specified learning rate in the first few iterations.
+  - Explanations
+    - Adam uses the bias correction factors which however can lead to a higher variance in the adaptive learning rate during the first iterations. Improved optimizers like RAdam have been shown to overcome this issue.
+    - The iteratively applied Layer Normalization across layers can lead to very high gradients during the first iterations, which can be solved by using Pre-Layer Normalization.
 
 ## Extensions
 
@@ -97,3 +106,6 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 - Methods to address this include:
   - Memory methods to "cache" information
   - Methods to selectively incorporate _some_ global context
+  - Attention free transformers
+    - $Y=f(X) ; Y_t=\sigma_q\left(Q_t\right) \odot \frac{\sum_{t^{\prime}=1}^T \exp \left(K_{t^{\prime}}+w_{t, t^{\prime}}\right) \odot V_{t^{\prime}}}{\sum_{t^{\prime}=1}^T \exp \left(K_{t^{\prime}}+w_{t, t^{\prime}}\right)}$
+      - I personally wonder how similar this is to normal transformers. To me, the hadamard product would distort values significantly. 
