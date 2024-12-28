@@ -37,6 +37,28 @@
   * Note a similar decomposition of the data generating process $y = f(x) + \epsilon$, $\operatorname{Var}(\epsilon) = \sigma^2$
     * $\operatorname{MSE} = \mathbb{E}[(y-\hat{y})^2] = \operatorname{Bias}(\hat{y})^2+\operatorname{Var}(\hat{y})+\sigma^2$, where we term $\sigma^2$ as the irreducible error.
       * We start by showing that $\mathbb{E}[(y-\hat{y})^2] = \mathbb{E}[(f(x)-\hat{f}(x))^2] + \mathbb{E}[\epsilon^2]$, then proceed as per the estimator case.
+* Regularization
+  * [Goodfellow](https://www.deeplearningbook.org/contents/regularization.html) defines regularization as “any modification we make to a learning algorithm that is intended to reduce its generalization error but not its training error.”
+  * One family of regularization strategies are based on regularizing estimators, which works by trading increased bias for reduced variance. 
+  * L2/Ridge/Tikhonov regularization
+    * We modify $L(\pmb\theta)$ to $\tilde{L}(\pmb\theta) = L(\pmb\theta) + \frac{\alpha}{2}\mathbf{\pmb\theta^\top \pmb\theta}$
+    * Gradient $\nabla_{\pmb\theta}\tilde{L}(\pmb\theta) = \nabla_{\pmb\theta}L(\pmb\theta) + \alpha\pmb\theta$
+    * Let $\pmb\theta^* = \arg\min_{\pmb\theta}L(\pmb\theta) $
+      * Then $L(\pmb\theta) \approx L(\pmb\theta^*) + \frac{1}{2}(\pmb\theta - \pmb\theta^*)^\top\mathbf{H}(\pmb\theta - \pmb\theta^*)$
+      * $\nabla_{\pmb\theta}\tilde{L}(\pmb\theta) \approx \mathbf{H}(\pmb\theta - \pmb\theta^*) + \alpha\pmb\theta$
+      * $= 0$ when $\pmb\theta = (\mathbf{H}+\alpha\mathbf{I})^{-1}\mathbf{H}\pmb\theta^*$
+      * = $\mathbf{Q}(\pmb\lambda + \alpha\mathbf{I})^{-1}\pmb\lambda\mathbf{Q}^{\top}\pmb\theta^*$, using the eigendecomposition of $\mathbf{H}$ since it is real and symmetric.
+      * The component of $\theta^*$ that is aligned with the $i^{th}$ eigenvector of $\mathbf{H}$ is rescaled by a factor of $\frac{\lambda_i}{\lambda_i + \alpha}$
+        * As a result, the effect of regularization is larger when $\lambda_i$ is smaller. 
+        * ![l2.png](l2.png)[Source](https://www.deeplearningbook.org/contents/regularization.html)
+          * In this picture, the eigenvalue of $\mathbf{H}$ is low in the first dimension ($x$ axis). 
+          * Because the objective function does not express a strong preference along this direction, the regularizer has a strong effect on this axis.
+  * Bayesian Perspective
+    * Oftentimes, regularization of estimators permits a Bayesian perspective where we place a prior over the estimated parameters.
+  * Lagrangian Perspective
+    - Note that per our discussion around the [Lagrangian](../01_linear_algebra_and_calculus/notes.md), our loss functions above are the "dual" interpretation of the respective optimization problems.
+    - We can also think of these problems in their "primal" form, e.g. Minimize $L(\pmb\theta)$ subject to $g(\pmb\theta) \leq c$.
+    - This helps motivate the effect of these methods on $\pmb\theta$. In particular, ridge regression shrinks coefficients to 0, while lasso regression induces sparsity. ![regularization.png](regularization.png)[Source](https://medium.com/codex/understanding-l1-and-l2-regularization-the-guardians-against-overfitting-175fa69263dd)
 * Consistency
   * $\operatorname{lim}_{m \rightarrow \infty} \hat{\theta}_m=\theta$
   * Biased but consistent: 

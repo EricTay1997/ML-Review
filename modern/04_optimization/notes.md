@@ -20,6 +20,7 @@
 - Regularization
   - L2 regularization is often added which shows up in the `weight_decay` parameter.
   - Some intuition for this is in [Statistical Learning Theory](../../classical/03_statistical_learning_theory/notes.md).
+  - Usually, we leave the bais terms unregularized, since each bias controls only a single variable. This means that we do not induce too much variance by leaving the biases unregularized.
 - Adam 
   - Algo
     - $m^{(t)} = \beta_1 m^{(t-1)} + (1 - \beta_1)\cdot g^{(t)}$

@@ -95,13 +95,21 @@
   - This permits the following solution $\mathbf{\hat{B} = (X^{\top}WX)^{-1}X^{\top}WY}$
 
 ## Regularization
-- Due to the [bias-variance tradeoff](../03_statistical_learning_theory/notes.md), we may opt for decreased variance at the cost of increased bias. 
+- Read more about this in [Statistical Learning Theory](../03_statistical_learning_theory/notes.md)
 - Ridge Regression
   - $\mathcal{L}(\mathbf{B}) = ||\mathbf{Y} - \mathbf{XB}||^2_2 + \lambda||\mathbf{B}||^2_2$
-  - $\hat{\mathbf{B}} = (\mathbf{X}^{\top}\mathbf{X} + \lambda \mathbf{I})^{-1}\mathbf{X}^{\top}\mathbf{y}$
-  - $\operatorname{MSE}(\mathbf{B}) = E[||\mathbf{B}-\mathbf{\hat{B}}||^2] = \sigma^2\operatorname{tr}\left[\left(\mathbf{X}^T \mathbf{X}\right)^{-1}\right] =\sigma^2 \sum_{j=1}^p \lambda_j^{-1}$
-    - In other words, if we have small eigenvalues, our MSE is high. 
-    - However, by adding $\lambda \mathbf{I}$ to $\mathbf{X}^{\top}\mathbf{X}$, we change $\frac{1}{\lambda_j}$ to $\frac{1}{\lambda + \lambda_j}$ (note that there's no free lunch here because we increased bias).
+  - $\hat{\mathbf{B}} = (\mathbf{X}^{\top}\mathbf{X} + \lambda \mathbf{I})^{-1}\mathbf{X}^{\top}\mathbf{y}$. 
+    - Here, the learning algorithm “perceives” the features of $\mathbf{X}$ as having higher variance (diagonal entries).
+    - Per our discussion in [Statistical Learning Theory](../03_statistical_learning_theory/notes.md), 
+      - $\hat{\mathbf{B}} = \mathbf{Q}(\pmb\lambda + 2\lambda\mathbf{I})^{-1}\pmb\lambda\mathbf{Q}^{\top}\hat{\mathbf{B}}_{MLE}$, where $\mathbf{Q}\pmb\lambda\mathbf{Q}^\top$ is the eigendecomposition of the hessian $2\mathbf{X^{\top}X}$.
+      - I.e. Shrinkage is the most significant (proportionally) for features that the data exhibits low variability in.
+  - $\operatorname{MSE}(\hat{\mathbf{B}}_{MLE}) = E[||\hat{\mathbf{B}}_{MLE}-\mathbf{B}||^2] = \sigma^2\operatorname{tr}\left[\left(\mathbf{X}^T \mathbf{X}\right)^{-1}\right] =\sigma^2 \sum_{j=1}^p \lambda_j^{-1}$
+    - In other words, if we have small eigenvalues, our MSE is high.  
+    - However, by adding $\lambda \mathbf{I}$ to $\mathbf{X}^{\top}\mathbf{X}$, we change $\frac{1}{\lambda_j}$ to $\frac{1}{\lambda + \lambda_j}$, which _probably_ reduces MSE. 
+    - Concretely, 
+      - There's no free lunch because we added bias whilst reducing variance. We can show that the MSE is now: 
+      - $\sigma^2 \sum_{i} \frac{\lambda_i}{(\lambda_i + \lambda)^2} + \lambda^2 \sum_i \frac{\alpha_i^2}{(\lambda_i + \lambda)^2},$ where $\pmb\alpha = \mathbf{Q}\pmb\beta$ ([Proof](https://homepages.math.uic.edu/~lreyzin/papers/ridge.pdf))
+        - Differentiating this with respect to $\lambda$ at $\lambda = 0$ (which allows us to ignore the second term) gives us $-2\sigma^2 \sum_{i} \frac{\lambda_i}{(\lambda_i + \lambda)^3} < 0$, which indicates that ridge regression reduces MSE. 
   - Optimization
     - Since we no longer can use the Moore-Penrose Inverse, it is common practice to use the Cholesky decomposition to compute $(\mathbf{X}^{\top}\mathbf{X} + \lambda \mathbf{I})^{-1}$.
 - Lasso Regression
@@ -113,8 +121,4 @@
   - $\mathcal{L}(\mathbf{B}) = ||\mathbf{Y} - \mathbf{XB}||^2_2 + \lambda_1||\mathbf{B}||^2_2 + \lambda_2||\mathbf{B}||^2_1$
 - Bayesian Perspective
   - Note that the loss functions above permit Bayesian interpretations, where if our prior on $\mathbf{B}$ is a Laplace/Normal zero-mean distribution, we get the lasso/ridge loss functions when computing the posterior likelihood. 
-  - This provides additional insight as to why ridge shrinks parameters and lasso induces sparsity. 
-- Lagrangian Perspective
-  - Note that per our discussion around the [Lagrangian](../01_linear_algebra_and_calculus/notes.md), our loss functions above are the "dual" interpretation of the respective optimization problems.
-  - We can also think of these problems in their "primal" form, e.g. Minimize $||\mathbf{Y} - \mathbf{XB}||^2_2$ subject to $||\mathbf{B}||^2_2 \leq c$.
-  - This helps motivate the effect of these methods on $\mathbf{B}$. In particular, ridge regression shrinks coefficients to 0, while lasso regression induces sparsity. ![regularization.png](regularization.png)[Source](https://medium.com/codex/understanding-l1-and-l2-regularization-the-guardians-against-overfitting-175fa69263dd)
+  - This provides additional insight as to why ridge shrinks parameters and lasso induces sparsity.
