@@ -3,8 +3,31 @@
 * Capacity
   * One way to quantify the capacity of a binary classifier is the VC dimension.
 * Generalization error
-  * Roughly, the difference between training and test error is of order $\sqrt{\frac{d_{vc}\log n}{n}}$
-    * I.e. generalization error decreases with lower model capacity / more data.
+  * Generalization error = Approximation error + Estimation error + Optimization error. 
+    * Setup
+      * Assume we have input space $\mathcal{X}$, output space $\mathcal{Y} = {-1,1}$, and unknown distribution $D$ on $\mathcal{X} \times \mathcal{Y}$. 
+      * We observe $n$ pairs ${(x_i, y_i)}_{i=1}^n$ drawn i.i.d. from $D$. 
+      * Suppose we have functions $f : \mathcal{X} \rightarrow \mathcal{Y}$ that predicts $y$ from $x$. 
+      * For simplicity of notation, we shall use classification error.
+    * True risk: $R^{true}(f) := \mathbb{P}_{(X,Y) \sim D}(f(X) \neq Y) = \mathbb{E}_{(X,Y) \sim D}\mathbf{1}_{[f(X)\neq Y]}$
+    * $R^{true}(t) = \inf_fR^{true}(f)$
+      * Our target function $t$ is the function that minimizes true risk over all possible measurable functions
+    * $R^{true}(f^*) = \inf_{f \in \mathcal{F}}R^{true}(f)$
+      * Given a class of functions $\mathcal{F}$, $f^*$ is the function in this class that minimizes true risk. 
+    * $R^{emp}(f) = \frac 1n \sum_{i=1}^n \mathbf{1}_{[f(x_i)\neq y_i]}$
+      * Our empirical risk is our estimate of true risk. 
+    * $R^{emp}(f^{emp}) = \inf_{f \in \mathcal{F}}R^{emp}(f)$
+      * Given a class of functions $\mathcal{F}$, $f^{emp}$ is the function in this class that minimizes empirical risk. 
+    * $f^{opt}$, our optimization algorithm's best guess of $f^{emp}$
+    * Generalization error: $R^{true}(f^{opt}) - R^{true}(t)$
+    * Approximation error: $R^{true}(f^*) - R^{true}(t)$
+    * Estimation error: $R^{true}(f^{emp}) - R^{true}(f^*)$
+    * Optimization error: $R^{true}(f^{opt}) - R^{true}(f^{emp})$
+  * Another type of generalization error
+    * We often say talk about generalization as the difference in train and test error,.
+    * Note that this difference is _none_ of the terms above, since these measured quantities are $R^{emp}$ values rather than $R^{true}$
+    * Roughly, the difference between training and test error is of order $\sqrt{\frac{d_{vc}\log n}{n}}$
+      * I.e. "generalization" error decreases with lower model capacity / more data.
 * Bias
   * The bias of an estimator $\hat{\pmb{\theta}}_m=\mathbb{E}\left(\hat{\pmb{\theta}}_m\right)-\pmb{\theta}_{true}$, where the expectation is over the data (seen as samples from a RV)
 * MSE & Bias-Variance Tradeoff
