@@ -29,10 +29,10 @@ This repository will include:
     * RNNs & LSTMs
     * Attention & Transformers
     * Autoencoders
-    * Generative Adversarial Networks
     * Diffusion Models
-    * Graph Neural Networks
     * Normalizing Flows
+    * Generative Adversarial Networks
+    * Graph Neural Networks
     * Meta-Learning
     * Self-Supervised Contrastive Learning
     * Optimization
