@@ -29,6 +29,7 @@
     - Given that KL Divergence $\geq 0$, the ELBO (as defined above) forms a lower bound for the log likelihood. The hope is therefore that maximization of the ELBO w.r.t. the parameters $\pmb\theta$ and $\pmb\phi$ would approximately maximize the likelihood. 
   - Additional implementational details:
     - We use the reparameterization trick $\mathbf{z}_i = \pmb\mu_i + \pmb\Sigma_i\pmb\epsilon$, $\pmb\epsilon \sim \mathcal{N}(\mathbf{0, I})$ to allow gradients to update $\pmb\phi$
+    - We assume that $p_\theta(\mathbf{x} \mid \mathbf{z})$ is gaussian, and therefore minimize MSE in reconstruction.
     - There is a closed form solution for $D_{K L}\left(q_\phi\left(\mathbf{z}_i \mid \mathbf{x}_i \right) \| p_\theta(\mathbf{z})\right)$, which we plug in directly to the loss. 
     - [Understanding Transposed Convolutions](https://towardsdatascience.com/understand-transposed-convolutions-and-build-your-own-transposed-convolution-layer-from-scratch-4f5d97b2967)
   - ToDo:

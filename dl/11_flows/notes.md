@@ -52,3 +52,21 @@
   - $\mathbb{E}_{t, q(\mathbf{z}), p_t\left(\mathbf{x}_t \mid \mathbf{z}\right)}\left[\left\|v_t\left(\mathbf{x}_{\mathrm{t}}, \theta\right)-u_t\left(\mathbf{x}_{\mathrm{t}} \mid \mathbf{z}\right)\right\|_2^2\right]$
 - It is interesting to note that Flow Matching therefore generalizes Diffusion, where Diffusion specifies the reverse diffusion process as the chosen conditional vector field.
   - ![vs_diffusion.png](vs_diffusion.png)[Source](https://www.youtube.com/watch?v=DDq_pIfHqLs)
+
+## Additional Details
+- Dequantization. 
+  - ![deq.png](deq.png)[Source](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial11/NF_image_modeling.ipynb)
+  - We usually have to dequantize discrete data to prevent degenerate solutions concentrated around discrete values.
+    - ![no_deq.png](no_deq.png)[Source](https://mtskw.com/posts/variational-dequantizer/)
+  - Question: Why is this _more_ pertinent to flows than other algorithms?
+  - One common option here is to use uniform noise, however this approach introduces flat step-wise regions into the data distribution, which makes fitting difficult. 
+    - ![unif_deq.png](unif_deq.png)[Source](https://mtskw.com/posts/variational-dequantizer/)
+    - Instead, we can use variational dequantization, where we use flows to model the noise to add (based on the pixel value)
+      - ![var_deq.png](var_deq.png)[Source](https://mtskw.com/posts/variational-dequantizer/)
+- Multi-Scale architecture (Squeeze and split)
+  - ![multi_scale.png](multi_scale.png)[Source](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial11/NF_image_modeling.ipynb)
+  - Squeeze: Rearranges data spatially: relevant since we use a 2d Conv layer
+    - Remember to change the hidden dimensions of these 2d Conv layers!
+  - Split: Many pixels contain less information, so we split off half of the latent dimensions and directly evlauate them on the prior
+      - We do so by reshaping and taking half the channels. Reshaping should mean that each channel has some sort of "checkboard" pattern, which may or may not be retained depending on how we take the channels.
+
