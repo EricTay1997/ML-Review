@@ -3,7 +3,7 @@
 ## Regularization
 
 - For general notes about regularization, refer to [Statistical Learning Theory](../../classical/03_statistical_learning_theory)
-- This section shall focus on regularization for deep learning. 
+- This section shall focus on regularization for deep learning, which is pertinent because neural network's expressiveness leave them vulnerable to overfitting.
 - Parameter regularization 
   - This is often referred to with the `weight_decay` parameter in PyTorch. 
   - Usually, we leave the basis terms unregularized, since each bias controls only a single variable. This means that we do not induce too much variance by leaving the biases unregularized.
