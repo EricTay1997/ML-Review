@@ -6,10 +6,15 @@
 - Interpretation of matrix multiplication: Consider $\mathbf{Ax} = \mathbf{b}$ for $\mathbf{A} \in \mathbb{R}^{n \times m}, \mathbf{x} \in \mathbb{R}^{m \times 1}$
   - Column interpretation: $\mathbf{Ax} = \sum_i^m x_i\mathbf{A}_{:,i}$, a linear combination of the columns of $\mathbf{A}$ 
   - Row interpretation: $b_j = \mathbf{A}_{j,:}\mathbf{x}$, how similar are the rows of $\mathbf{A}$ to $\mathbf{x}$?
-- Definitions
-  - For an inverse to exist, the columns of $\mathbf{A}$ need to span $\mathbb{R}^n$, and they have to be linearly independent, i.e. the matrix is nonsingular.
+- Invertibility: For an inverse to exist, the columns of $\mathbf{A}$ need to span $\mathbb{R}^n$, and they have to be linearly independent, i.e. the matrix is nonsingular.
     - Note that if columns are not independent, then a combination of standard basis vectors would map to the same line as another standard basis vector that's not included in that set.
-    - Invertibility: If you have "collapsed" the space, how are you going to recreate it? 
+      - If you have "collapsed" the space, how are you going to recreate it? 
+    - Moore-Penrose pseudoinverse
+      - While an inverse may not exist for all matrices, the Moore-Penrose pseudoinverse does. 
+      - The pseudo-inverse is defined as $\mathbf{A}^+ = \lim_{\alpha \rightarrow 0}(\mathbf{A^\top A} + \alpha\mathbf{I})^{-1}\mathbf{A}^\top$
+        - We can see this as stabilizing underdetermined problems using regularization!
+      - Practically, we usually derive this by using the SVD decomposition of $\mathbf{A}$
+- Definitions
   - $L^p$ norm: $\|\mathbf{x}\|_p=\left(\sum_i\left|x_i\right|^p\right)^{\frac{1}{p}}$
   - $L^{\infty}$ = $\|\mathbf{x}\|_{\infty}=\max _i\left|x_i\right|$.
   - Frobenius norm: $\|\mathbf{A}\|_F=\sqrt{\sum_{i, j} A_{i, j}^2}$
@@ -26,7 +31,7 @@
     - If all eigenvalues are positive, the matrix is positive definite. ($\forall$ $\mathbf{x}, \mathbf{xA^{\top}x}>0$. Proof: We can express $\mathbf{x}$ as a sum of eigenvectors and $\mathbf{vA^{\top}v}=\lambda>0$).
 - Other Decompositions
   - SVD: $\mathbf{A} = \mathbf{UDV^{\top}}$, which exists for all matrices. Importantly, $\mathbf{U}$ and $\mathbf{V}$ are both orthogonal. 
-    - The Moore-Penrose pseudoinverse effectively takes the inverse of this decomposition to help solve for $\mathbf{Ax} = \mathbf{b}$. 
+    - The Moore-Penrose pseudoinverse effectively takes the inverse of this decomposition to help solve for $\mathbf{Ax} = \mathbf{b}$.
   - LU: For square matrices, $\mathbf{A} = \mathbf{LU}$. This isn't guaranteed to exist, but if we permit a permutation matrix, then this is: $\mathbf{PA} = \mathbf{LU}$.
   - Choleseky: Every Hermitian, positive-definite matrix has a unique Cholesky decomposition $\mathbf{A} = \mathbf{LL}^*$, where $\mathbf{L}^*$ is the conjugate transpose of $\mathbf{L}$. 
     - If $\mathbf{A}$ is real, we can write $\mathbf{A} = \mathbf{LL}^{\top}$, where $\mathbf{L}$ has positive diagonal entries.

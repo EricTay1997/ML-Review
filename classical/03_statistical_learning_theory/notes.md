@@ -37,10 +37,10 @@
   * Note a similar decomposition of the data generating process $y = f(x) + \epsilon$, $\operatorname{Var}(\epsilon) = \sigma^2$
     * $\operatorname{MSE} = \mathbb{E}[(y-\hat{y})^2] = \operatorname{Bias}(\hat{y})^2+\operatorname{Var}(\hat{y})+\sigma^2$, where we term $\sigma^2$ as the irreducible error.
       * We start by showing that $\mathbb{E}[(y-\hat{y})^2] = \mathbb{E}[(f(x)-\hat{f}(x))^2] + \mathbb{E}[\epsilon^2]$, then proceed as per the estimator case.
-* Regularization
+* Parameter Regularization
   * [Goodfellow](https://www.deeplearningbook.org/contents/regularization.html) defines regularization as “any modification we make to a learning algorithm that is intended to reduce its generalization error but not its training error.”
   * One family of regularization strategies are based on regularizing estimators, which works by trading increased bias for reduced variance. 
-  * L2/Ridge/Tikhonov regularization
+  * L2/Ridge/Tikhonov Regularization
     * We modify $L(\pmb\theta)$ to $\tilde{L}(\pmb\theta) = L(\pmb\theta) + \frac{\alpha}{2}\mathbf{\pmb\theta^\top \pmb\theta}$
     * Gradient $\nabla_{\pmb\theta}\tilde{L}(\pmb\theta) = \nabla_{\pmb\theta}L(\pmb\theta) + \alpha\pmb\theta$
     * Let $\pmb\theta^* = \arg\min_{\pmb\theta}L(\pmb\theta) $
@@ -53,12 +53,24 @@
         * ![l2.png](l2.png)[Source](https://www.deeplearningbook.org/contents/regularization.html)
           * In this picture, the eigenvalue of $\mathbf{H}$ is low in the first dimension ($x$ axis). 
           * Because the objective function does not express a strong preference along this direction, the regularizer has a strong effect on this axis.
+  * L1 Regularization 
+    * We modify $L(\pmb\theta)$ to $\tilde{L}(\pmb\theta) = L(\pmb\theta) + \alpha\mathbf{||\pmb\theta||_1}$
+    * Sub-gradient $\nabla_{\pmb\theta}\tilde{L}(\pmb\theta) = \nabla_{\pmb\theta}L(\pmb\theta) + \alpha\operatorname{sign}(\pmb\theta)$
+    * If our Hessian is diagonal, (for example if we used PCA to remove the pairwise feature correlation in linear regression), 
+      * The minimizer of the 2nd order approximation of $\tilde{L}(\pmb\theta)$ is given by:
+      * $\theta_i=\operatorname{sign}\left(\theta_i^*\right) \max \left\{\left|\theta_i^*\right|-\frac{\alpha}{H_{ii}}, 0\right\},$ which shrinks parameters and encourages sparsity.
   * Bayesian Perspective
-    * Oftentimes, regularization of estimators permits a Bayesian perspective where we place a prior over the estimated parameters.
-  * Lagrangian Perspective
+    * Note that the loss functions above permit Bayesian interpretations, where if our prior on $\pmb\theta$ is a Laplace/Normal zero-mean distribution, we get the lasso/ridge loss functions when computing the posterior likelihood. 
+    - This provides additional insight as to why ridge shrinks parameters and lasso induces sparsity.
+  * Constrained Optimization Perspective
     - Note that per our discussion around the [Lagrangian](../01_linear_algebra_and_calculus/notes.md), our loss functions above are the "dual" interpretation of the respective optimization problems.
     - We can also think of these problems in their "primal" form, e.g. Minimize $L(\pmb\theta)$ subject to $g(\pmb\theta) \leq c$.
+      - In principle, we can solve for $c$, but we need both $\alpha$ and $L$. 
     - This helps motivate the effect of these methods on $\pmb\theta$. In particular, ridge regression shrinks coefficients to 0, while lasso regression induces sparsity. ![regularization.png](regularization.png)[Source](https://medium.com/codex/understanding-l1-and-l2-regularization-the-guardians-against-overfitting-175fa69263dd)
+    - Functionally, there are reasons to also use explicit constraints (and reprojection) ([Goodfellow](https://www.deeplearningbook.org/contents/regularization.html))
+  - Under-determined problems
+    - Regularization can help make matrices invertible
+    - Regularization can help convergence properties (pick between multiple "optimal" solutions)
 * Consistency
   * $\operatorname{lim}_{m \rightarrow \infty} \hat{\theta}_m=\theta$
   * Biased but consistent: 

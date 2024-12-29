@@ -1,4 +1,12 @@
-# Optimization
+# Optimization and Regularization
+
+## Regularization
+
+- For general notes about regularization, refer to [Statistical Learning Theory](../../classical/03_statistical_learning_theory)
+- This section shall focus on regularization for deep learning. 
+- Parameter regularization 
+  - This is often referred to with the `weight_decay` parameter in PyTorch. 
+  - Usually, we leave the basis terms unregularized, since each bias controls only a single variable. This means that we do not induce too much variance by leaving the biases unregularized.
 
 ## First-Order Methods
 
@@ -17,10 +25,6 @@
   - ToDo: Why?
     - Re: pathogolocial curves, GD oscillates while momentum helps
     - SGD oscillates while algorithms with momentum nicely converge because the changing direction of the gradient cancels itself out.
-- Regularization
-  - L2 regularization is often added which shows up in the `weight_decay` parameter.
-  - Some intuition for this is in [Statistical Learning Theory](../../classical/03_statistical_learning_theory/notes.md).
-  - Usually, we leave the bais terms unregularized, since each bias controls only a single variable. This means that we do not induce too much variance by leaving the biases unregularized.
 - Adam 
   - Algo
     - $m^{(t)} = \beta_1 m^{(t-1)} + (1 - \beta_1)\cdot g^{(t)}$

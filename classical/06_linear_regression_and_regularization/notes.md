@@ -16,7 +16,7 @@
   - Since the $\hat{\pmb{\beta}}$ that maximizes this does not depend on $\sigma^2$, we focus on this first.
     - Notably, $\hat{\pmb{\beta}}$ minimizes $||\mathbf{Y} - \mathbf{XB}||^2$, i.e. **this is the same as minimizing MSE!**
     - The easiest way to do this is to think of this geometrically: 
-      - Given that $||\mathbf{Y} - \mathbf{XB}||^2 = ||(\mathbf{I} - \mathbf{P_X})\mathbf{Y}||^2 + ||\mathbf{P_X Y} - \mathbf{XB}||^2$, $\mathbf{X\hat{B}} = \mathbf{P_X Y}$, where $\mathbf{P_X}$ is the projection matrix onto the column space of $\mathbf{X}$. 
+      - Given that $||\mathbf{Y} - \mathbf{XB}||^2 = ||(\mathbf{I} - \mathbf{P_X})\mathbf{Y}||^2 + ||\mathbf{P_X Y} - \mathbf{XB}||^2$, $\mathbf{X\hat{B}} = \mathbf{P_X Y}$, where $\mathbf{P_X}$ is the projection matrix onto the column space of $\mathbf{X}$.
       - If $\mathbf{X}^{\top}\mathbf{X}$ is full rank, we then get that $\mathbf{\hat{B}} = (\mathbf{X}^{\top}\mathbf{X})^{-1}\mathbf{X}^{\top}\mathbf{y}$
         - In the simple linear regression case, we get the formulae:
           - $\beta_1=\frac{\sum_{i=1}^n\left(x_i-\bar{x}\right)\left(y_i-\bar{y}\right)}{\sum_{i=1}^n\left(x_i-\bar{x}\right)^2}$ (We can use the multivariate form to help remember this)
@@ -26,7 +26,9 @@
   - It is clear that $\hat{\mathbf{B}}$ is unbiased, but it turns out that $\hat{\sigma^2} = \frac{\mathbf{e}^{\top}\mathbf{e}}{n}$ is not!
   - Instead, an unbiased estimate of $\sigma^2$ is instead $\frac{\mathbf{e}^{\top}\mathbf{e}}{n-rank(\mathbf{X})}$ ([Proof](https://www2.stat.duke.edu/courses/Fall19/sta721/lectures/MLES/mles.pdf)).
 - t-stats
-  - t-stats indicate the significance of each $\hat{B_i}$. 
+  - Since $\mathbf{\hat{B}} = (\mathbf{X}^{\top}\mathbf{X})^{-1}\mathbf{X}^{\top}\mathbf{y}$ is an affine transformation of $\mathbf{y} \sim \mathcal{N}(\mathbf{XB}, \sigma^2\mathbf{I})$, 
+    - $\mathbf{\hat{B} \mid \mathbf{B}, \sigma^2}\sim\mathcal{N}(\mathbf{B}, \sigma^2(\mathbf{X^\top X})^{-1})$ 
+  - t-stats indicate the significance of each $\hat{B_i}$.
   - Formally, $\frac{\hat{B_i} - B_i}{SE(\hat{B_i})} \sim t_{n-rank(\mathbf{X})},$ where $SE(\hat{B_i}) = \sqrt{\frac{\mathbf{e}^{\top}\mathbf{e}}{n-rank(\mathbf{X})}[(\mathbf{X^{\top}X})^{-1}]_{ii}}$ 
     - In simple linear regression, we have that $SE(\hat{B_1}) = \sqrt{\frac{\mathbf{e}^{\top}\mathbf{e}}{n-2}\frac{1}{\sum_i(x_i - \bar{x})^2}}$ 
     - In regression libraries, we often set $\beta_i = 0$ as our null hypothesis.
@@ -49,8 +51,7 @@
 ## Optimization 
 ### Methodologies to Get $\mathbf{B}$
 - Moore-Penrose Pseudo-Inverse
-  - Instead of calculating $(\mathbf{X}^{\top}\mathbf{X})^{-1}$, which takes around $O(n^{2.4})$ to $O(n^3)$, we use SVD to calculate the Moore-Penrose pseudo-inverse of $\mathbf{X}, \mathbf{X}^+$
-    - $\mathbf{X}^+ = (\mathbf{X}^{\top}\mathbf{X})^{-1}\mathbf{X}$
+  - Instead of calculating $(\mathbf{X}^{\top}\mathbf{X})^{-1}$, which takes around $O(n^{2.4})$ to $O(n^3)$, we use SVD to calculate the Moore-Penrose pseudo-inverse of $\mathbf{X}, \mathbf{X}^+$, since $\mathbf{X}^+ := \lim_{\alpha \rightarrow 0}(\mathbf{X^\top X} + \alpha\mathbf{I})^{-1}\mathbf{X}^\top$
     - SVD takes $O(np^2)$ (assuming $p< n$).
 - Gradient Descent
   - If $\mathcal{L}(\mathbf{B}) = ||\mathbf{y}-\mathbf{X}\mathbf{B}||^2$, then $\nabla_{\mathbf{B}}\mathcal{L}(\mathbf{B}) = 2\mathbf{X}^{\top}\mathbf{X}\mathbf{B}-2\mathbf{X^{\top}y}$
@@ -119,6 +120,3 @@
     - Looking at the form of the subgradients provides inspiration for why Lasso promotes sparsity.
 - Elastic Net
   - $\mathcal{L}(\mathbf{B}) = ||\mathbf{Y} - \mathbf{XB}||^2_2 + \lambda_1||\mathbf{B}||^2_2 + \lambda_2||\mathbf{B}||^2_1$
-- Bayesian Perspective
-  - Note that the loss functions above permit Bayesian interpretations, where if our prior on $\mathbf{B}$ is a Laplace/Normal zero-mean distribution, we get the lasso/ridge loss functions when computing the posterior likelihood. 
-  - This provides additional insight as to why ridge shrinks parameters and lasso induces sparsity.

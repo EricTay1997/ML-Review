@@ -21,9 +21,9 @@ This repository will include:
     * Causal Inference
   * DL (Note that the delineation is not super clear here and this separation is purely made for organizational purposes)
     * Basics
-      * PyTorch
-      * Activation Functions
-      * Initialization (and optimization?)
+    * Activation Functions
+    * Initialization
+    * Optimization and Regularization
     * Coding Practices
     * CNNs
     * RNNs & LSTMs

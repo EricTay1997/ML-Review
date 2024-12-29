@@ -29,7 +29,7 @@
   - There is no closed form solution for $\mathbf{B}_{MLE}$, but the loss function is convex. Importantly, we have that
     - $\nabla_{\pmb\theta}\mathcal{L}(\pmb\theta) = \mathbf{X^{\top}}(\pmb\pi - \mathbf{y})$
     - $\nabla^2_{\pmb\theta}\mathcal{L}(\pmb\theta) = \mathbf{X^{\top}DX}$, where $D_{ii} = \pi_i(1-\pi_i)$ 
-  - With these forms, we can then use [Newton's method](../../modern/concepts/notes.md) to iteratively update $\mathbf{B}$.
+  - With these forms, we can then use [Newton's method](../../dl/concepts/notes.md) to iteratively update $\mathbf{B}$.
     - The update step turns out to take the form $\mathbf{\hat{B} = (X^{\top}DX)^{-1}X^{\top}DZ}$ ([look familiar?](../06_linear_regression_and_regularization/notes.md)), which is why this is often termed iterative re-weighted least squares
 - Multiple classes
   - The extention of logistic regression to multiple classes is termed softmax regression, which can be viewed as a one-layer neural network. 
@@ -55,4 +55,4 @@
 ## GLMS
 - GLMs extend the concept of logistic regression and assert that $\mathrm{E}(\mathbf{Y} \mid \mathbf{X})=\pmb{\mu}=g^{-1}(\mathbf{X} \mathbf{B})$
   - For logistic regression, we see that $g^{-1} = \sigma$
-- MLE estimates are usually found using iteratively reweighted least squares / Newton's, or [Fisher's scoring method](../../modern/concepts/notes.md).
+- MLE estimates are usually found using iteratively reweighted least squares / Newton's, or [Fisher's scoring method](../../dl/concepts/notes.md).
