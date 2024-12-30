@@ -9,11 +9,7 @@
     - This divide and conquer algorithm, $T(n) = 2T(n/2)+O(n)$ is $O(n\log n)$
 - Pooling
   - Pooling operates per channel and so $C_{out}$ = $C_{in}$
-- Batch Normalization
-  - BN reparameterizes the per-channel mean and SD as such:
-    - $O_{b, c, x, y} = \gamma_c \frac{I_{b, c, x, y}-\mu_c}{\sqrt{\sigma_c^2+\epsilon}}+\beta_c$
-  - While the learnable parameters $\gamma_c$ and $\beta_c$ seem to defeat the purpose of normalization, it offers different learning dynamics where instead of having the mean and SD determined by the complex interaction between layers, we can optimize for this via gradient descent. 
-  - A side note is that convolutional layers need not have a bias anymore if it precedes a BN layer.
+- We typically use [Batch Normalization](../01_basics/notes.md) to help training.
 
 ## Inception 
 - ![inception.png](inception.png)[Source](https://arxiv.org/pdf/1409.4842)

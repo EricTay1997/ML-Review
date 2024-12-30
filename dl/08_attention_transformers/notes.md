@@ -26,6 +26,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
   - $h$ : The number of heads in multi-head attention layer.
   - $L$ : The segment length of input sequence.
   - $\mathbf{X} \in \mathbb{R}^{L \times d}$ : The input sequence where each element has been mapped into an embedding vector of dimension $d$. Note that this represents _one_ sample of training data.
+  - $\mathbf{x}_i \in \mathbb{R}^{1 \times d}$ : The $i^{th}$ input token, $i^{th}$ row in $\mathbf{X}$.
   - $\mathbf{W}^{k,i}, \mathbf{W}^{q,i} \in \mathbb{R}^{d \times d_k}$: The key and query weight matrix for head $i$. 
   - $\mathbf{W}^{v,i} \in \mathbb{R}^{d \times d_v}$: The value weight matrix for head $i$.
   - $\mathbf{W}^{o,i} \in \mathbb{R}^{d_v \times \ d}$: The output weight matrix for head $i$.
@@ -59,7 +60,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
   - Why do we need matrices to convert $\mathbf{X}$ into these $\mathbf{q}_j^i, \mathbf{k}_j^i$ and $\mathbf{v}_j^i$ vectors?
     - This allows us to more flexibly query and match queries. One such example is to find the following word for the last time we encountered the current word. (See [Q and K Composition](../23_safety/02_interpretability.md))
   - Why do we model $\mathbf{v}_b^i$ and $\mathbf{W}^{o,i}$ separately?
-    - I suspect that it's computational. 
+    - My intuition is that it's computational. 
 - Softmax and Temperature
   - The softmax ensures that the row sums are 1. 
   - The temperature is related to how large our denominator $\sqrt{d_k}$ is. As this denominator increases, our weights are more even. 
@@ -81,24 +82,42 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 ## MLP
 
 - It is important to remember that while attention is the key innovation of transformers, 2/3 of parameters in a transformer is in its linear layers. 
-- I don't believe that we have a good idea of what these linear layers are doing, although [this video](https://www.youtube.com/watch?v=9-Jl0dxWQs8&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&index=8) provides some useful intuition. 
-- Potentially unanswered question: Why do we need the MLP layers? What does it do that the attention heads cannot? 
+- [This video](https://www.youtube.com/watch?v=9-Jl0dxWQs8&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&index=8) provides some useful intuition for what MLP layers do. 
+  - Suppose we have input to MLP $\mathbf{X} \in \mathbb{R}^{L \times d}$
+  - The MLP layers do $(\operatorname{ReLU}(\mathbf{X}\mathbf{W}^1))\mathbf{W}^2$, where $\mathbf{W}^1 \in \mathbb{R}^{d \times d'}, d' > d$.
+  - Note that in such a transformation, _unlike attention_, each of the $L$ tokens do _not_ influence each other, i.e. we can process each token in parallel. 
+  - $\mathbf{W}^1$ projects $\mathbf{X}$ into a higher-dimensional vector before $\mathbf{W}^2$ projects it down. 
+    - One hypothesis is that each entry (column) of $\mathbf{x}_i\mathbf{W}^1 \in \mathbb{R}^{1 \times d'}$ represents a question, e.g. is $\mathbf{x}_i$ correlated with "Michael Jordan"?
+    - $\mathbf{W}^2$ then says, if $\mathbf{x}_i$ is correlated with "Michael Jordan", then add a particular vector (e.g. "basketball") to $\mathbf{x}_i$'s embedding. 
+    - As [research on SAEs indicate]((https://transformer-circuits.pub/2023/monosemantic-features/index.html)), the neurons in $\operatorname{ReLU}(\mathbf{X}\mathbf{W}^1))$ are often polysemantic, i.e. under the question paradigm, they correspond to multiple questions.  
+  - Potentially unanswered question: Why do we need the MLP layers? What does it do that the attention heads cannot? 
+    - Suppose that $\operatorname{softmax}(\frac{\mathbf{Q}^i\mathbf{K}^{i\top}}{\sqrt{d_k}})$ is the identity matrix. 
+    - Then we're essentially adding $\mathbf{XW}^{v,i}\mathbf{W}^{o,i}$ to $\mathbf{X}$, which looks very similar?
+    - Notable differences
+      - $\mathbf{XW}^{v,i}$ is lower dimensional than $\mathbf{XW}^1$, so maybe interference makes it harder to add the correct embeddings? 
+      - Lack of activation: If something has a negative activation to "Michael Jordan" (which can happen with 0 correlation but negative bias), what the attention head would do is _subtract_ the "basketball" embedding, which may not be what we want to do. 
+    - Or maybe it's just more parameter efficient, since we don't need to compute and store a huge identity matrix. 
 
 ## Additional details
 - Residual connections
   - This helps to mitigate the vanishing gradients problem. 
   - This also helps us think of transfomers as "adding to the residual stream"
-- Layer Normalization
-  - This tends to stabilize the network and reduces the training time
-  - We don't use batch normalization here because batches tend to be small for language tasks
-- Initialization
-  - GPT2 initializes weights with and SD of 0.02, and scales weights of residual layers by $1/\sqrt{N}$, to account for the accumulation on the residual path. 
-  - ToDo: To understand this better. 
 - Learning-Rate Warm Up
   - When training a transformer, we usually gradually increase the learning rate from 0 on to our originally specified learning rate in the first few iterations.
   - Explanations
     - Adam uses the bias correction factors which however can lead to a higher variance in the adaptive learning rate during the first iterations. Improved optimizers like RAdam have been shown to overcome this issue.
     - The iteratively applied Layer Normalization across layers can lead to very high gradients during the first iterations, which can be solved by using Pre-Layer Normalization.
+- Layer Normalization
+  - We typically use [Layer Normalization](../01_basics/notes.md) to stabilize the network and reduces the training time
+  - We don't use batch normalization here because batches tend to be small for language tasks, which could induce high variance in batch statistics.
+  - Pre-LN Transformer
+    - ![pre_ln.png](pre_ln.png)[Source](https://proceedings.mlr.press/v119/xiong20b/xiong20b.pdf)
+    - In the original (Post-LN) Transformer, gradients in certain layers can be very large.
+    - The Pre-LN Transformer normalizes these and eliminate the need for warm up.
+- Initialization
+  - Xavier initialization should be appropriate, but [BERT and GPT2 initializes weights with a smaller SD of 0.02](https://aclanthology.org/D19-1083.pdf)
+  - GPT2 also scales weights of residual layers by $1/\sqrt{N}$, to account for the accumulation on the residual path.
+    - ToDo: Understand this better.
 
 ## Extensions
 

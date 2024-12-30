@@ -24,4 +24,9 @@
 
 ## Vision Transformers 
 
-- 
+- We follow [Philippe's implementation](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial15/Vision_Transformer.ipynb) of a vision transformer used for classification. 
+- Implementational details:
+  - Split an image up into a sequence of $L$ image patches, each image patch is now a "token", where its embedding is a flattened vector of its pixel values. 
+  - Add an additional classification token to each sequence, which is initialized with noise. The final embedding for this token is used for classification. 
+  - We learn positional encodings which has $L \times Cp_Hp_W$ parameters. Comparing rows dictate the relationship between patches and comparing columns dictate hte relationship between pixels of the same patch. 
+    - Convolutional kernels is the normal way we learn these relationships, although these have more restrictions (but are probably easier to learn).
