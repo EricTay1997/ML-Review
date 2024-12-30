@@ -23,6 +23,66 @@
     - The softmax function we typically apply exponentiates this distance
     - But I thought this was pretty cool!
 - PyTorch
-  - There quite a few PyTorch intricacies. I'm finding it hard to be both comprehensive and not excessive, so for now I will avoid making notes regarding such details.
+  - There quite a few PyTorch intricacies. I'm finding it hard to be both comprehensive and not excessive, so for now I will avoid making notes regarding most details.
+  - Permutations
+    - Consider the following $B \times C \times H \times W$ tensor $a$.
+    - The order that we read elements would go from last to first.
+      - I.e. we go along $W$, changing columns. Then we go along $H$, changing rows, etc. 
+      - Suppose we now want to change $a$ into $b$
+        - Going from 0 to 4 means that our last dimension is the $C$ dimension. 
+        - Going from 4 to 1 means that our 2nd last dimension is the $W$ dimension. 
+        - Going from 5 to 8 means that our 3rd last dimension is the $B$ dimension. 
+    - It is also important to note that permutations don't change the _order_ of an element
+      - The word order here is overloaded, what I mean is that the element at position $ijkl$ will move to some permutation of $ijkl$, e.g. $kjli$, but it'll still be the $k^{th}$ element in a specified direction.  
+```
+a = torch.tensor([
+    [[[ 0,  1],
+      [ 2,  3]],
+
+     [[ 4,  5],
+      [ 6,  7]]],
 
 
+    [[[ 8,  9],
+      [10, 11]],
+
+     [[12, 13],
+      [14, 15]]]])
+b = torch.tensor([[ 0,  4,  1,  5],
+                  [ 8, 12,  9, 13],
+                  [ 2,  6,  3,  7],
+                  [10, 14, 11, 15]])
+b == a.permute(2,0,3,1).reshape(4,4)
+>>> True
+```
+  - - Reshaping
+      - Reshaping is also processed from last dimension to first.
+        - I.e. $B \times C \times H \times W \rightarrow B \times C \times HW$ would leave the first 2 dimensions untouched. 
+        - [Exercise](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial15/Vision_Transformer.html)
+          - Suppose we want to split $a$ into $H'W'$ patches of size $p_H \times p_W$ ($H=p_HH'$)
+          - Since reshaping is processed from last to first, we do
+            - `a.reshape(B, C, H', pH, W', pW)`
+              - Why `(W', pW)` and not `(pW, W')`?
+              - Because the last dimension should "read" across columns.
+          - Next, we permute $a$ to
+            - `(B, H', W', C, pH, pW)`
+            - Permuting doesn't "mess up" the ordering of elements, it simply tells us _how_ to read them
+              - Why `(H', W')` and not `(W', H')`?
+              - This essentially tells us what order to "read" the patches. Here, we're saying read them in Raster Scan order.
+    - [Transformer Exercise](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.ipynb)
+      - Line 1: We merge our weight matrices together column-wise
+      - Line 2: `qkv` is of size $B \times L \times 3hD$, this just expands the last dimension
+        - Note that we can do `(3D, h)` instead of `(h, 3D)`
+        - `(3D, h)` implies we do $W = [W_Q ; W_K ; W_V]$, where each $W_Q$ is then a column-wise concatenation of each head. 
+      - Line 3: This is ok to do because permutations don't mess up orders. 
+      - Line 6: I believe whether we have `(h, 3D)` or `(3D, h)` here is irrelevant and only changes the order of columns for $W_O$. To be consistent with the other weight matrices this ordering seems natural.
+```
+(1) qkv = nn.Linear(input_dim, 3*embed_dim)(x)
+(2) qkv = qkv.reshape(batch_size, seq_length, self.num_heads, 3*self.head_dim)
+(3) qkv = qkv.permute(0, 2, 1, 3) # [Batch, Head, SeqLen, Dims]
+(4) q, k, v = qkv.chunk(3, dim=-1)
+(5) values, attention = scaled_dot_product(q, k, v, mask=mask)
+(6) values = values.permute(0, 2, 1, 3) # [Batch, SeqLen, Head, Dims]
+(7) values = values.reshape(batch_size, seq_length, self.embed_dim)
+(8) o = nn.Linear(embed_dim, embed_dim)(values)
+```

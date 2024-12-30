@@ -35,9 +35,9 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
   - $\mathbf{k}_j^i, \mathbf{q}_j^i \in \mathbb{R}^{d_k}, \mathbf{v}_j^i \in \mathbb{R}^{d_v}$: The key, query and value embeddings for the $j^{th}$ token in the input sequence ($j^{th}$ row).
 - Goal:
   - The goal of training is to obtain parameters for $\mathbf{W}^{k,i}, \mathbf{W}^{q,i}, \mathbf{W}^{v,i}, \mathbf{W}^{o,i}$, and MLP layers (not discussed yet).
-- An attention block converts the input as such: 
-  - $\mathbf{Y} = \sum_i \left[ \operatorname{softmax}(\frac{\mathbf{Q}^i\mathbf{K}^{i\top}}{\sqrt{d_k}})\mathbf{V}^i\mathbf{W}^{o,i} \right]$ (softmax is applied such that row sums are 1)
 - Multi-head self-attention
+  - An attention block adds (because of residual connection) to input $\mathbf{X}$: 
+    - $\mathbf{Y} = \sum_i \left[ \operatorname{softmax}(\frac{\mathbf{Q}^i\mathbf{K}^{i\top}}{\sqrt{d_k}})\mathbf{V}^i\mathbf{W}^{o,i} \right]$ (softmax is applied such that row sums are 1)
   - Naming
     - Multi-head: Summing over $i$ heads
     - Self: Using the same $\mathbf{X}$ for $\mathbf{Q}^i, \mathbf{K}^i$ and $\mathbf{V}^i$ matrices
@@ -48,6 +48,8 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
     - Having multiple heads allows us to learn different attention patterns (see intuition)
     - Each attention head can be computed in parallel.
     - Usually, we set $d_k = d_v = \frac{d}{h}$.
+  - Permutation invariance
+    - Swapping rows $i$ and $j$ in $\mathbf{X}$ would swap rows $i$ and $j$ in $\mathbf{Y}$.
 - Intuition
   - $\mathbf{q}_j^i, \mathbf{k}_j^i$ and $\mathbf{v}_j^i$ are lower-dimensional representations of the $j^{th}$ input token. 
     - I'm not sure if there's a compelling reason for it to be lower dimensional outside of computational cost. 

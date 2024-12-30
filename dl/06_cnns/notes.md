@@ -4,6 +4,9 @@
 - Convolutions
   - Convolutions, without padding and with kernel size 1, transform a tensor of shape $N \times C_{in} \times H \times W$ into $N \times C_{out} \times (H-k+1) \times (W-k+1)$.
   - The number of parameters are $C_{out}(k^2C_{in} + 1)$
+  - Disregarding channel numbers for now, naïve implementations of convolutions are $O(HWk^2)$, but if we use fast fourier transforms we can get this down to $O(HW\log (HW))$. 
+    - The intuitive idea is that we can split the frequencies and add them together with a phase shift. 
+    - This divide and conquer algorithm, $T(n) = 2T(n/2)+O(n)$ is $O(n\log n)$
 - Pooling
   - Pooling operates per channel and so $C_{out}$ = $C_{in}$
 - Batch Normalization
