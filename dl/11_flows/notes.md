@@ -69,4 +69,5 @@
     - Remember to change the hidden dimensions of these 2d Conv layers!
   - Split: Many pixels contain less information, so we split off half of the latent dimensions and directly evlauate them on the prior
       - We do so by reshaping and taking half the channels. Reshaping should mean that each channel has some sort of "checkboard" pattern, which may or may not be retained depending on how we take the channels.
+- $\operatorname{bpd} = \frac{\log_2(e)\operatorname{nll}}{\prod d_i}$ gives us a metric which we can compare for different image resolutions
 
