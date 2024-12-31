@@ -81,6 +81,7 @@
 ## Code
 
 - Design an LRU Cache (Ordered Dict)
+- Code up linear/logistic regression as a neural network
 - Code up various activation functions
 - Code up various initialization functions
 - Code up various optimization functions
