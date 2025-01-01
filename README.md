@@ -35,7 +35,6 @@ This repository will include:
     * Graph Neural Networks
     * Meta-Learning
     * Self-Supervised Contrastive Learning
-    * Optimization
     * Computer Vision
     * Natural Language Processing
       * Text Processing
@@ -46,7 +45,6 @@ This repository will include:
     * Reinforcement Learning
     * Hyperparameter Optimization
     * Computational Performance
-      * JAX + Flax
     * AI Safety
     * Applied Apps
       * RAG?
@@ -59,11 +57,11 @@ This repository will include:
 
 I shall try to be diligent in citing my sources. Due to visa-related time constraints, I do apologize for any lapses in citation. At the current moment, I envision pulling most heavily from the following sources:
 * Notes / Code from classes I took at Duke.
-* [Hands-On Machine Learning by Aurélien Géron](https://www.amazon.com/Hands-Machine-Learning-Scikit-Learn-TensorFlow/dp/1098125975)
 * [UvA Deep Learning Tutorials by Lippe](https://uvadlc-notebooks.readthedocs.io/en/latest/)
+* [Hands-On Machine Learning by Aurélien Géron](https://www.amazon.com/Hands-Machine-Learning-Scikit-Learn-TensorFlow/dp/1098125975)
 * [Dive into Deep Learning by Zhang, Lipton, Li and Smola](http://d2l.ai)
-* Hugging Face Courses ([NLP](https://huggingface.co/learn/nlp-course/en/chapter1/1), [Diffusion](https://huggingface.co/learn/diffusion-course/unit0/1))
 * [Build a Large Language Model (From Scratch) by Raschka](https://www.amazon.com/Build-Large-Language-Model-Scratch/dp/1633437167)
+* Hugging Face Courses ([NLP](https://huggingface.co/learn/nlp-course/en/chapter1/1), [Diffusion](https://huggingface.co/learn/diffusion-course/unit0/1))
 * [Deep Learning by Goodfellow, Bengio and Courville](https://www.deeplearningbook.org)
 * [Implementations of Various LLMs by Ma](https://github.com/johnma2006/candle)
 * [Designing Machine Learning Systems by Huyen](https://www.amazon.com/Designing-Machine-Learning-Systems-Production-Ready/dp/1098107969)

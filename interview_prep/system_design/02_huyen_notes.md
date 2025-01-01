@@ -56,12 +56,7 @@
 
 ## Model Development and Offline Evaluation
 - Consider learning curves when doing model selection. One may deploy a second model in the background because with enough data it'll catch up. 
-- Distributed Training
-  - Data Parallelism
-    - Synchronous SGD - slower
-    - Asynchronous SGD - gradient staleness, but when weight matrices are large, most updates are sparse and it is ok. 
-  - Model Parallelism
-    - ![pipeline_parallelism.png](pipeline_parallelism.png)
+- [Distributed Training](../../dl/22_compuational_performance/notes.md)
 - Sampling from predicted probabilities is generally (depending on use case) desirable. This ensures that the model is well calibrated. 
 
 ## Model Deployment and Prediction Service

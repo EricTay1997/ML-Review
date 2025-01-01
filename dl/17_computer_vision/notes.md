@@ -24,7 +24,7 @@
 
 ## Vision Transformers 
 
-- We follow [Philippe's implementation](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial15/Vision_Transformer.ipynb) of a vision transformer used for classification. 
+- We follow [Lippe's implementation](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial15/Vision_Transformer.ipynb) of a vision transformer used for classification. 
 - Implementational details:
   - Split an image up into a sequence of $L$ image patches, each image patch is now a "token", where its embedding is a flattened vector of its pixel values. 
   - Add an additional classification token to each sequence, which is initialized with noise. The final embedding for this token is used for classification. 

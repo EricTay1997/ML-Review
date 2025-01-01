@@ -20,7 +20,7 @@
   - When the condition number of the Hessian is high, gradient descent performs poorly. 
   - Gradient descent is unaware of the difference in second derivatives, so it does not know to explore in the direction where the derivative remains negative for longer.
   - ![canyon.png](canyon.png)[Source](https://www.deeplearningbook.org/contents/numerical.html)
-    - [Philippe](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial4/Optimization_and_Initialization.ipynb) calls this a Pathological curve.
+    - [Lippe](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial4/Optimization_and_Initialization.ipynb) calls this a Pathological curve.
 - Momentum
   - ToDo: Why?
     - Re: pathogolocial curves, GD oscillates while momentum helps
