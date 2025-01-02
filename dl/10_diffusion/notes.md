@@ -46,6 +46,18 @@
 - Implementation
   - Timesteps $t$ are sampled from a uniform distribution from 1 to $T$. 
   - $\beta_t$ is scaled linearly from $\beta_1 = 10^{-4}$ to $\beta_T = 0.02$
+    - Other variance schedules have also been suggested since:
+      - ![cosine.png](cosine.png)[Nichol and Dhariwal](https://arxiv.org/pdf/2102.09672) argue that the training steps with large $t$ is irrelevant for linear. 
+      - "The choice of the scheduling function can be arbitrary, as long as it provides a near-linear drop in the middle of the training process and subtle changes around $t=0$ and $t=T$" [Source](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/) (ToDo: To understand)
   - $\mathbf{\Sigma}_\theta(\mathbf{x}_t, t) = \sigma^2_t\mathbf{I},$ where both $\sigma^2_t = \beta_t$ and $\sigma^2_t = \frac{1-\bar{\alpha}_{t-1}}{1-\bar{\alpha}_t}\beta_t$ were tried
   - We model $L_0$ using a separate discrete decoder ([Section 3.3](https://arxiv.org/pdf/2006.11239))
+- Conditional Generation
+  - Guidance is when we pass in conditional information to generate images according to the conditioner
+  - We can do so with:
+    - Concatenation, e.g. passing in an additional channel 
+    - Embedding and adding, similar to how timestep conditioning is handled 
+    - Adding cross-attention layers that can ‘attend’ to a (text) sequence passed in as conditioning
+- Faster Sampling
+  - We could use a [strided sampling schedule](https://arxiv.org/pdf/2102.09672) to reduce the number of steps we take.  
+  - [DDIM](https://arxiv.org/pdf/2010.02502) combines the idea of an accelerated trajectory with $\sigma_t = 0$ (deterministic) 
 

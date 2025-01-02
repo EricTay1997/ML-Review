@@ -56,7 +56,7 @@
       - Alternatively, one can say that this prevents the generator and discriminator from simply memorizing training examples.
     - This also perhaps weakens the discriminator, which is probably helpful especially in the earliest phases.
   - Adding additional information to prevent mode collapse
-    - AC-GANs supply both the generator and discriminator with class labels to produce class conditional samples
+    - AC-GANs supply the generator with class labels to produce class conditional samples (the discriminator is additionally tasked to predict the class)
     - I have implemented the AC-GAN on CIFAR-10 data at https://github.com/EricTay1997/AC-GAN_CIFAR10
   - DCGANs
     - Replaces pooling functions with strided convolutions.
