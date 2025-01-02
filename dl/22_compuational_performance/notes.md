@@ -73,7 +73,7 @@ As models and data scale in size, optimizing for more efficient processes become
     - This is synchronous SGD, but this may be slowed down due to communication overhead.
     - Asynchronous SGD can be used, although there may be gradient staleness. However, when weight matrices are large, most updates are sparse and gradient staleness may be ok.
 - Parameter Sharding (Fully-sharded data parallelism)
-  - Storing _all_ of a model's parameters can be costly in terms of memory
+  - Storing _all_ of a model's data (optimizer state, gradients, parameters) can be costly in terms of memory
   - Each device can instead store a portion of parameters
   - Before executing a layer, a device can then communicate with other devices to receive the parameters it needs
 
@@ -108,4 +108,10 @@ As models and data scale in size, optimizing for more efficient processes become
     - ![gather.png](gather.png)[Source](https://arxiv.org/pdf/2302.05442)
   - Scatter
     - ![scatter.png](scatter.png)[Source](https://arxiv.org/pdf/2302.05442)
+
+### 3D Parallelism
+
+- We can combine all the 3 parallelism types for increased computational gains.
+  - ![3d.png](3d.png)[Source](http://web.ecs.baylor.edu/faculty/dong/elc5396_DeepLearning/DeepLearningSignalProcessingH3.pdf)
+  - [DeepSpeed](https://www.microsoft.com/en-us/research/blog/deepspeed-extreme-scale-model-training-for-everyone/)
 
