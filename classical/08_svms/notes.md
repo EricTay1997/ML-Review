@@ -20,7 +20,7 @@
 
 - Hard margin SVMs assumes that the data is linearly separable and tries to maximize the distance between the hyperplane $\pmb\lambda^{\top}\mathbf{x}+\lambda_0$ and the point closest to it. 
 - The support vectors are the points that are the minimum distance to this boundary. 
-- For this reason, feature scaling _does_ affect the hyperplane chosen (thinking through a 3 point example should show this).
+- For this reason, feature scaling _does_ affect the hyperplane chosen (thinking through a 3 point example [(0,0), (0.5, 1), (1,0)] should show us changing support vectors as we scale the x-axis).
 - Jumping ahead, we have the following solution for $\hat{\pmb\alpha}$ and $\hat{\lambda_0}$:
   - $\hat{\pmb\alpha} = \operatorname{argmax}_{\pmb\alpha}\mathcal{L}(\pmb{\alpha}), \mathcal{L}(\pmb{\alpha})=\sum_{i=1}^n \alpha_i-\frac{1}{2} \sum_{i, k} \alpha_i \alpha_k y_i y_k \mathbf{x}_i^T \mathbf{x}_k \quad$ s.t. $\quad\left\{\begin{array}{l}\alpha_i \geq 0 \quad i=1 \ldots n \\ \sum_{i=1}^n \alpha_i y_i=0\end{array}\right.$
   - $\hat{\pmb{\lambda}}=\sum_{i=1}^n \hat{\alpha}_i y_i \mathbf{x}_i$

@@ -80,12 +80,11 @@
 
 ## Code
 
-- Design an LRU Cache (Ordered Dict)
+- Design an LRU Cache, Text Editor, (Ultimate) Tic Tac Toe
 - Code up linear/logistic regression as a neural network, including code for data loading, model specification, initialization, and training. 
 - Code up various activation functions
-- Derive various initialization functions
-- Code up various initialization functions
-- Code up various optimization functions
+- Derive and code up various initialization functions
+- Derive and code up various optimization functions
 - Code up a self-attention head
 - Code up the transformer architecture
 - Describe the {architecture, I/O, loss, training, sampling} for RNNs, LSTMs, Autoencoders, Diffusion, Flows, GANs, GNNs

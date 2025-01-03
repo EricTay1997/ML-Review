@@ -110,7 +110,7 @@ b == a.permute(2,0,3,1).reshape(4,4)
   - Batch Normalization
     - BN reparameterizes the per-channel mean and SD as such:
       - $O_{b, c, x, y} = \gamma_c \frac{I_{b, c, x, y}-\mu_c}{\sqrt{\sigma_c^2+\epsilon}}+\beta_c$
-      - `(x - x.mean(dim = (0,2,3), keepdim = True))/x.std(dim = (0,2,3), unbiased = False, keepdim = True)`
+      - `(x - x.mean(dim = (0,2,3), keepdim = True))/x.std(dim = (0,2,3), unbiased = False, keepdim = True)`, disregarding $\epsilon$ for now
     - While the learnable parameters $\gamma_c$ and $\beta_c$ seem to defeat the purpose of normalization, it offers different learning dynamics where instead of having the mean and SD determined by the complex interaction between layers, we can optimize for this via gradient descent. 
     - Since batch statistics can have high variance especially with small batches,
       - In training, we often compute and use a running mean and variance for normalization.
@@ -118,6 +118,6 @@ b == a.permute(2,0,3,1).reshape(4,4)
     - A side note is that convolutional layers need not have a bias anymore if it precedes a BN layer.
   - Layer Normalization
     - LN normalizes over the last dimension - for each batch, for each token, normalize its features.
-    - `(x - x.mean(dim = (-1), keepdim = True))/x.std(dim = (-1), unbiased = False, keepdim = True)`
+    - `(x - x.mean(dim = (-1), keepdim = True))/x.std(dim = (-1), unbiased = False, keepdim = True)`, disregarding $\epsilon$ for now
     - This makes for easier parallelizability without any batch-wise dependence.
     - This could also be more relevant when [batch statistics have large variance](https://arxiv.org/pdf/2003.07845v1).
