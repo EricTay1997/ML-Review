@@ -1,12 +1,20 @@
 # Optimization and Regularization
 
-## Regularization
+## Overfitting / Regularization
 
 - For general notes about regularization, refer to [Statistical Learning Theory](../../classical/03_statistical_learning_theory)
+- [Goodfellow](https://www.deeplearningbook.org/contents/regularization.html) defines regularization as “any modification we make to a learning algorithm that is intended to reduce its generalization error but not its training error.”
 - This section shall focus on regularization for deep learning, which is pertinent because neural network's expressiveness leave them vulnerable to overfitting.
 - Parameter regularization 
   - This is often referred to with the `weight_decay` parameter in PyTorch. 
   - Usually, we leave the basis terms unregularized, since each bias controls only a single variable. This means that we do not induce too much variance by leaving the biases unregularized.
+- Early Stopping
+- Dropout
+  - Training
+    - We zero out a fraction of nodes in each layer
+    - Debias each layer by normalizing by the fraction of nodes that were retained
+  - Evaluation
+    - Do not do the zeroing
 
 ## First-Order Methods
 

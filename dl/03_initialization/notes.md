@@ -1,15 +1,12 @@
 # Initialization
 
-* Notes here are incomplete, I still have quite a few questions on the topic. 
-
 * Two desirable properties
     * The variance of the input should be propagated through the model to the last layer
     * Similarly, we want a gradient distribution with equal variance across layers. Is this gradient wrt nodes or edges?
 * Constant initialization
   * Other 3 layers have the same gradient that's close to 0. Why? 
-  * Having the same gradient for parameters that have been initialized with the same values means that we will always have the same value for those parameters. This reduces ESS and effectiveness of weights.
-* Constant variance initialization
-  * Why do activations vanish/explode? Connection to vanishing/exploding gradients? Is vanishing/exploding gradients reference to nodes or edges?
+  * Permutation invariance:
+    * Having the same gradient for parameters that have been initialized with the same values means that we will always have the same value for those parameters. This reduces ESS and effectiveness of weights.
 * Xavier initialization: $\operatorname{Var}(w_{ij}) = \frac{2}{d_x + d_y}$
   * Suppose now we want two conditions 
     * The mean of the activations should be zero 

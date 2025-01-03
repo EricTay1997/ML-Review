@@ -81,9 +81,11 @@
 ## Code
 
 - Design an LRU Cache (Ordered Dict)
-- Code up linear/logistic regression as a neural network
+- Code up linear/logistic regression as a neural network, including code for data loading, model specification, initialization, and training. 
 - Code up various activation functions
+- Derive various initialization functions
 - Code up various initialization functions
 - Code up various optimization functions
 - Code up a self-attention head
 - Code up the transformer architecture
+- Describe the {architecture, I/O, loss, training, sampling} for RNNs, LSTMs, Autoencoders, Diffusion, Flows, GANs, GNNs

@@ -77,6 +77,13 @@
   - WASM is an open standard that allows you to run executable programs in browsers. However, it is slow.
 
 ## Data Distribution Shifts and Monitoring
+- Distribution shifts
+  - Covariate shift
+    - $P(y\mid x)$ doesn't change, but $P(x)$ changes
+  - Label shift
+    - $P(x \mid y)$ doesn't change, but $P(y)$ changes, e.g. $y$ = disease, $x$ = symptoms
+  - Concept shift
+    - Job titles and what they mean change
 - Degenerate feedback loops
   - Monitoring
     - Check aggregate diversity or average coverage of long-tailed items

@@ -25,6 +25,25 @@
       - But I thought this was pretty cool!
 - PyTorch
   - There quite a few PyTorch intricacies. I'm finding it hard to be both comprehensive and not excessive, so for now I will avoid making notes regarding most details.
+  - `binary_cross_entropy_with_logits` vs `cross_entropy` loss
+    - They are essentially the same, but 
+      - `input`: `binary_cross_entropy_with_logits` expects provides 1 value per sample, while `cross_entropy` expects 1 value per sample per class (so 2 values in the binary case)
+      - `output`: `binary_cross_entropy_with_logits` expects floats and `cross_entropy` expects longs. 
+    - This means that for them to give the same output we need to concatenate a column of 0s for the input of `cross_entropy`:
+```
+input = torch.randn(3, requires_grad=True)
+target = torch.empty(3).random_(2)
+# These are equivalent
+F.binary_cross_entropy_with_logits(input, target)
+F.cross_entropy(torch.cat((torch.zeros((3,1)), input.unsqueeze(1)), 1), target.type(torch.int64))
+-(target*torch.log(torch.sigmoid(input)) + (1-target)*torch.log(1-torch.sigmoid(input))).mean()
+
+input = torch.randn(3, 5, requires_grad=True)
+target = torch.randint(5, (3,), dtype=torch.int64)
+# These are equivalent
+F.cross_entropy(input, target)
+-torch.log(torch.softmax(input, dim = -1))[list(range(input.shape[0])), target].mean()
+```
   - Permutations
     - Consider the following $B \times C \times H \times W$ tensor $a$.
     - The order that we read elements would go from last to first.

@@ -79,7 +79,7 @@
   * Less likely events should have higher information content.
   * Independent events should have additive information.
 * Self-information of event $X = x$ is $I(x) = -\log P(x)$
-  * Negative: Each event has positive information
+  * Negative: Each event has positive information, and rare events have higher information content.
 * **Shannon entropy**: The uncertainty in an entire probability distribution
   * $H(P)=\mathbb{E}_{\mathrm{x} \sim P}[I(x)]=-\mathbb{E}_{\mathrm{x} \sim P}[\log P(x)]$
   * If $P(x)$ can take on many values, this is high. If not, this is low. 
@@ -93,4 +93,6 @@
     * Note: We often do $D_{\mathrm{KL}}\left(\hat{p}_{\text {data }} \| p_{\text {model}}\right)$
 * **Cross Entropy**: $H(P,Q)=-\mathbb{E}_{\mathbf{x} \sim P}\log Q(x)=H(P)+D_{\mathrm{KL}}(P \| Q)$
   * If we fix $P$, and we minimize the cross-entropy with respect to $Q$, this is the same as minimizing KL divergence.
+  * The minimum cross entropy is when $P = Q$ and the value is then the self-entropy of either distributions.
+  * Also see [logistic/softmax regression](../07_naive_bayes_and_logistic_regression_and_glms/notes.md).
 

@@ -23,7 +23,7 @@
     - Larger sample size
     - And no extreme outliers
 - Loss
-  - The log likelihood can now be written as $\sum_i [y_i\log(\pi_i) + (1-y_i)\log(1-\pi_i)]$, which is the negative of the **log loss**.
+  - The log likelihood can now be written as $\sum_i [y_i\log(\pi_i) + (1-y_i)\log(1-\pi_i)]$, which is the negative of the **[cross-entropy loss](../02_probability_and_info_theory/notes.md)**.
   - Note that this form doesn't explicitly handle imbalances in the dataset, but we can always get our desired sensitivity/precision trade off by changing our threshold. Importantly, we require that the covariates need to have information that distinguishes the two classes.
 - Parameter Estimation ([useful reference](https://stats.stackexchange.com/questions/344309/why-using-newtons-method-for-logistic-regression-optimization-is-called-iterati))
   - There is no closed form solution for $\mathbf{B}_{MLE}$, but the loss function is convex. Importantly, we have that
@@ -33,12 +33,13 @@
     - The update step turns out to take the form $\mathbf{\hat{B} = (X^{\top}DX)^{-1}X^{\top}DZ}$ ([look familiar?](../06_linear_regression_and_regularization/notes.md)), which is why this is often termed iterative re-weighted least squares
 - Multiple classes
   - The extention of logistic regression to multiple classes is termed softmax regression, which can be viewed as a one-layer neural network. 
-  - To compute the probabilities over $k$ classes for $y_i$, we do $\operatorname{softmax}(\mathbf{W}x_i)$, where $W \in \mathbb{R}^{k \times p}$, and $[\operatorname{softmax}(\mathbf{x})]_i = \frac{\exp(x_i)}{\sum_i \exp(x_i)}$
+  - To compute the probabilities over $k$ classes for $y_i$, we do $\operatorname{softmax}(\mathbf{Wx}_i)$, where $W \in \mathbb{R}^{k \times p}$, and $[\operatorname{softmax}(\mathbf{x})]_i = \frac{\exp(x_i)}{\sum_i \exp(x_i)}$
     - The softmax functions as a normalizing function, which also places even higher emphasis on large values (than a simple scaling function).
   - The log likelihood is now $LL =\sum_i\sum_k [y_{ik}\log(\hat{p}_{ik})$], where $y_i \in \mathbb{R}^k$ takes a one-hot encoding form and $\hat{p}_i$ represents our predictions for this data point.
+    - Note that this is still the negative of the **[cross-entropy loss](../02_probability_and_info_theory/notes.md)** ($\sum_k [y_{ik}\log(\hat{p}_{ik})]$ is the cross-entropy loss between $y_i$ and $\hat{p}_i$)
     - Note that in the 2-class case, this is the same as the likelihood for logistic regression
-    - If we denote $\operatorname{softmax}(\hat{o}_{ik}) = \hat{p}_{ik},$ then we have that $\frac{\partial LL}{\partial \hat{o}_{ik}} = \hat{p}_{ik} - y_{ik},$ the gradient is the difference between the truth and the predicted probability. 
-    - We note that $\sum_k [y_{ik}\log(\hat{p}_{ik})]$ is the cross-entropy loss between $y_i$ and $\hat{p}_i$. 
+      - We can interpret logistic regression as producing unnormalized logits $\mathbf{B^{\top}x_i}$.
+    - If we denote $\operatorname{softmax}(\hat{o}_{ik}) = \hat{p}_{ik},$ then we have that $\frac{\partial LL}{\partial \hat{o}_{ik}} = y_{ik}-\hat{p}_{ik},$ the gradient is the difference between the truth and the predicted probability.
     - Permitting some abuse of notation, the loss gradient wrt $W$still permits the form $\nabla_{\pmb\theta}\mathcal{L}(\pmb\theta) = \mathbf{X^{\top}}(\pmb\pi - \mathbf{y}),$ where $\pi_i$ is now $\hat{p}_{ik}$, where $k$ is the class that $y_i$ belongs to.
 
 - Comparison vs Naive Bayes
