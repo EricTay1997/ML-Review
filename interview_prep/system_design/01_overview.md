@@ -74,7 +74,7 @@
       - Shard databases
         - Vertical: By feature
         - Key-based
-        - Directory-based: NEed to maintain a lookup table
+        - Directory-based: Need to maintain a lookup table
       - Normalization
         - Reduces redundancy but slows down joins
   - Databases (SQL vs NoSQL)
@@ -84,6 +84,17 @@
     - NoSQL: Nested Key-Value store, document databases, columnar databases (when search for value), graph databases. 
       - Pros: Faster writes. Managed NoSQL services come with sharding and scaling out the box.
       - Cons: Limited in the types of efficient queries that can be done. Less suitable where strong consistency is required.
+    - ACID properties
+      - Atomicity: Transactions are either all or nothing, if a transaction fails, the entire transaction is rolled back.
+      - Consistency: Transactions bring the database from one valid state to another, adhering to all predefined rules and constraints. I.e. any transaction that breaks such constraints would fail and be rolled back.
+      - Isolation: Transactions run independently, and concurrent transactions occur as though they were occurring sequentially. 
+      - Durability: Committed transactions are permanently recorded in the database, even after system failure
+    - CAP Theorem
+      - A distributed data store can only provide two of the following three guarantees
+        - Consistency: Every read receives the most recent write or an error. Alternatively, all nodes will give the same response to a given request.
+        - Availability: Every request receives a non-error response, even when nodes are down or unavailable
+        - Partition tolerance: The system continues to operate even if there is a communication break between two nodes
+      - Note: The consistency here is _different_ from the consistency in ACID!
   - MapReduce
     - Specifies logic to hash requests and therefore parallelize them.
   - CAP
@@ -117,7 +128,7 @@
       - Retraining frequency
       - Privacy
       - Availability (downtime)
-  - Design deep dive (look for guidance here). 
+  - Design deep dive (look for specific guides here). 
     - Frame the problem
       - Input and output
       - Offline and online metrics (see [Testing and Metrics](../../classical/04_testing_and_metrics/notes.md))

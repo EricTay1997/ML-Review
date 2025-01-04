@@ -77,14 +77,29 @@
   - Write down the steps/template for a typical SWE SD interview 
   - Write down the steps/template for a typical ML SD interview 
   - Name some common online and offline metrics that can be used for each use case
+  - What is an ACID database?
+  - What is the CAP theorem?
+- OOP / Python
+  - What are the principles of OOP?
+  - What is the difference between an iterator and a generator?
+  - What are decorators? Give an example of this. 
+  - What are `*args` and `*kwargs`?
+  - How to initialize a 2d array in python? What about nested list comprehension?
+  - Explain the rules for variable scope?
+  - What are positional, keyword, and default arguments to a function?
+  - Explain trailing and leading underscores in Python. 
+- DL
+  - Describe the {architecture, I/O, loss, training, sampling} for RNNs, LSTMs, Transformers, Autoencoders, Diffusion, Flows, GANs, GNNs
+- ToDo: CE loss, regularization, optimization, dl questions, applied AI (agents, RAG, RLHF), multimodality
 
 ## Code
 
-- Design an LRU Cache, Text Editor, (Ultimate) Tic Tac Toe
+- OOP: Design an LRU Cache, Text Editor, (Ultimate) Tic Tac Toe, DenseNet
+- Code up a basic flask app to describe RESTful APIs
+- Code up various classical algorithms with `sklearn`, including code for data loading, model initialization, training and evaluation.
 - Code up linear/logistic regression as a neural network, including code for data loading, model specification, initialization, and training. 
 - Code up various activation functions
 - Derive and code up various initialization functions
 - Derive and code up various optimization functions
-- Code up a self-attention head
+- Code up a self/cross-attention head
 - Code up the transformer architecture
-- Describe the {architecture, I/O, loss, training, sampling} for RNNs, LSTMs, Autoencoders, Diffusion, Flows, GANs, GNNs
