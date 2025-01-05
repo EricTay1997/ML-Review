@@ -28,6 +28,14 @@ As models and data scale in size, optimizing for more efficient processes become
   - Vectorization refers to single instruction, multiple data (SIMD) operations. 
     - I.e. One instruction carries our the same operation on a number of operands in parallel.
   - NumPy enables vectorization when we write code in a way that operates on entire arrays rather than looping through individual elements. 
+- Imperative vs Symbolic programming
+  - Imperative programming makes it easy to design new models since it is possible to write code with control flow and the ability to use a large amount of the Python software ecosystem.
+  - Symbolic programming requires that we specify the program and compile it before executing it. The benefit is improved performance.
+- Asynchronous Computation
+  - For PyTorch, by default, GPU operations are asynchronous.
+  - Broadly speaking, PyTorch has a frontend for direct interaction with the users, e.g., via Python, as well as a backend, e.g. via C++, used by the system to perform the computation.
+  - Thus, there is little impact on the program’s overall performance, regardless of Python’s performance.
+  - Conversions to NumPy are blocking because NumPy has no notion of asynchrony.
 - JAX
   - JAX is a numerical computing library that has various desirable characteristics for the computations done in DL. 
     - Provides a unified NumPy-like interface to computations that run on CPU, GPU, or TPU, in local or distributed settings
@@ -64,6 +72,10 @@ As models and data scale in size, optimizing for more efficient processes become
     - If we don't need our input variables, JAX provides a mechanism to donate buffers, which allows us to reuse the memory of the input arguments for the output arguments.
 
 ## Multiple Processors
+
+- Parallel Computation and Communication
+  - In PyTorch, functions like `to()` and `copy_()` admit an explicit `non_blocking` argument. 
+  - We can also do this in JAX
 
 ### Data Parallelism
 

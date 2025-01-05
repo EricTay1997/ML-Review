@@ -10,7 +10,7 @@
     - [Proof](https://see.stanford.edu/materials/aimlcs229/cs229-gp.pdf)
 - Prediction:
   - For a Gaussian Process, we have:
-  - $\left.\left[\begin{array}{c}\vec{y} \\ \vec{y}_*\end{array}\right] \right\rvert\, X, X_*=\left[\begin{array}{c}\vec{h} \\ \vec{h}_*\end{array}\right]+\left[\begin{array}{c}\vec{\varepsilon} \\ \vec{\varepsilon}_*\end{array}\right] \sim \mathcal{N}\left(\overrightarrow{0},\left[\begin{array}{cc}K(X, X)+\sigma^2 I & K\left(X, X_*\right) \\ K\left(X_*, X\right) & K\left(X_*, X_*\right)+\sigma^2 I\end{array}\right]\right)$
+  - $\left.\left[\begin{array}{c}\vec{y} \\ \vec{y}_*\end{array}\right] \right\rvert\, X, X_* \sim \mathcal{N}\left(\overrightarrow{0},\left[\begin{array}{cc}K(X, X)+\sigma^2 I & K\left(X, X_*\right) \\ K\left(X_*, X\right) & K\left(X_*, X_*\right)+\sigma^2 I\end{array}\right]\right)$
   - This yields $\overrightarrow{y_*} \mid \vec{y}, X, X_* \sim \mathcal{N}\left(\mu^*, \Sigma^*\right),$ where $K\left(X, X_*\right) \in \mathbf{R}^{m \times m_*}$, where $\left(K\left(X, X_*\right)\right)_{i j}=k\left(x^{(i)}, x_*^{(j)}\right)$
   - $\mu^*=K\left(X_*, X\right)\left(K(X, X)+\sigma^2 I\right)^{-1} \vec{y}$ and
   - $\Sigma^*=K\left(X_*, X_*\right)+\sigma^2 I-K\left(X_*, X\right)\left(K(X, X)+\sigma^2 I\right)^{-1} K\left(X, X_*\right)$
