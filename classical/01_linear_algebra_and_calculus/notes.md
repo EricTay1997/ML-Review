@@ -89,7 +89,8 @@ $\nabla_{\mathbf{x}} y=\nabla_{\mathbf{x}}\mathbf{u} \nabla_{\mathbf{u}} y$
   - To know what $\lambda$ is, we plug in $g(\mathbf{x}) = c$ (eqn 2) and we're done!
     - A pretty convoluted way of saying this is to define the Lagrangian $\mathcal{L}(\mathbf{x},\lambda)=f(\mathbf{x}) -\lambda(g(\mathbf{x}) -c)$
     - Then we have that $\nabla_{\mathbf{x}}\mathcal{L}(\mathbf{x},\lambda) = 0$ (eqn 1) and $\nabla_{\lambda}\mathcal{L}(\mathbf{x},\lambda) = 0$ (eqn 2)
-  - Note that sometimes we get the constraint in the form $g(\mathbf{x}) \leq c$. A common trick is that when the constraint is binding, we set $g(\mathbf{x}) = c$.
+  - An alternative strategy for satisfying constraints is projections. It turns out that the solution for our problem is also the projection of $\mathbf{x}^*$ (the unconstrained optima) onto  $g(\mathbf{x}) = c$ (the point that minimizes the distance from $\mathbf{x}^*)$.
+  - Note that we more often get the constraint in the form $g(\mathbf{x}) \leq c$. A common trick is that when the constraint is binding, we set $g(\mathbf{x}) = c$.
 - Generalized Lagrangian
   - Suppose now we want to find $\hat{\mathbf{x}}$ that minimizes $f(\mathbf{x})$ s.t. $g^{(i)}(\mathbf{x}) = 0$ and $h^{(i)}(\mathbf{x}) \leq 0$ $\forall$ $i,j$
   - We now define the generalized Lagrangian $L(\mathbf{x}, \pmb{\lambda}, \pmb{\alpha})=f(\mathbf{x})+\sum_i \lambda_i g^{(i)}(\mathbf{x})+\sum_j \alpha_j h^{(j)}(\mathbf{x})$
