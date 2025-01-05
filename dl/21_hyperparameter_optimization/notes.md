@@ -15,3 +15,5 @@
     - Ranking of hyperparameter configurations is often fairly consistent across rung levels.
     - Rungs grow over time and become more accurate.
     - My gut feel is that we probably don't want to overfit to hyperparameters either, but that may be domain specific. 
+- Model-specific hyperparameters
+  - [AnyNet](../06_cnns/notes.md) provides a parameterization for network designs.

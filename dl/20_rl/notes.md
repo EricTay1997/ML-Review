@@ -1,3 +1,71 @@
 # Reinforcement Learning
 
-## RLHF
+- Reinforcement learning is a framework for solving control tasks (also called decision problems) by building agents that learn from the environment by interacting with it through trial and error and receiving rewards (positive or negative) as unique feedback.
+- Definitions
+  - The environment can exist in one of many states $s \in \mathcal{S}$. 
+  - At any point, the AI can take any action $a \in \mathcal{A}$.
+  - The transition function of an environment $T \in \mathcal{T}$ defines the conditional probability of reaching another state given $s, a$:
+    - $T(s,a,s') = P(s' \mid s, a)$
+    - This could be probabilistic if say, the state is the sum of dice rolls and the action is whether to roll a dice. 
+  - The reward function $r(s,a)$ defines the reward the AI receives for taking action $a$ at state $s$, 
+  - The environment is typically stated in the form of a Markov decision process:
+    - The next state $s_{t+1}$ is only a function of $s_t$ and $a_t$. 
+  - The policy $\pi(a \mid s)$ defines the action the AI takes at each state. Given our Markov assumption, the policy need only consider the current state $s$. 
+  - The value of a state $s_0$ for a policy $\pi$, $V^{\pi}(s_0)$, is the expected return ($\gamma$-discounted reward) obtained by the AI if it begins at state $s_0$ and takes actions from the policy $\pi$ at each time instant.
+    - $V^\pi\left(s_0\right)=E_{a_t \sim \pi\left(s_t\right)}\left[\sum_{t=0}^{\infty} \gamma^t r\left(s_t, a_t\right)\right]$, or defined recursively, 
+    - $V^\pi\left(s_0\right)= E_{a_0 \sim \pi\left(s_0\right)}\left[ r(s_0, a_0) + \gamma E_{s_1 \sim P\left(s_1 \mid s_0, a_0\right)}\left[ V^{\pi}(s_1)\right]\right]$ (The Bellman Equation)
+  - The action-value function fixes the action taken at $s_0$:
+    - $Q^\pi\left(s_0, a_0\right)=r(s_0, a_0) + E_{a_t \sim \pi\left(s_t\right)}\left[\sum_{t=1}^{\infty} \gamma^t r\left(s_t, a_t\right)\right]$
+    - $Q^\pi\left(s_0, a_0\right)=r(s_0, a_0) + E_{s_1 \sim P(s_1 \mid s_0, a_0)}\left[ E_{a_1 \sim \pi(a_1 \mid s_1)} \left[Q^\pi\left(s_1, a_1\right)\right] \right]$
+  - Duality of $V^{\pi}$ and $Q^{\pi}$
+    - $V^\pi\left(s\right) = E_{a \sim \pi(s)}\left[Q^\pi\left(s, a\right)\right]$
+    - Both are formulations for describing the expected return of being at state $s$ under policy $\pi$. 
+    - $Q$ form is more explicit and I will default to this for clarity. 
+    - $V$ form is simpler, especially if policy $\pi(a\mid s)$ is deterministic, i.e. we only take one action at each state $s$. 
+- Goal
+  - The goal is to learn a policy $\pi^* = \arg\max_\pi V^{\pi}(s_0)$
+  - We let the value function and the action-value function of the optimal policy $\pi^*$ be $V^*$ and $Q^*$ respectively. 
+- Training: How do we learn this policy?
+  - Duality of objective:
+    - Value-based: We can approximate $V^*$ or $Q^*$: This defines a greedy policy $\pi^*$ where at each stage $s$ we take action $a$ that maximizes $Q^*(s,a)$
+    - Policy-based: We can directly approximate $\pi^*$ without learning $V^*$ or $Q^*$.
+    - Policy-based methods:
+      - Pros
+        - Can learn a stochastic policy
+        - More effective in high-dimensional/continuous action spaces
+        - Have better convergence properties
+      - Cons
+        - Converges to a local maxima
+        - Takes longer to train
+        - Has higher variance
+    - Moving on, we focus on value-based methods. 
+  - Two ways of training:
+    - Monte Carlo
+      - Starts episode from $s_0$, takes action $a_0$ and runs till termination before updating. 
+      - Suppose the return at time $t$ it got was $R^{t}(s_0)$
+      - $Q^{t+1}(s_0, a_0) \leftarrow Q^t(s_0, a_0) + \alpha[R^{t}(s_0, a_0) - Q^t(s_0, a_0)]$
+    - TD Learning
+      - Updates after one interaction/step
+      - $Q^{t+1}(s_0, a_0) \leftarrow Q^t(s_0, a_0) + \alpha[r(s_0, a_0) + \gamma \max_a(Q^t(s_1, a)) - Q^t(s_0, a_0)]$
+    - Both methods assume that after successive iterations, we will converge to the optimal $Q^*$ function.
+    - Monte Carlo methods are slower, but TD Learning may face convergence issues. 
+    - For our discussion below, we focus on TD Learning.
+  - Additional details
+    - Exploration vs Exploitation: We typically employ a $\epsilon$-greedy algorithm, where at each state $s_0$, with probability $1-\epsilon$ we pick $a_0$ that maximizes $Q^t(s_0, a)$, but with probability $\epsilon$ we explore. 
+    - Off-policy 
+      - Q-learning, which was described in the TD Learning algorithm above, is an off-policy method, because 
+        - Our acting policy ($\epsilon$-greedy) is different from 
+        - Our updating policy (max)
+  - Deep Q-Learning
+    - If our state-action space is not too large, we can maintain a Q-table and update our values appropriately. 
+    - Deep Q-Learning uses a deep neural network to approximate the different Q-values for each possible action at a state, which is especially useful when this state-action space is very large. 
+    - A few tricks we use to stabilize training:
+      - Experience replay
+        - Instead of updating based on only the current step, we store data from the current step. 
+        - Then, we randomly sample a minibatch of data from the stored data to update our network. 
+        - This allows us to reuse our data, prevent catastrophic forgetting and reduces the correlation between experiences. 
+      - Fixed Q-target
+        - We update the parameters used to generate $\max_a(Q^t(s_1, a))$ figures less frequently than the parameters being trained. 
+      - Double DQN 
+        - This is similar to the Fixed Q-target concept, except that instead of having one "network" lag the other, we simply have 2 networks altogether that use each other to update themselves. 
+        - The idea is to generate $\max_a(Q^t(s_1, a))$ figures with a network different from the one whose parameters are being updated.
