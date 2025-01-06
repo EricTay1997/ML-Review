@@ -38,16 +38,13 @@ This repository will include:
     * Computer Vision
     * Natural Language Processing
       * Text Processing
-      * LLMs From Scratch
       * Pre-training
       * Fine-tuning
-    * Recommender Systems
     * Reinforcement Learning
     * Hyperparameter Optimization
     * Computational Performance
     * AI Safety
     * Applied Apps
-      * RAG?
     * Misc
 * Code implementation for various algorithms, which will mostly come from online resources/tutorials. 
   * The first priority would be to get implementations that work.

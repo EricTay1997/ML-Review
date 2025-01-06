@@ -53,7 +53,7 @@
         - Embed users into the same space: For a given user, find users closest to it and recommend things that close users like. 
         - Why (1) 
           - (1) achieves (2) and (3) but not the reverse
-          - (1) ensures that both similar users and similar items are close to each other
+          - (1) can ensure that both similar users are close to each other, and similar items are close to each other
         - Why not (1)
           - We have limited amounts of information we can use, (2) and (3) can use more relevant information
           - Susceptible to cold start problem

@@ -23,4 +23,8 @@
       - If we have a dataset of $(y,x)$ pairs, this can be couched as supervised learning.
       - The key here is that the model itself generates $y \mid x$. 
         - We then also need the KL divergence term to prevent the model from just generating gibberish that just tricks the imperfect reward model. 
+
+## LoRA
+
+## RAG
     
