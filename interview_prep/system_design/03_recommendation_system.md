@@ -46,20 +46,20 @@
     - Only needed if you have many items, and we want to reduce the order of candidates to ~1000. Consider using simple user/request-based filtering if this is not the case!
     - This usually works by projecting user and/or item matrices to a lower $k$-dimensional space and then conducting nearest neighbor searches.
       - Approximate nearest neighbor services are relevant here.
+      - The key here is speed - we can do the embedding asynchronously and only need to find nearest neighbors at inference time
       - We can go 1 of 3 ways (usually suggest (1), but maybe (2) in certain situations):
         - Embed user and items into the same space: For a given user, find items closest to it. 
         - Embed items into the same space: For a given user, find items closest to the past items a user has interacted with.
         - Embed users into the same space: For a given user, find users closest to it and recommend things that close users like. 
+        - Why (1) 
+          - (1) achieves (2) and (3) but not the reverse
+          - (1) ensures that both similar users and similar items are close to each other
+        - Why not (1)
+          - We have limited amounts of information we can use, (2) and (3) can use more relevant information
+          - Susceptible to cold start problem
       - Folks like to call methods "CF-based" (see below), but I don't fully agree with this categorization. 
     - We can use multiple candidate generation models: Relevant, Trending, (Popular). For now, we focus on relevancy.
-    - Priority is speed (we can be more accurate later)
-      - Optimizing for _both_ user and item embeddings
-        - If we want to be fast, we can't use too complicated a model / too many features
-        - Matrix factorization of a user-item matrix.
-      - Fix item embeddings and just optimize for user embeddings.
-        - This is considerably faster, and allows us to use more user features.
-        - Two Tower
-    - Matrix Factorization
+    - Matrix Factorization: Optimizing for _both_ user and item embeddings
       - With a user-item matrix $A \in \mathbb{R}^{n \times m}$, we decompose it into $A \approx UV^{\top},$ where $U \in \mathbb{R}^{n \times k}, V \in \mathbb{R}^{m \times k}$
           - Loss: 
             - Unobserved entries are treated to be negative, due to the sparsity of this matrix we usually need to weight positive entries more. 
@@ -69,7 +69,7 @@
               - Loss = $\ln \sigma(\hat{y}_{ui} - \hat{y}_{uj})$ (BPR-esque, Bayesian Personalized Ranking)
               - Can also use hinge loss: $\max(margin - \hat{y}_{ui} + \hat{y}_{uj}, 0)$
         - Optimization is usually done via Weighted Alternating Least Squares (alternating between fixing $U$ and $V$), or SGD. WALS is usually converges faster and is parallelizable.
-    - Two Tower
+    - Two Tower: Fix item embeddings and just optimize for user embeddings
       - ![two_tower.png](two_tower.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/video-recommendation-system)
         - In CG, rather than using all item features, we usually just embed item ID. 
       - ![youtube_cg.png](youtube_cg.png)[Source](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf)
@@ -121,7 +121,7 @@
     - Content-based filtering uses _more_ item-based features.
       - The canonical CF method, matrix factorization, only uses item ID. **This, in my opinion, is the key distinguishing factor.**
       - In content-based methods, we explicitly model the features we believe to be relevant.
-- Learning embeddings
+- CG: Learning embeddings
   - We describe the models used to embed users and items. These can take 3 forms:
     - Embed user and items into the same space: For a given user, find items closest to it. 
     - Embed items into the same space: For a given user, find items closest to the past items a user has interacted with.
@@ -147,7 +147,7 @@
         - We predict $\hat{A}_j = f(W\cdot g(VA_j + \mu) + b)$, where $VA_j \in \mathbb{R}^{k}$ is our embedding of item $j$.
   - Embed users into the same space
     - AutoRec
-- Joint Modeling
+- Ranking: Joint Modeling
   - Here, we focus on methods that do something more complicated than just taking the dot product of embeddings.
   - [A Tour of the Recommender System Model Zoo](https://mlfrontiers.substack.com/p/a-tour-of-the-recommender-system) covers popular architectures. 
   - NeuMF
