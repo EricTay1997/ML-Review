@@ -1,5 +1,18 @@
 # Post Training
 
+## Finetuning
+- Encoder Only
+  - BERT
+    - Pretrained with tokens prepended with a "<cls" token
+    - Fine-tuned with additional layers that act on "cls" token
+- Encoder-Decoder
+  - T5
+    - "Task description" tokens can be added to input
+    - Can already generate sequences with arbitrary length
+    - No additional layers are needed.
+- Decoder Only
+  - InstructGPT/ChatGPT used RLHF to generate "human-like" responses
+
 ## RLHF
 
 - In pretraining process, it is hard to incorporate additional (human) preferences

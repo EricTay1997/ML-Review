@@ -26,7 +26,7 @@ This repository will include:
     * Optimization and Regularization
     * Coding Practices
     * CNNs
-    * RNNs & LSTMs
+    * RNNs
     * Attention & Transformers
     * Autoencoders
     * Diffusion Models

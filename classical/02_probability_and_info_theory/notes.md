@@ -83,7 +83,9 @@
 * **Shannon entropy**: The uncertainty in an entire probability distribution
   * $H(P)=\mathbb{E}_{\mathrm{x} \sim P}[I(x)]=-\mathbb{E}_{\mathrm{x} \sim P}[\log P(x)]$
   * If $P(x)$ can take on many values, this is high. If not, this is low. 
-* **Perplexity**: $2^{H(P)} = \pi_x p(x)^{-p(x)}$ for the discrete case.
+* **Perplexity**: $2^{H(P)} = \prod_x p(x)^{-p(x)}$ for the discrete case.
+  * This is meant to be more intuitive - for a uniform distribution the perplexity is the number of unique outcomes. 
+  * Hence, a distribution of perplexity 4 is as random as rolling a 4-sided die. 
 * **KL divergence**: The difference between two probability distributions $P(x)$ and $Q(x)$
   * $D_{\mathrm{KL}}(P \| Q)=\mathbb{E}_{\mathbf{x} \sim P}\left[\log \frac{P(x)}{Q(x)}\right]=\mathbb{E}_{\mathbf{x} \sim P}[\log P(x)-\log Q(x)]$
   * This is guaranteed to be nonnegative is 0 $\iff$ the distributions are equal. 

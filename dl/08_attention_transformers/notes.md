@@ -17,6 +17,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
   - For encoders, output token length is the same as input token length. 
   - For decoders, training is done in an autoregressive fashion. 
 - Today, many tasks that were originally achieved with encoder-decoder models can be achieved with decoder-only models. 
+- More details in [Pretraining (NLP)](../18_nlp/pre_training.md).
 
 ## Attention
 
@@ -56,7 +57,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
     - I'm not sure if there's a compelling reason for it to be lower dimensional outside of computational cost. 
   - $A = \operatorname{softmax}(\frac{\mathbf{Q}^i\mathbf{K}^{i\top}}{\sqrt{d_k}})$ is a matrix where $A_{ab}$ represents how similar $\mathbf{k}_b^i$ is to $\mathbf{q}_a^i$, relative to the other keys. 
   - What attention head $i$ does to the $a^{th}$ row of $\mathbf{X}$, is to _add_ additional context to its embedding, given by $\sum_b (A_{ab}\mathbf{v}_b^{i\top}\mathbf{W}^{o,i})$
-  - Here, we see that every input token can now absorb context from any other input token in the same sequence (limited by $L$). This addresses a major weakness in RNNs, which have difficulty remembering long inputs in seq2seq tasks.
+  - Here, we see that every input token can now absorb context from any other input token in the same sequence (limited by $L$). This addresses a major weakness in [RNNs](../07_rnns/notes.md), which faced the context vector bottleneck issue.
   - Why do we need matrices to convert $\mathbf{X}$ into these $\mathbf{q}_j^i, \mathbf{k}_j^i$ and $\mathbf{v}_j^i$ vectors?
     - This allows us to more flexibly query and match queries. One such example is to find the following word for the last time we encountered the current word. (See [Q and K Composition](../23_safety/02_interpretability.md))
   - Why do we model $\mathbf{v}_b^i$ and $\mathbf{W}^{o,i}$ separately?
@@ -100,7 +101,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 
 ## Additional details
 - Residual connections
-  - This helps to mitigate the vanishing gradients problem. 
+  - This helps to mitigate the vanishing gradient problem. 
   - This also helps us think of transfomers as "adding to the residual stream"
 - Learning-Rate Warm Up
   - When training a transformer, we usually gradually increase the learning rate from 0 on to our originally specified learning rate in the first few iterations.
@@ -133,3 +134,8 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 - Parallel architectures 
   - [Parallel architectures](https://arxiv.org/pdf/2211.05953) are sometimes used in big models, trading off expressiveness for efficiency
     - ![parallel_architecture.png](parallel_architecture.png)
+- Cross attention
+  - In focusing on the original transformer paper, we have mainly talked about self-attention. 
+  - Cross-attention is also useful, especially for [conditional generation](../10_diffusion/notes.md). 
+    - ![cross_attention.png](cross_attention.png)[Source](https://www.linkedin.com/posts/damienbenveniste_what-is-the-difference-between-self-attention-activity-7211029906166624257-m0Wn/)
+    - Suppose we're conditioning image generation (decoder) on text (encoder). Think of this as adding the relevant text embeddings to the image embeddings. 
