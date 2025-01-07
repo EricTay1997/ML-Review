@@ -13,8 +13,10 @@
 - Encoder-Decoder
   - BART
   - T5
-    - Trained with
-      - Replacing consecutive spans with a special token.
+    - Pretraining T5 by predicting consecutive spans. 
+    - The original sentence is “I”, “love”, “this”, “red”, “car”
+    - Input is masked to “I”, “<X>”, “this”, “<Y>”
+    - Target sequence is “<X>”, “love”, “<Y>”, “red”, “car”, “<Z>”
 - Decoder Only
   - \*GPT*
     - 

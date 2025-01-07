@@ -99,6 +99,13 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
       - Lack of activation: If something has a negative activation to "Michael Jordan" (which can happen with 0 correlation but negative bias), what the attention head would do is _subtract_ the "basketball" embedding, which may not be what we want to do. 
     - Or maybe it's just more parameter efficient, since we don't need to compute and store a huge identity matrix. 
 
+## Masking
+
+- For the encoder, we use padding/truncation to ensure that input sequences are of the same length
+  - We use masking to ensure that we do not attend to padding tokens.
+- For the decoder, we use masking to ensure that we do not attend to a token ahead of the token being predicted.
+  - As per [seq2seq](../07_rnns/notes.md), we also use shift our input so that we don't pass in our output by accident. 
+
 ## Additional details
 - Residual connections
   - This helps to mitigate the vanishing gradient problem. 
@@ -119,6 +126,11 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
   - Xavier initialization should be appropriate, but [BERT and GPT2 initializes weights with a smaller SD of 0.02](https://aclanthology.org/D19-1083.pdf)
   - GPT2 also scales weights of residual layers by $1/\sqrt{N}$, to account for the accumulation on the residual path.
     - ToDo: Understand this better.
+- Cross attention
+  - Cross-attention is relevant when dealing with an encoder-decoder architecture.
+  - Cross-attention is also useful for [conditional generation](../10_diffusion/notes.md). 
+    - Typically, keys and values come from encoder, queries come from decoder.
+    - Suppose we're conditioning image generation (decoder) on text (encoder). Think of this as adding the relevant text embeddings to the image embeddings. 
 
 ## Extensions
 
@@ -134,8 +146,3 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 - Parallel architectures 
   - [Parallel architectures](https://arxiv.org/pdf/2211.05953) are sometimes used in big models, trading off expressiveness for efficiency
     - ![parallel_architecture.png](parallel_architecture.png)
-- Cross attention
-  - In focusing on the original transformer paper, we have mainly talked about self-attention. 
-  - Cross-attention is also useful, especially for [conditional generation](../10_diffusion/notes.md). 
-    - ![cross_attention.png](cross_attention.png)[Source](https://www.linkedin.com/posts/damienbenveniste_what-is-the-difference-between-self-attention-activity-7211029906166624257-m0Wn/)
-    - Suppose we're conditioning image generation (decoder) on text (encoder). Think of this as adding the relevant text embeddings to the image embeddings. 
