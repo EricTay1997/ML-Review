@@ -24,10 +24,7 @@
 
 ## LSTMs
 
-- LSTMs use a combination of gates to better retain information over a long sequence. 
-- Due to notational conventions, we switch some notations:
-  - RNN hidden state $h_t \rightarrow$ LSTM cell state $C_t$
-  - RNN output $o_t \rightarrow$ LSTM "hidden" state $h_t$
+- LSTMs use a combination of gates to better retain information over a long sequence.
 - Concretely, we have
   - ![lstm.png](lstm.png)[Source](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
   - Forget gate $f_t = \sigma(W_f \cdot [h_{t-1}, x_t] + b_f)$
@@ -39,6 +36,7 @@
   - Output gate $o_t = \sigma(W_o \cdot [h_{t-1}, x_t] + b_o)$
     - How much of cell state to output
   - Output $h_t = o_t \odot \tanh(C_t)$ 
+  - Note that $h_t$ still needs to go through an output matrix to be decoded.
 - Variants
   - Peephole connections: Passing in $C_{t-1}$ to calculation of $f_t, i_t$, and/or $C_t$ to calculation of $o_t$.
   - Coupling forget and input gates, $C_t = f_t \odot C_{t-1} + (1-f_t) \odot \tilde{C}_t$
@@ -63,10 +61,17 @@
 - In seq2seq problems, inputs and outputs each consist of variable-length unaligned sequences, such as in machine translation. 
 - Here, we typically rely on the encoder-decoder architecture:
   - ![seq2seq.png](seq2seq.png)[Source](http://d2l.ai/chapter_recurrent-modern/seq2seq.html)
-  - The encoder encodes the input sequence into a context vector, which is then decoded by the decoder
+  - The RNN encoder encodes the input sequence into a context vector, which is then decoded by the RNN decoder
     - The limited size of the context vector forms a bottleneck, which we address with [attention](../08_attention_transformers/notes.md). 
 
 ## Beam Search
 - When outputting text sequentially, the most probable next _sequence_ may not start with the most probable next _token_. 
 - Beam search trades off accuracy and computational cost by maintaining a fixed number of "beams", until the decoder predicts the "<END>" token.
   - ![beam_search.png](beam_search.png)[Source](https://towardsdatascience.com/foundations-of-nlp-explained-visually-beam-search-how-it-works-1586b9849a24)
+
+## Metrics
+- Cross Entropy loss can be used when predicting tokens
+- For evaluating output sequences, BLEU is a popular measure that matches $n$-grams between the predicted sequence and the target sequence.
+  - Bounded between 0 and 1
+  - When similarity is higher, BLEU is higher
+  - Matching longer $n$-grams have higher weight
