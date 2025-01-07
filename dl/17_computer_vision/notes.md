@@ -32,3 +32,53 @@
       - Convolutional kernels is the normal way we learn these relationships, although these have more restrictions (but are probably easier to learn).
 - Generation
   - See [Diffusion](../10_diffusion/notes.md)
+
+## Object Detection
+
+- Rectangular boxes
+  - Single Shot Multibox Detection (one stage)
+    - Reuse a base network, and use multiscale feature maps to draw anchor boxes of different resolutions. 
+    - For each of these anchor boxes, we make a prediction of the class of the encapsulated object and the offset to best encapsulate this object. 
+    - To obtain the target class and offset, we [use the IOU metric](http://d2l.ai/chapter_computer-vision/anchor.html)
+    - The loss we minimize has two parts
+      - The predicted class
+      - The l1 localization loss for the offset
+    - Inference
+      - We run the model to get candidate anchor boxes with associated predictions.
+      - We use Non-Maximum Suppression to reduce the number of anchor boxes
+        - Iteratively keep the box with the highest predicted probability
+        - Remove any box that predicts the same class, that overlaps heavily (IOU) with the selected box
+  - YOLO (one stage)
+    - Splits image into $S \times S$ cells. 
+    - For each cell, we predict $B$ bounding boxes of the same class and its confidence for each of the $C$ classes.
+    - The output of YOLO is a tensor of $S \times S \times (B\times 5+C)$.
+    - This can be followed by NMS to remove duplicate detections.
+  - R-CNN and friends (two stage)
+    - R-CNN
+      - Extracts many region proposals from the input image, uses a CNN to perform forward propagation on each region proposal to extract its features, then uses these features to predict the class and bounding box of this region proposal.
+    - Fast R-CNN
+      - CNN forward propagation is only performed on the entire image. 
+      - Introduces the region of interest pooling layer, so that features of the same shape can be further extracted for regions of interest that have different shapes.
+    - Faster R-CNN
+      - Replaces the selective search used in the fast R-CNN with a jointly trained region proposal network, requiring fewer region proposals
+    - Mask R-CNN 
+      - Introduces an additional fully convolutional network to leverage pixel-level labels to further improve the accuracy of object detection.
+- Semantic segmentation
+  - Labels semantic regions on a pixel level.
+  - Fully convolutional networks are useful here
+    - ![fully_convolutional.png](fully_convolutional.png)[Source](http://d2l.ai/chapter_computer-vision/fcn.html)
+    - One channel per class
+
+## Neural Style Transfer
+
+- Leveraging pretrained networks
+  - ![nst.png](nst.png)[Source](http://d2l.ai/chapter_computer-vision/neural-style.html)
+  - Use pre-trained networks to: 
+    - Extract content and style from reference images
+      - In general, 
+        - The closer to the input layer, the easier to extract details of the image (style).
+        - The further from the input layer, the easier to extract the global information of the image.
+    - Initialize the new generative network
+  - Loss
+    - Content loss + Style loss + Variation loss
+    - We tend to use a gram matrix for style loss because it calculates correlations across features, focusing on the overall distribution of features rather than their exact locations.

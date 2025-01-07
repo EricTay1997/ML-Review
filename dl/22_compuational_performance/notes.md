@@ -8,7 +8,13 @@ As models and data scale in size, optimizing for more efficient processes become
 
 - CPU vs GPU
   - CPUs and GPUs are processors
-  - GPUs have many smaller, more specialized cores, which make it suited for parallel processing, e.g. tensor cores which compute matrix-matrix multiplications quickly. 
+  - GPUs have many smaller, more specialized cores, which make it suited for parallel processing, e.g. tensor cores which compute matrix-matrix multiplications quickly.
+  - Terminology differences
+    - A GPU is formed by multiple units named SM (Streaming Multiprocessors), these function like CPU cores.
+    - Each SM can execute many threads concurrently.
+    - Threads are grouped into warps, a basic execution unit, where each warp contains 32 threads. 
+    - While CPU threads can each execute different tasks at the same time, all GPU threads in a single warp can only execute one same task. 
+    - A threadblock is a collection of warps. The threads in the same thread block run on the same SM. 
   - PyTorch (amongst other libraries) allow us to use these tensor cores for training DL models. 
 - Multithreading vs Multiprocessing
   - Multithreading (`threading`) is the ability of a processor to execute multiple threads concurrently, where each thread runs a process.
