@@ -12,12 +12,15 @@
 - Lemmatization 
   - Lemmatization is mapping different variants of words to its root format, where a root is an actual word.
 - Subword tokens
+  - Enables us to handle some out-of-vocabulary words
   - fastText
     - Here, we have an embedding of all 3-6 character $n$-grams
     - A word is the sum of the embeddings of all its constituent subword embeddings
   - Byte Pair Encoding
     - fastText have subwords of a specified length, and variable vocabulary size
     - BPE starts from symbols of length 1, and iteratively merges the most frequent pair of consecutive symbols until our desired vocabulary size.
+      - Allows for variable subwords
+      - Fixed vocabulary size
 - In the rest of this document, we use "word" to mean "token"
 
 ## Context Independent Embeddings
