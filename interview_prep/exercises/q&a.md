@@ -73,6 +73,9 @@
 - Optimization
   - What's Newton's method?
   - What is the general equation for Quasi-Newton methods?
+- DL
+  - Describe the {architecture, I/O, loss, training, sampling} for RNNs, LSTMs, Transformers, Autoencoders, Diffusion, Flows, GANs, GNNs
+- ToDo: CE loss, regularization, optimization, dl questions, applied AI (agents, RAG, RLHF), multimodality
 - System Design
   - Write down the steps/template for a typical SWE SD interview 
   - Write down the steps/template for a typical ML SD interview 
@@ -88,9 +91,6 @@
   - Explain the rules for variable scope?
   - What are positional, keyword, and default arguments to a function?
   - Explain trailing and leading underscores in Python. 
-- DL
-  - Describe the {architecture, I/O, loss, training, sampling} for RNNs, LSTMs, Transformers, Autoencoders, Diffusion, Flows, GANs, GNNs
-- ToDo: CE loss, regularization, optimization, dl questions, applied AI (agents, RAG, RLHF), multimodality
 
 ## Code
 
@@ -103,3 +103,4 @@
 - Derive and code up various optimization functions
 - Code up a self/cross-attention head
 - Code up the transformer architecture
+- Code and analyze Kahn, Dijkstra, Bellman Ford, Floyd Warshall, Kruskal, Prim, Ford Fulkerson, Kosaraju, Manacher, [Union Find](https://leetcode.com/discuss/general-discussion/1072418/Disjoint-Set-Union-(DSU)Union-Find-A-Complete-Guide)

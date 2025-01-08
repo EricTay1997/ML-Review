@@ -9,7 +9,7 @@
     - This means that for them to give the same output we need to concatenate a column of 0s for the input of `cross_entropy`:
 ```
 input = torch.randn(3, requires_grad=True)
-target = torch.empty(3).random_(2)
+target = torch.randint(2, (3,), dtype = torch.float32)
 # These are equivalent
 F.binary_cross_entropy_with_logits(input, target)
 F.cross_entropy(torch.cat((torch.zeros((3,1)), input.unsqueeze(1)), 1), target.type(torch.int64))
