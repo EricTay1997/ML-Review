@@ -78,7 +78,6 @@
       - Inputs are either consecutive or non-consecutive sentences. Model needs to predict True or False
   - Additional details
     - Positional embeddings are learnt
-    - For question-answer, we pass in a question and context pair, and additional layers are typically added on top of context embeddings to predict the start and end index of the answer. 
     - Next Sentence Prediction was less useful when pretraining RoBERTa
 
 ## Model Trends

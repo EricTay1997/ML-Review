@@ -1,10 +1,19 @@
 # Post Training
 
-## Finetuning
+## Fine-Tuning
+- Pretrained LLMs allow us to tackle a wide range of NLP tasks with minimal architectural changes and fine-tuning. 
 - Encoder Only
   - BERT
-    - Pretrained with tokens prepended with a "<cls" token
-    - Fine-tuned with additional layers that act on "cls" token
+    - Single Text Classification
+      - ![bert_single_classification.png](bert_single_classification.png)[Source](http://d2l.ai/chapter_natural-language-processing-applications/finetuning-bert.html)
+    - Text Pair Classification or Regression
+      - ![bert_pair_classification.png](bert_pair_classification.png)[Source](http://d2l.ai/chapter_natural-language-processing-applications/finetuning-bert.html)
+    - Text Tagging
+      - ![bert_text_tagging.png](bert_text_tagging.png)[Source](http://d2l.ai/chapter_natural-language-processing-applications/finetuning-bert.html)
+    - Question Answering
+      - ![bert_qna.png](bert_qna.png)[Source](http://d2l.ai/chapter_natural-language-processing-applications/finetuning-bert.html)
+      - For the Stanford Question Answering Dataset, the answer to every question is a text span from the input passage.
+      - The goal is to predict the start and end of the text span.
 - Encoder-Decoder
   - T5
     - "Task description" tokens can be added to input
@@ -13,31 +22,22 @@
 - Decoder Only
   - InstructGPT/ChatGPT used RLHF to generate "human-like" responses
 
-## RLHF
+## Reinforcement Learning with Human Feedback (RLHF)
 
-- In pretraining process, it is hard to incorporate additional (human) preferences
-- 3 steps
-  - Pretraining a language model (LM)
-  - Gathering data and training a reward model
-    - Gather data
-      - Prompt LMs with prompts $x$
-      - Gather responses $y$
-      - Get human rankings
-    - Train a reward model
-      - Can be any model
-      - Why do we need this? Ideally in the next step, we can have a reward/rank for any $y \mid x$, but that's prohibitively expensive.
-  - Fine-tuning the LM with reinforcement learning
-    - ![rlhf.png](rlhf.png)[Source](https://huggingface.co/blog/rlhf)
-    - Some parameters of the LM are frozen because fine-tuning an entire 10B or 100B+ parameter model is prohibitively expensive
-    - State: $x$
-    - Action: $y$
-    - Policy: $\pi_{PPO}(y \mid x)$
-    - Why is this RL? 
-      - If we have a dataset of $(y,x)$ pairs, this can be couched as supervised learning.
-      - The key here is that the model itself generates $y \mid x$. 
-        - We then also need the KL divergence term to prevent the model from just generating gibberish that just tricks the imperfect reward model. 
+- See more in [Post-Training](../25_post_training/notes.md).
+- Anthropic has a [paper](../23_safety/03_alignment.md) where they do this with an AI.
 
 ## LoRA
 
 ## RAG
     
+## Task-specific Architectures
+
+- The ability of pretrained LLMs to tackle a wide range of NLP tasks with minimal architectural changes largely reduces the need for crafting task-specific architectures. 
+- With space and time constraints, however, one may still consider building task-specific architectures on top of pre-trained, "frozen" embeddings. For example,
+  - Sentiment analysis
+    - Use a [bidirectional RNN + GloVe embeddings](http://d2l.ai/chapter_natural-language-processing-applications/sentiment-analysis-rnn.html)
+    - Use a [textCNN + GloVe embeddings](http://d2l.ai/chapter_natural-language-processing-applications/sentiment-analysis-cnn.html)
+      - 1D Convolutions capture sequential information
+  - Natural Language Inference 
+    - Use an [attention-based model + GloVe embeddings](http://d2l.ai/chapter_natural-language-processing-applications/natural-language-inference-attention.html)
