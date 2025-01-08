@@ -95,6 +95,7 @@ b == a.permute(2,0,3,1).reshape(4,4)
     - A side note is that convolutional layers need not have a bias anymore if it precedes a BN layer.
   - Layer Normalization
     - LN normalizes over the last dimension - for each batch, for each token, normalize its features.
+    - $O_{b, c, x, y} = \gamma_y \frac{I_{b, c, x, y}-\mu_{b ,c, x}}{\sqrt{\sigma_{b ,c, x}^2+\epsilon}}+\beta_y$
     - `(x - x.mean(dim = (-1), keepdim = True))/x.std(dim = (-1), unbiased = False, keepdim = True)`, disregarding $\epsilon$ for now
     - This makes for easier parallelizability without any batch-wise dependence.
     - This could also be more relevant when [batch statistics have large variance](https://arxiv.org/pdf/2003.07845v1).

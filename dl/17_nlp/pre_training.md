@@ -98,5 +98,6 @@
     - Input is masked to “I”, “<X>”, “this”, “<Y>”
     - Target sequence is “<X>”, “love”, “<Y>”, “red”, “car”, “<Z>”
 - Decoder Only
-  - \*GPT*
-    - s
+  - GPT-2
+    - Pre-Layer Normalization (See [Transformer Notes](../08_attention_transformers/notes.md))
+    - Intialization

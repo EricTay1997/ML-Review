@@ -1,9 +1,10 @@
 # Activation Functions
 - ![activations.png](activations.png)[Source](https://medium.com/the-modern-scientist/an-overview-of-activation-functions-in-deep-learning-97a85ac00460)
 - Swish
-  - $\frac{x}{1+e^{-\beta x}}$
+  - $\operatorname{Swish}(x) = \frac{x}{1+e^{-\beta x}}$
 - GeLU
-  - $xP(X \leq x)$ for $X \sim \mathcal{N}(0,1)$
+  - $\operatorname{GELU}(x) = xP(X \leq x)$ for $X \sim \mathcal{N}(0,1)$
+  - $\operatorname{GELU}(x) \approx 0.5 \cdot x \cdot\left(1+\tanh \left[\sqrt{\frac{2}{\pi}} \cdot\left(x+0.044715 \cdot x^3\right)\right]\right)$
   - ![gelu.png](gelu.png)[Source](https://paperswithcode.com/method/gelu)
 - Exploding/Vanishing gradients
   - Since the propagation of gradients into weights goes through (multiple layers of) neurons, we expect any exploding/vanishing problems to affect both neurons and weights.
