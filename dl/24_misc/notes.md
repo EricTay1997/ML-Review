@@ -1,4 +1,4 @@
-# Concepts (Misc)
+# Misc (To Be Categorized)
 
 ## The Curse of Dimensionality
 - As the number of dimensions increase, the "space" between training points increases significantly
@@ -6,8 +6,8 @@
 ## Manifold Learning
 - The manifold interpretation is that natural data forms lower-dimensional manifolds in its embedding space. 
   - I view this as the motivation for why we "encode" data into a lower-dimensional space. 
-- [Neural Networks, Manifolds, and Topology](https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/) mentions the inverse: All $n$-dimensional manifolds can be untangled in $2n+2$ dimensions. 
-  - I wonder if this is good intuition for first increasing the number of hidden units and then going back down? Like the MLP layers of a transformer...
+- [Neural Networks, Manifolds, and Topology](https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/) mentions that all $n$-dimensional manifolds can be untangled in $2n+2$ dimensions. 
+  - This may be motivation for projecting into a higher dimension before reducing the dimensionality
 
 ## Local Constancy and Smoothness Regularization
 - Many ML models operate under the prior that the function we want to learn should not change very much within a small region. 

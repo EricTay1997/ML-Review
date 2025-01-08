@@ -24,8 +24,8 @@
 
 ## Reinforcement Learning with Human Feedback (RLHF)
 
-- See more in [Post-Training](../25_post_training/notes.md).
-- Anthropic has a [paper](../23_safety/03_alignment.md) where they do this with an AI.
+- See more in [Post-Training](../20_post_training/notes.md).
+- Anthropic has a [paper](../21_safety/03_alignment.md) where they do this with an AI.
 
 ## LoRA
 

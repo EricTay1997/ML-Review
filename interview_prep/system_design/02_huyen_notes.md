@@ -56,7 +56,7 @@
 
 ## Model Development and Offline Evaluation
 - Consider learning curves when doing model selection. One may deploy a second model in the background because with enough data it'll catch up. 
-- [Distributed Training](../../dl/22_compuational_performance/notes.md)
+- [Distributed Training](../../dl/23_compuational_performance/notes.md)
 - Sampling from predicted probabilities is generally (depending on use case) desirable. This ensures that the model is well calibrated. 
 
 ## Model Deployment and Prediction Service

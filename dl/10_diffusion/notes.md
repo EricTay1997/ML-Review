@@ -52,7 +52,7 @@
   - $\mathbf{\Sigma}_\theta(\mathbf{x}_t, t) = \sigma^2_t\mathbf{I},$ where both $\sigma^2_t = \beta_t$ and $\sigma^2_t = \frac{1-\bar{\alpha}_{t-1}}{1-\bar{\alpha}_t}\beta_t$ were tried
   - We model $L_0$ using a separate discrete decoder ([Section 3.3](https://arxiv.org/pdf/2006.11239))
 - Conditional Generation
-  - [Fine-tuning and guidance](../25_post_training/notes.md) are both ways to post-train diffusion models.
+  - [Fine-tuning and guidance](../20_post_training/notes.md) are both ways to post-train diffusion models.
   - Additional conditional information can be passed in with:
     - Embedding and concatenation, e.g. passing in an additional channel 
     - Embedding and adding, similar to how timestep conditioning is handled 

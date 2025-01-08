@@ -12,7 +12,7 @@
 - Re-train existing models on new data to change the type of output they produce.
 - [Dreambooth](../10_diffusion/notes.md)
 - LoRA
-- See examples in [Diffusion](../10_diffusion/notes.md), [NLP](../18_nlp/post_training.md), and [CV](../17_computer_vision/notes.md).
+- See examples in [Diffusion](../10_diffusion/notes.md), [NLP](../17_nlp/post_training.md), and [CV](../16_computer_vision/notes.md).
 
 ## Guidance
 

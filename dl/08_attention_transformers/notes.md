@@ -17,7 +17,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
   - For encoders, output token length is the same as input token length. 
   - For decoders, training is done in an autoregressive fashion. 
 - Today, many tasks that were originally achieved with encoder-decoder models can be achieved with decoder-only models. 
-- More details in [Pretraining (NLP)](../18_nlp/pre_training.md).
+- More details in [Pretraining (NLP)](../17_nlp/pre_training.md).
 
 ## Attention
 
@@ -59,7 +59,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
   - What attention head $i$ does to the $a^{th}$ row of $\mathbf{X}$, is to _add_ additional context to its embedding, given by $\sum_b (A_{ab}\mathbf{v}_b^{i\top}\mathbf{W}^{o,i})$
   - Here, we see that every input token can now absorb context from any other input token in the same sequence (limited by $L$). This addresses a major weakness in [RNNs](../07_rnns/notes.md), which faced the context vector bottleneck issue.
   - Why do we need matrices to convert $\mathbf{X}$ into these $\mathbf{q}_j^i, \mathbf{k}_j^i$ and $\mathbf{v}_j^i$ vectors?
-    - This allows us to more flexibly query and match queries. One such example is to find the following word for the last time we encountered the current word. (See [Q and K Composition](../23_safety/02_interpretability.md))
+    - This allows us to more flexibly query and match queries. One such example is to find the following word for the last time we encountered the current word. (See [Q and K Composition](../21_safety/02_interpretability.md))
   - Why do we model $\mathbf{v}_b^i$ and $\mathbf{W}^{o,i}$ separately?
     - My intuition is that it's computational. 
 - Softmax and Temperature
@@ -136,7 +136,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 
 - I think [The Transformer Family Version 2.0](https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/#combination-of-local-and-global-context) provides a great summary of extensions to the transformer. 
   - A key bottleneck is in the computation of the $\mathbf{Q}^i\mathbf{K}^{i\top}$ matrix, which is $O(L^2d)$. 
-    - This is why larger context lengths are a big deal! (But also note that they allow for [increased vulnerabilities](../23_safety/03_alignment.md))
+    - This is why larger context lengths are a big deal! (But also note that they allow for [increased vulnerabilities](../21_safety/03_alignment.md))
     - Methods to address this include:
       - Memory methods to "cache" information
       - Methods to selectively incorporate _some_ global context
