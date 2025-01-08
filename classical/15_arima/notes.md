@@ -1,0 +1,25 @@
+# ARIMA
+
+- Time series forecasting is the use of a model to predict future values based on previously observed values.
+- Auto-Regressive Integrated Moving Average (ARIMA) is a popular model for this. We will build up to it
+- Stationarity
+  - A stationary process is one whereby statistical properties like mean and variance do not change over time
+  - The augmented Dickey-Fuller test can help tell if a process is stationary
+- $AR(p)$
+  - An autoregressive model of order $p$ takes the form:
+  - $Y_t = \mu + \sum_{i = 1}^p \phi_i (Y_{t-i} - \mu) + \epsilon_t$
+  - Assumes stationarity
+  - Partial Autocorrelation Function (PACF) graph can help determine $p$
+    - Measures the correlation between a series and a lagged series, while also accounting for the values of the intervals between.
+- $MA(q)$
+  - A moving average model of order $q$ takes the form:
+  - $Y_t = \mu + \sum_{i = 1}^q \theta_i \epsilon_{t-i} + \epsilon_t$
+  - Autocorrelation Function (ACF) graph can help determine $q$
+    - Measures the correlation between a series and a lagged series.
+- $ARMA(p, q)$
+  - $Y_t = \mu + \sum_{i = 1}^p \phi_i (Y_{t-i} - \mu) + \sum_{i = 1}^q \theta_i \epsilon_{t-i} + \epsilon_t$
+- $ARIMA(p,d,q)$
+  - If $Y_t$ is not stationary, but $Y'_t = Y_t - Y_{t-1}$ is stationary, then we difference the sequence before applying an $ARMA(p, q)$ model. 
+  - $d$ determines the number of differencing steps.
+- $SARIMA(p,d,q,P,D,Q,s)$
+  - $P, D, Q$ are parameters of our seasonal ARIMA process with $s$ periods per year. 
