@@ -60,9 +60,23 @@ As models and data scale in size, optimizing for more efficient processes become
       - It also allows us to support additional batch dimensions.
     - A note: JAX is designed to be functional. 
       - Writing code with side effects is dangerous because an error will _not_ be thrown and JAX will just ignore such instructions.
+- What are we bounded by?
+  - [He's article](https://horace.io/brrr_intro.html)
+  - Memory
+    - Size of DRAM
+      - Solution: See below
+  - Bandwidth
+    - Time spent transferring tensors within a GPU
+      - Solution: Operator fusion
+  - Compute (on SRAM)
+    - Time spent on your GPU computing actual floating point operations (FLOPS)
+      - Solution: More tensor cores
+  - Overhead
+    - Everything else
+      - Solution: Asynchronous computation
 - Memory reduction
   - Memory vs compute
-    - Oftentimes, memory limitations are a key bottleneck (vs compute). We discuss methods to reduce this overhead (sometimes at the cost of increased computational cost)
+    - We discuss methods to reduce this memory constraints (sometimes at the cost of increased computational cost)
   - Mixed Precision Training
     - Use 32-bit floating-point numbers for weight updates and final loss computation
     - Use 16-bit floating-point numbers for most computations

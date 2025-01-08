@@ -98,3 +98,11 @@ b == a.permute(2,0,3,1).reshape(4,4)
     - `(x - x.mean(dim = (-1), keepdim = True))/x.std(dim = (-1), unbiased = False, keepdim = True)`, disregarding $\epsilon$ for now
     - This makes for easier parallelizability without any batch-wise dependence.
     - This could also be more relevant when [batch statistics have large variance](https://arxiv.org/pdf/2003.07845v1).
+- PyTorch Buffers
+  - We often see fixed positional embeddings or causal attention masks registered as PyTorch Buffers
+  - PyTorch buffers are tensor attributes associated with a PyTorch module or model similar to parameters, but unlike parameters, buffers are not updated during training.
+  - Why can't we just initialize an attribute?
+    - Then we have to [manually move that attribute](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch03/03_understanding-buffers/understanding-buffers.ipynb) to the same device as the module.
+  - Using a buffer means that these attributes are added to a model's state_dict
+    - We can set `persistent = False` if we don't want these to be saved. 
+- [Numerical Stability of Softmax](https://jaykmody.com/blog/stable-softmax/)

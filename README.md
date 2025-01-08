@@ -52,12 +52,12 @@ This repository will include:
   * I want to emphasize that the goal of these implementations would be to ensure that I have a thorough understanding of topics, rather than being the most involved projects. Notebooks may be more sparse if I believe my understanding to be sufficient. To that effect, notebooks for the classical ML topics will largely be calling scikit-learn libraries (from-scratch implementations of algorithms like SVMs, AdaBoost and K-means can be found in my other repos). 
 * Interview Preparation
 
-I shall try to be diligent in citing my sources. Due to visa-related time constraints, I do apologize for any lapses in citation. At the current moment, I envision pulling most heavily from the following sources:
-* Notes / Code from classes I took at Duke.
+I shall try to be diligent in citing my sources. Due to visa-related time constraints, I do apologize for any lapses in citation. At the current moment (1/8/25), I have pulled most heavily from the following sources:
 * [UvA Deep Learning Tutorials by Lippe](https://uvadlc-notebooks.readthedocs.io/en/latest/)
+* Notes / Code from classes I took at Duke.
 * [Hands-On Machine Learning by Aurélien Géron](https://www.amazon.com/Hands-Machine-Learning-Scikit-Learn-TensorFlow/dp/1098125975)
 * [Dive into Deep Learning by Zhang, Lipton, Li and Smola](http://d2l.ai)
-* [Build a Large Language Model (From Scratch) by Raschka](https://www.amazon.com/Build-Large-Language-Model-Scratch/dp/1633437167)
+* [Build a Large Language Model (From Scratch) by Raschka](https://github.com/rasbt/LLMs-from-scratch)
 * Hugging Face Courses ([NLP](https://huggingface.co/learn/nlp-course/en/chapter1/1), [Diffusion](https://huggingface.co/learn/diffusion-course/unit0/1))
 * [Deep Learning by Goodfellow, Bengio and Courville](https://www.deeplearningbook.org)
 * [Implementations of Various LLMs by Ma](https://github.com/johnma2006/candle)

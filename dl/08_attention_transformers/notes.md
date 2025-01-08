@@ -134,15 +134,17 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 
 ## Extensions
 
-- I think [The Transformer Family Version 2.0](https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/#combination-of-local-and-global-context) provides a great summary of extensions to the transformer. 
-  - A key bottleneck is in the computation of the $\mathbf{Q}^i\mathbf{K}^{i\top}$ matrix, which is $O(L^2d)$. 
-    - This is why larger context lengths are a big deal! (But also note that they allow for [increased vulnerabilities](../21_safety/03_alignment.md))
-    - Methods to address this include:
-      - Memory methods to "cache" information
-      - Methods to selectively incorporate _some_ global context
-      - Attention free transformers
-        - $Y=f(X) ; Y_t=\sigma_q\left(Q_t\right) \odot \frac{\sum_{t^{\prime}=1}^T \exp \left(K_{t^{\prime}}+w_{t, t^{\prime}}\right) \odot V_{t^{\prime}}}{\sum_{t^{\prime}=1}^T \exp \left(K_{t^{\prime}}+w_{t, t^{\prime}}\right)}$
-          - I personally wonder how similar this is to normal transformers. To me, the hadamard product would distort values significantly. 
-- Parallel architectures 
-  - [Parallel architectures](https://arxiv.org/pdf/2211.05953) are sometimes used in big models, trading off expressiveness for efficiency
-    - ![parallel_architecture.png](parallel_architecture.png)
+- A key bottleneck is in the computation of the $\mathbf{Q}^i\mathbf{K}^{i\top}$ matrix, which is $O(L^2d)$.
+- This is why larger context lengths are a big deal! (But also note that they allow for [increased vulnerabilities](../21_safety/03_alignment.md))
+  - Reducing compute: algorithmic extensions [(The Transformer Family Version 2.0)](https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/#combination-of-local-and-global-context)
+    - Memory methods to "cache" information
+    - Methods to selectively incorporate _some_ global context (sparse attention, etc.)
+    - Attention free transformers
+      - $Y=f(X) ; Y_t=\sigma_q\left(Q_t\right) \odot \frac{\sum_{t^{\prime}=1}^T \exp \left(K_{t^{\prime}}+w_{t, t^{\prime}}\right) \odot V_{t^{\prime}}}{\sum_{t^{\prime}=1}^T \exp \left(K_{t^{\prime}}+w_{t, t^{\prime}}\right)}$
+        - I personally wonder how similar this is to normal transformers. To me, the hadamard product would distort values significantly. 
+  - Reducing bandwidth
+    - Flash attention performs kernel fusion by using recursion to compute softmax denominator ([explanation](https://gordicaleksa.medium.com/eli5-flash-attention-5c44017022ad))
+    - This is implemented with PyTorch's default attention modules.
+  - Parallel architectures 
+    - [Parallel architectures](https://arxiv.org/pdf/2211.05953) are sometimes used in big models, trading off expressiveness for efficiency
+      - ![parallel_architecture.png](parallel_architecture.png)
