@@ -125,7 +125,6 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 - Initialization
   - Xavier initialization should be appropriate, but [BERT and GPT2 initializes weights with a smaller SD of 0.02](https://aclanthology.org/D19-1083.pdf)
   - GPT2 also scales weights of residual layers by $1/\sqrt{N}$, to account for the accumulation on the residual path.
-    - ToDo: Understand this better.
 - Cross attention
   - Cross-attention is relevant when dealing with an encoder-decoder architecture.
   - Cross-attention is also useful for [conditional generation](../10_diffusion/notes.md). 

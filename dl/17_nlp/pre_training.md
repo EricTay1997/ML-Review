@@ -100,4 +100,8 @@
 - Decoder Only
   - GPT-2
     - Pre-Layer Normalization (See [Transformer Notes](../08_attention_transformers/notes.md))
-    - Intialization
+    - Initialization
+      - Scale final linear layers of MHA and MLP by $\frac{1}{2N}$, where $N$ is the number of transformer blocks.
+        - $\frac{1}{N}$ ensures that variance added is invariant to number of transformer blocks.
+        - $\frac{1}{2}$ is because there are two times we're adding to the residual stream for each block.
+          - This means that the intial embedding's contribution to the final embedding is around half. 
