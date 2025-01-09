@@ -82,10 +82,7 @@
   * Negative: Each event has positive information, and rare events have higher information content.
 * **Shannon entropy**: The uncertainty in an entire probability distribution
   * $H(P)=\mathbb{E}_{\mathrm{x} \sim P}[I(x)]=-\mathbb{E}_{\mathrm{x} \sim P}[\log P(x)]$
-  * If $P(x)$ can take on many values, this is high. If not, this is low. 
-* **Perplexity**: $2^{H(P)} = \prod_x p(x)^{-p(x)}$ for the discrete case.
-  * This is meant to be more intuitive - for a uniform distribution the perplexity is the number of unique outcomes. 
-  * Hence, a distribution of perplexity 4 is as random as rolling a 4-sided die. 
+  * If $P(x)$ can take on many values, this is high. If not, this is low.  
 * **KL divergence**: The difference between two probability distributions $P(x)$ and $Q(x)$
   * $D_{\mathrm{KL}}(P \| Q)=\mathbb{E}_{\mathbf{x} \sim P}\left[\log \frac{P(x)}{Q(x)}\right]=\mathbb{E}_{\mathbf{x} \sim P}[\log P(x)-\log Q(x)]$
   * This is guaranteed to be nonnegative is 0 $\iff$ the distributions are equal. 
@@ -97,4 +94,14 @@
   * If we fix $P$, and we minimize the cross-entropy with respect to $Q$, this is the same as minimizing KL divergence.
   * The minimum cross entropy is when $P = Q$ and the value is then the self-entropy of either distributions.
   * Also see [logistic/softmax regression](../07_naive_bayes_and_logistic_regression_and_glms/notes.md).
-
+* **Perplexity**: 
+  * Of a probability distribution
+    * $2^{H(P)} = \prod_x p(x)^{-p(x)}$ for the discrete case, and if $H(p)$ is expressed in log2 (bits)
+      * This is meant to be more intuitive 
+        * For a uniform distribution the perplexity is the number of unique outcomes: a distribution of perplexity 4 is as random as rolling a 4-sided die.
+        * A discrete probability distribution with only one outcome has a perplexity of 1.
+  * Of an LLM
+    * $e^{H(P,Q)}$ if $H(P,Q)$ is expressed in natural log (nats)
+      * Intuition
+        * For an uninformative LLM (uniform), this is the vocabulary size.
+        * For a perfect LLM, this is 1
