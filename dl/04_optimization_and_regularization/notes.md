@@ -2,13 +2,40 @@
 
 ## Overfitting / Regularization
 
-- For general notes about regularization, refer to [Statistical Learning Theory](../../classical/03_statistical_learning_theory)
+- For general notes about parameter regularization, refer to [Statistical Learning Theory](../../classical/03_statistical_learning_theory/notes.md)
 - [Goodfellow](https://www.deeplearningbook.org/contents/regularization.html) defines regularization as “any modification we make to a learning algorithm that is intended to reduce its generalization error but not its training error.”
-- This section shall focus on regularization for deep learning, which is pertinent because neural network's expressiveness leave them vulnerable to overfitting.
+- This section shall have a larger focus on regularization for deep learning, which is pertinent because neural network's expressiveness leave them vulnerable to overfitting.
 - Parameter regularization 
   - This is often referred to with the `weight_decay` parameter in PyTorch. 
   - Usually, we leave the basis terms unregularized, since each bias controls only a single variable. This means that we do not induce too much variance by leaving the biases unregularized.
+- Data Augmentation
+  - Transformations, adding noise, and dropout can all be considered data augmentations
+  - Prevents network from overfitting to inherent biases in training data
+  - Generates more training data
+  - Careful
+    - Not to change class: "b", "d"; "6", "9"
+    - Not to learn the augmentation rather than the actual task
+- Noise 
+  - Can add to inputs/activations
+  - Can add to weights
+    - This can push the model into regions where it is relatively insensitive to small variations in the
+weights, finding minima surrounded by flat regions
+  - Can add to outputs
+    - Label moothing changes labels from 0 and 1 to $\frac{\epsilon}{k-1}$ and $1 - \epsilon$.
+- Sharing
+  - Semi-Supervised Learning
+    - We have both unlabeled examples $P(\mathbf{x})$ and lableed examples $P(\mathbf{x,y})$ and we want $P(\mathbf{y \mid x})$
+    - Instead of having separate models, we can have models in which a generative model of either $P(\mathbf{x})$ or $P(\mathbf{x,y})$ shares parameters with a discriminattive model of $P(\mathbf{y \mid x})$
+  - Multi-Task Learning
+    - Sharing parameters at the bottom layers
+      - Prior belief: Among the factors that explain the variations observed in the data
+  - CNNs
+associated with the different tasks, some are shared across two or more tasks.
 - Early Stopping
+  - Has the effect of restricting the optimization procedure to the vicinity of initialization
+    - Can view this as a sort of parameter regularization if we initialize at the origin.
+  - Inference
+    - We can either retrain or continue from where we left off, with various heuristics to stop
 - Dropout
   - Training
     - We zero out a fraction of nodes in each layer
