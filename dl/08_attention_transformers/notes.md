@@ -25,10 +25,11 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 - Terminology:
   - $d$ : The model size / hidden state dimension / positional encoding size.
   - $h$ : The number of heads in multi-head attention layer.
+  - $d_k$: The head dimension. 
   - $L$ : The segment length of input sequence.
   - $\mathbf{X} \in \mathbb{R}^{L \times d}$ : The input sequence where each element has been mapped into an embedding vector of dimension $d$. Note that this represents _one_ sample of training data.
   - $\mathbf{x}_i \in \mathbb{R}^{1 \times d}$ : The $i^{th}$ input token, $i^{th}$ row in $\mathbf{X}$.
-  - $\mathbf{W}^{k,i}, \mathbf{W}^{q,i} \in \mathbb{R}^{d \times d_k}$: The key and query weight matrix for head $i$. 
+  - $\mathbf{W}^{k,i}, \mathbf{W}^{q,i} \in \mathbb{R}^{d \times d_k}$: The key and query weight matrix for head $i$.
   - $\mathbf{W}^{v,i} \in \mathbb{R}^{d \times d_v}$: The value weight matrix for head $i$.
   - $\mathbf{W}^{o,i} \in \mathbb{R}^{d_v \times \ d}$: The output weight matrix for head $i$.
   - $\mathbf{W}^{o} \in \mathbb{R}^{hd_v \times \ d}$: The overall output weight matrix, formed by concatenating each $\mathbf{W}^{o,i}$ row-wise. 
@@ -77,7 +78,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
     - $P_{ij} = \sin(\frac{i}{10000^\frac{j}{d}})$ if $j$ even, and 
     - $P_{ij} = \cos(\frac{i}{10000^\frac{j-1}{d}})$ if $j$ odd
     - Under this formulation, the wavelengths vary from $2\pi$ to $10000\times2\pi$.
-  - Other [types](https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/#positional-encoding) of embedding include learned, relative and rotary embeddings.
+  - Other [types](https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/#positional-encoding) of embedding include learned, relative and rotary embeddings (see below).
 - Note, while it feels more natural to concatenate these embeddings, this is easier to implement and [perhaps](https://kazemnejad.com/blog/transformer_architecture_positional_encoding/) we may think of $d$ being large enough to store position and semantic information in different dimensions.
 
 ## MLP
@@ -134,7 +135,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 ## Extensions
 
 - A key bottleneck is in the computation of the $\mathbf{Q}^i\mathbf{K}^{i\top}$ matrix, which is $O(L^2d)$.
-- This is why larger context lengths are a big deal! (But also note that they allow for [increased vulnerabilities](../21_safety/03_alignment.md))
+  - This is why larger context lengths are a big deal! (But also note that they allow for [increased vulnerabilities](../21_safety/03_alignment.md))
   - Reducing compute: algorithmic extensions [(The Transformer Family Version 2.0)](https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/#combination-of-local-and-global-context)
     - Memory methods to "cache" information
     - Methods to selectively incorporate _some_ global context (sparse attention, etc.)
@@ -147,3 +148,39 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
   - Parallel architectures 
     - [Parallel architectures](https://arxiv.org/pdf/2211.05953) are sometimes used in big models, trading off expressiveness for efficiency
       - ![parallel_architecture.png](parallel_architecture.png)
+- Positional Embeddings
+  - While the original paper used absolute positional embeddings, later models like BERT and GPT-2 used learned positional embeddings. 
+  - Relative position embeddings simplifies this and only encodes relative positions in attention weights. 
+  - [RoPE](https://arxiv.org/pdf/2104.09864) provides a _computationally efficient_ way to encode relative positions in attention weights
+    - We no longer provide positional information to $\mathbf{V}^i$, so we give up absolute positional information. 
+    - Consider $(\mathbf{Q}^i\mathbf{K}^{i\top})_{mn}$, and let us not consider multiple heads for now (removing the $i$ superscript henceforth, and replacing head dimension $d_k$ with a general $d$)
+      - $(\mathbf{Q}\mathbf{K}^{\top})_{mn}$ = $\mathbf{q}_m^\top\mathbf{k}_n = \mathbf{x}_m\mathbf{W}^q\mathbf{W}^{k\top}\mathbf{x}_n^\top$
+      - For RoPE, we replace $\mathbf{q}_m^\top\mathbf{k}_n$ with $\mathbf{q}_m^\top(\mathbf{R}_{\pmb\Theta, m}^d)^\top\mathbf{R}_{\pmb\Theta, n}^d\mathbf{k}_n$, where $\mathbf{R}_{\pmb\Theta, m}^d=\left(\begin{array}{ccccccc}\cos m \theta_1 & -\sin m \theta_1 & 0 & 0 & \cdots & 0 & 0 \\ \sin m \theta_1 & \cos m \theta_1 & 0 & 0 & \cdots & 0 & 0 \\ 0 & 0 & \cos m \theta_2 & -\sin m \theta_2 & \cdots & 0 & 0 \\ 0 & 0 & \sin m \theta_2 & \cos m \theta_2 & \cdots & 0 & 0 \\ \vdots & \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\ 0 & 0 & 0 & 0 & \cdots & \cos m \theta_{d / 2} & -\sin m \theta_{d / 2} \\ 0 & 0 & 0 & 0 & \cdots & \sin m \theta_{d / 2} & \cos m \theta_{d / 2}\end{array}\right)$
+        - We can show that this reduces to $\mathbf{q}_m^\top\mathbf{R}_{\pmb\Theta, n-m}^d\mathbf{k}_n$
+          - Hence, this form encodes relative positions into attention weights. 
+          - Geometrically, this is natural to reason in 2D. 
+            - $\mathbf{R}_{\pmb\Theta, n-m}^d\mathbf{k}_n$ rotates $\mathbf{k}_n$ counter-clockwise by $n\theta_1$. 
+            - The dot product $\mathbf{q}_m^\top\mathbf{k}_n $ is the unnormalized cosine angle of the two vectors, $\theta_0$. 
+            - Hence, the new dot product is another unnormalized cosine angle, where the angle is now $\theta_0 + (n-m)\theta_1$.
+        - Implementation details
+          - $\theta_i=10000^{-\frac{2(i-1)}{d}}, i \in\left[1,2, \ldots, \frac{d}{2}\right]$
+            - Given that we rotate each pair of features by $m\theta_i$, we can view $\theta_is$ as frequencies with wavelength $\frac{2\pi}{\theta_i}$. 
+            - For $i = 1$, we rotate the fastest at 1 radian per token (high frequency), and shortest wavelength $2\pi$ tokens.
+            - For $i = \frac{d}{2}$, we rotate the slowest at approximately $\frac{1}{10000}$ radians per token (low frequency) and longest wavelength $20000\pi$ tokens.
+            - For this reason, 10000 is known as the base wavelength. The higher this is, the longer the wavelengths for a given $i$, allowing the model to attend to longer contexts.
+            - This is worth restating: _There is a connection between the base wavelength and the longest context length we can support without erroneous alignment._ 
+              - This [PR](https://github.com/ggerganov/llama.cpp/pull/2295) also suggests scaling base wavelength somewhat proportionally to context length.
+              - Note that for $i = \frac{d}{2}$, the maximum context length we can support is $2\pi$(base wavelength). However, the constant of proportionality is off. For example, it seems ideal to have a base wavelength of 57200 for a context size of 8192 ([link](https://github.com/ggerganov/llama.cpp/pull/2054)). My guess is that we need many feature $i$s to support the context length. 
+            - In extending the context length from 8k to 131k, we [adjust the frequencies](https://www.reddit.com/r/MachineLearning/comments/1hovvmm/d_rope_frequency_calculation_for_llama/) such that lower frequencies are scaled down even more. 
+            - Extentions 
+              - I find [this article](https://arxiv.org/pdf/2410.06205) very interesting, but haven't fully digested it. 
+              - Also, it feels like we're not using most of our positional information. Is there a more efficient way to do so? Have we explored e.g. linear $\theta_i$s sufficiently?
+          - Re-ordering of features
+            - Notice that $\mathbf{R}_{\pmb\Theta, n}^d$ rotates consecutive pairs of features by the same angle. 
+            - Regardless of how we permute the features prior to rotation (thereby choosing pairs), the transformation is still a function of $n-m$
+            - Hence, for both the query and key vectors, we pair feature $i$ with feature $i + d/2$. (Possibly out of convenience?)
+            - Concretely, we convert $\binom{{k}_n^{(i)}}{{k}_n^{\left(i+\frac{d}{2}\right)}}$ into $\binom{k_n^{(i)} \cos n \theta_i-k_n^{\left(i+\frac{d}{2}\right)} \sin n \theta_i}{k_n^{\left(i+\frac{d}{2}\right)} \cos n \theta_i+k_n^{(i)} \sin n \theta_i}$
+            - As the above form suggests, we can compute the matrix multiplication in a computationally efficient manner due to the sparsity of $\mathbf{R}_{\pmb\Theta, n}^d$. 
+            - Concretely, expressing $\mathbf{K} = \left[ \mathbf{K}_1 ; \mathbf{K}_2\right]$, for $\mathbf{K}_1, \mathbf{K}_2$ with equal columns, we do:
+              - $\left[ \mathbf{K}_1 ; \mathbf{K}_2\right] \odot \left[ \mathbf{C}_{cos}; \mathbf{C}_{cos}\right] + \left[ -\mathbf{K}_2; \mathbf{K}_1\right] \odot \left[ \mathbf{C}_{sin}; \mathbf{C}_{sin}\right]$, for $\left(\mathbf{C}_{g}\right)_{ij} = i\theta_j$
+            - Note that we do the same transformations for $\mathbf{Q}$. 
