@@ -148,6 +148,8 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
   - Parallel architectures 
     - [Parallel architectures](https://arxiv.org/pdf/2211.05953) are sometimes used in big models, trading off expressiveness for efficiency
       - ![parallel_architecture.png](parallel_architecture.png)
+- Grouped Attention 
+  - Reduce the number of key and value heads and have multiple query heads attend to one key head.
 - Positional Embeddings
   - While the original paper used absolute positional embeddings, later models like BERT and GPT-2 used learned positional embeddings. 
   - Relative position embeddings simplifies this and only encodes relative positions in attention weights. 
@@ -170,7 +172,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
             - For this reason, 10000 is known as the base wavelength. The higher this is, the longer the wavelengths for a given $i$, allowing the model to attend to longer contexts.
             - This is worth restating: _There is a connection between the base wavelength and the longest context length we can support without erroneous alignment._ 
               - This [PR](https://github.com/ggerganov/llama.cpp/pull/2295) also suggests scaling base wavelength somewhat proportionally to context length.
-              - Note that for $i = \frac{d}{2}$, the maximum context length we can support is $2\pi$(base wavelength). However, the constant of proportionality is off. For example, it seems ideal to have a base wavelength of 57200 for a context size of 8192 ([link](https://github.com/ggerganov/llama.cpp/pull/2054)). My guess is that we need many feature $i$s to support the context length. 
+              - Note that for $i = \frac{d}{2}$, the maximum context length we can support is $2\pi$(base wavelength). However, the constant of proportionality is off. For example, it seems ideal to have a base wavelength of 57200 for a context size of 8192 ([link](https://github.com/ggerganov/llama.cpp/pull/2054)). My guess is that we not only need the largest $i = \frac{d}{2}$, but multiple $i$s to support the context length. 
             - In extending the context length from 8k to 131k, we [adjust the frequencies](https://www.reddit.com/r/MachineLearning/comments/1hovvmm/d_rope_frequency_calculation_for_llama/) such that lower frequencies are scaled down even more. 
             - Extentions 
               - I find [this article](https://arxiv.org/pdf/2410.06205) very interesting, but haven't fully digested it. 
