@@ -105,3 +105,25 @@
         - $\frac{1}{N}$ ensures that variance added is invariant to number of transformer blocks.
         - $\frac{1}{2}$ is because there are two times we're adding to the residual stream for each block.
           - This means that the intial embedding's contribution to the final embedding is around half. 
+  - GPT-2 to Llama 2
+    - Rounded figures, smaller vocab size, 5x parameters, 4x context length (4k), 3x embed dim (4k), 32 heads, 32 layers, 11k hidden dim.
+    - LayerNorm to RMSNorm ($y_i = \frac{x_i}{\sqrt{\frac{1}{n}\sum_i x_i^2 + \epsilon}}\gamma_i$)
+    - GELU to SwiGLU
+    - [RoPE](../08_attention_transformers/notes.md)
+    - Remove dropout and QKV bias
+    - Uses Google's SentencePiece tokenizer (but Llama 3 goes back to OpenAI's tokenizer)
+  - Llama 2 to Mistral 7B
+    - Sliding Window Attention 
+      - Rolling Buffer Cache for keys and values (only need values for the size of sliding window)
+      - Pre-Fill and Chunking - can parallelize the pre-fill process
+  - Llama 2 to Llama 3
+    - Larger vocab size (128k), 2x context length (8k), larger hidden dim (3k), q to k ratio of 4
+    - Modified [RoPE](../08_attention_transformers/notes.md): New baseline wavelength of 500k (prev 10k)
+    - [Grouped-query attention](../08_attention_transformers/notes.md)
+  - Llama 3 to Llama 3.1
+    - Much larger context length of 131k
+    - Increased context window with modified [RoPE](../08_attention_transformers/notes.md)
+  - Llama 3.1 to Llama 3.2
+    - 7B to 1B parameters
+    - Half embed dim (2k), half layers (16), almost half hidden dim (8k), weight_tying, rope freq rescaling factor of 32. 
+  
