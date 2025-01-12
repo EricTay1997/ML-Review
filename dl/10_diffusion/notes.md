@@ -62,7 +62,7 @@
     - Here, we create two predictions at inference time: One with conditioning and one without. 
     - We then use the two to push even further in the direction indicated by the text-conditioned prediction.
   - Textual conditioning
-    - Suppose we have a text/image embedding model (e.g. CLIP)
+    - Suppose we have a text/image embedding model (e.g. [CLIP](../15_contrastive_learning/notes.md))
       - Guidance
         - Generate images
         - Embed query text and generated images

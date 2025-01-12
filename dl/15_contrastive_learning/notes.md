@@ -13,3 +13,12 @@ $
   - Data Augmentation
     - Crop-and-resize, and color distortion are particularly useful especially when used together. 
     - The former without the latter may allow the model to simply pick up non-subject matter details only relevant to a particular image.
+- Contrastive Language-Image Pre-training (CLIP)
+  - CLIP uses a ViT model for its image encoder and a transformer model similar to GPT-2 for its text encoder
+  - Dataset consists of image-text pairs
+  - Contrastive Learning Objective
+    - Image classifier objective suffers from needing to pre-specify a list of classes
+    - Language model objective suffers possibly because many possible text can accompany an image
+    - The contrastive learning objective maximizes the similarity between paired image-text combinations, and minimizes the similarity between unpaired image-text combinations.
+- Contrastive Language-Audio Pretraining (CLAP)
+  - Similar to CLIP
