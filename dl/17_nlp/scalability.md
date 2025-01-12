@@ -1,0 +1,24 @@
+# Scalability
+
+- The development of NLP models have allowed us to automate many processes, enabling scalability by removing/reducing the need for human input
+- **Evaluating responses** 
+  - We can use LLMs to evaluate LLM-generated responses ([example](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch07/03_model-evaluation/llm-instruction-eval-ollama.ipynb))
+  - Interestingly, [weaker models have shown promise in evaluating stronger models](https://raw.githubusercontent.com/ucl-dark/llm_debate/main/paper.pdf), which has implications on scalable oversight.
+  - **Refining text**
+    - We can take this one step further by using LLMs to refine text ([Reflection Tuning](https://arxiv.org/pdf/2310.11716), [example](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch07/05_dataset-generation/reflection-gpt4.ipynb))
+    - **Fine-tuning on refined text**
+      - We can take this one step further as per [Anthropic's Constitutional AI paper](https://arxiv.org/pdf/2212.08073)
+- Generating data (https://github.com/rasbt/LLMs-from-scratch/blob/main/ch07/05_dataset-generation/llama3-ollama.ipynb)
+  - [Magpie](https://arxiv.org/pdf/2406.08464) ([Reproduction](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch07/05_dataset-generation/llama3-ollama.ipynb))
+    - A typical input to an aligned LLM contains three key components: the pre-query template, the query, and the post-query template.
+    - Thanks to their auto-regressive nature, aligned LLMs can generate a user query when we input only the pre-query templates up to the position reserved for user messages
+    - The generated user query can then be used to generate responses. 
+  - We can then use LLMs to refine both queries and responses.
+  - We can further use LLMs to evaluate query-response pairs and filter data appropriately 
+- RLHF
+  - One bottleneck in RLHF is the need for human feedback.
+  - It is possible to carry out this process with AI feedback instead ([Constitutional AI]((https://arxiv.org/pdf/2212.08073))). 
+- Agents
+  - The ability of agents to plan their actions before execution also enables high levels of automation. 
+  - We can also have multiple agents work together. 
+  - See more in [Agent notes](../24_applications/agents.md). 

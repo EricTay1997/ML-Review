@@ -1,19 +1,22 @@
 # Alignment
 
 - [Constitutional AI: Harmlessness from AI Feedback (2022)](https://arxiv.org/pdf/2212.08073)
-  - Authors experiment with methods for training a harmless AI assistant through self-improvement, without any human labels identifying harmful outputs (Scalable Oversight). 
-  - The only human oversight is provided through a list of rules or principles, i.e. a Constitution. 
+  - Authors experiment with methods for training a harmless AI assistant through self-improvement, without any human labels identifying harmful outputs (Scalable Oversight).
   - The process involves two phases:
     - Supervised Learning
       - Generate responses to harmful prompts with an initial, helpful-only model.
       - Ask the model to critique its response according to a constitution, and revise its response accordingly. 
       - Repeat this multiple times. 
       - Finetune based on final revised responses.
+      - The output is an SL-CAI model. 
     - RL from AI feedback
       - Similar to RLHF, but uses AI feedback instead. 
-      - Use finetuned AI to generate a pair of responses, then use AI to pick one based on Constitution. 
+      - Use SL-CAI model to generate a pair of responses, then use AI to pick one based on Constitution. 
       - Train a preference model from the dataset of AI preferences. 
-      - Train with RL using the preference model as the reward signal. 
+      - Train SL-CAI model with RL using the preference model as the reward signal. 
+  - The only human oversight is provided through a list of rules or principles, i.e. a Constitution. 
+    - The second phase is very similar to RLHF, except that we use AI feedback versus human feedback
+    - The first phase is necessary to alter the distribution of the model’s responses, reducing the need for exploration and the total length of training during the second RL phase
   - Interestingly, RL-CAI is virtually never evasive, and often gives nuanced and harmless responses to most red team prompts, in contrast to previous models trained on human feedback. 
 - [Studying Large Language Model Generalization with Influence Functions (2023)](https://www.anthropic.com/news/studying-large-language-model-generalization-with-influence-functions)
   - Training Data Attribution (TDA): How does a model's parameters/output change if a given sequence was added to the training set?
@@ -32,7 +35,8 @@
   - The backdoor behavior is most persistent in the largest models and in models trained to produce chain-of-thought reasoning about deceiving the training process, with the persistence remaining even when the chain-of-thought is distilled away.
   - Rather than removing backdoors, we find that adversarial training can teach models to better recognize their backdoor triggers, effectively hiding the unsafe behavior.
 - [Debating with More Persuasive LLMs Leads to More Truthful Answers (2024)](https://raw.githubusercontent.com/ucl-dark/llm_debate/main/paper.pdf)
-  - In a world where AI exceeds human expertise, and for scalable oversight reasons, we want to know if weaker models can assess the correctness of stronger models.
+  - In a world where AI exceeds human expertise, we need scalable oversight - alginment methods that scale with model capability.
+  - A pertinent question is then whether weaker models can assess the correctness of stronger models.
   - This work shows that:
     - Weak judges can supervise strong debaters.
     - Optimising debaters for persuasiveness improves a judge’s ability to identify truth in debates.
