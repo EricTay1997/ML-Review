@@ -42,6 +42,7 @@ associated with the different tasks, some are shared across two or more tasks.
     - Debias each layer by normalizing by the fraction of nodes that were retained
   - Evaluation
     - Do not do the zeroing
+- Gradient clipping
 
 ## First-Order Methods
 

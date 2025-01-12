@@ -21,6 +21,7 @@
       - Allows for variable subwords
       - Fixed vocabulary size
     - Avoids out-of-vocabulary words
+- Additional details on [Hugging Face](https://huggingface.co/learn/nlp-course/en/chapter6/1)
 - In the rest of this document, we use "word" to mean "token"
 
 ## Context Independent Embeddings
@@ -116,6 +117,9 @@
     - Sliding Window Attention 
       - Rolling Buffer Cache for keys and values (only need values for the size of sliding window)
       - Pre-Fill and Chunking - can parallelize the pre-fill process
+    - [Grouped-query attention](../08_attention_transformers/notes.md)
+  - Mistral 7B to Mistral 8x7B
+    - [Mixture of Experts](https://huggingface.co/blog/moe#what-is-a-mixture-of-experts-moe) layer
   - Llama 2 to Llama 3
     - Larger vocab size (128k), 2x context length (8k), larger hidden dim (3k), q to k ratio of 4
     - Modified [RoPE](../08_attention_transformers/notes.md): New baseline wavelength of 500k (prev 10k)

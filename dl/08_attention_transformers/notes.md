@@ -166,15 +166,18 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
             - Hence, the new dot product is another unnormalized cosine angle, where the angle is now $\theta_0 + (n-m)\theta_1$.
         - Implementation details
           - $\theta_i=10000^{-\frac{2(i-1)}{d}}, i \in\left[1,2, \ldots, \frac{d}{2}\right]$
-            - Given that we rotate each pair of features by $m\theta_i$, we can view $\theta_is$ as frequencies with wavelength $\frac{2\pi}{\theta_i}$. 
-            - For $i = 1$, we rotate the fastest at 1 radian per token (high frequency), and shortest wavelength $2\pi$ tokens.
-            - For $i = \frac{d}{2}$, we rotate the slowest at approximately $\frac{1}{10000}$ radians per token (low frequency) and longest wavelength $20000\pi$ tokens.
-            - For this reason, 10000 is known as the base wavelength. The higher this is, the longer the wavelengths for a given $i$, allowing the model to attend to longer contexts.
-            - This is worth restating: _There is a connection between the base wavelength and the longest context length we can support without erroneous alignment._ 
-              - This [PR](https://github.com/ggerganov/llama.cpp/pull/2295) also suggests scaling base wavelength somewhat proportionally to context length.
-              - Note that for $i = \frac{d}{2}$, the maximum context length we can support is $2\pi$(base wavelength). However, the constant of proportionality is off. For example, it seems ideal to have a base wavelength of 57200 for a context size of 8192 ([link](https://github.com/ggerganov/llama.cpp/pull/2054)). My guess is that we not only need the largest $i = \frac{d}{2}$, but multiple $i$s to support the context length. 
-            - In extending the context length from 8k to 131k, we [adjust the frequencies](https://www.reddit.com/r/MachineLearning/comments/1hovvmm/d_rope_frequency_calculation_for_llama/) such that lower frequencies are scaled down even more. 
-            - Extentions 
+            - Wavelength
+              - Given that we rotate each pair of features by $m\theta_i$, we can view $\theta_is$ as frequencies with wavelength $\frac{2\pi}{\theta_i}$. 
+              - For $i = 1$, we rotate the fastest at 1 radian per token (high frequency), and shortest wavelength $2\pi$ tokens.
+              - For $i = \frac{d}{2}$, we rotate the slowest at approximately $\frac{1}{10000}$ radians per token (low frequency) and longest wavelength $20000\pi$ tokens.
+              - For this reason, 10000 is known as the base wavelength. The higher this is, the longer the wavelengths for a given $i$, allowing the model to attend to longer contexts.
+              - This is worth restating: _There is a connection between the base wavelength and the longest context length we can support without erroneous alignment._ 
+                - This [PR](https://github.com/ggerganov/llama.cpp/pull/2295) also suggests scaling base wavelength somewhat proportionally to context length.
+                - Note that for $i = \frac{d}{2}$, the maximum context length we can support is $2\pi$(base wavelength). However, the constant of proportionality is off. For example, it seems ideal to have a base wavelength of 57200 for a context size of 8192 ([link](https://github.com/ggerganov/llama.cpp/pull/2054)). My guess is that we not only need the largest $i = \frac{d}{2}$, but multiple $i$s to support the context length. 
+              - In extending the context length from 8k to 131k, we [adjust the frequencies](https://www.reddit.com/r/MachineLearning/comments/1hovvmm/d_rope_frequency_calculation_for_llama/) such that lower frequencies are scaled down even more. 
+            - Decay
+              - Attention weights are expected to decay when relative positions are larger.
+            - Extensions 
               - I find [this article](https://arxiv.org/pdf/2410.06205) very interesting, but haven't fully digested it. 
               - Also, it feels like we're not using most of our positional information. Is there a more efficient way to do so? Have we explored e.g. linear $\theta_i$s sufficiently?
           - Re-ordering of features

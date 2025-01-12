@@ -104,6 +104,7 @@ As models and data scale in size, optimizing for more efficient processes become
   - After obtaining the gradients for each batch, we aggregate the gradients over the devices and update our model. 
     - This is synchronous SGD, but this may be slowed down due to communication overhead.
     - Asynchronous SGD can be used, although there may be gradient staleness. However, when weight matrices are large, most updates are sparse and gradient staleness may be ok.
+    - `DP` has all communication go through a master process, which is slower than `DDP`, which uses Ring-AllReduce. 
 - Parameter Sharding (Fully-sharded data parallelism)
   - Storing _all_ of a model's data (optimizer state, gradients, parameters) can be costly in terms of memory
   - Each device can instead store a portion of parameters

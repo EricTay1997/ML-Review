@@ -19,7 +19,7 @@ This repository will include:
     * Gaussian Mixtures and EM
     * Gaussian Process
     * Causal Inference
-  * DL (Note that the delineation is not super clear here and this separation is purely made for organizational purposes)
+  * DL (Note that some topics may bleed into each category)
     * Basics
     * Activation Functions
     * Initialization
@@ -37,35 +37,32 @@ This repository will include:
     * Self-Supervised Contrastive Learning
     * Computer Vision
     * Natural Language Processing
-      * Text Processing
-      * Pre-training
-      * Fine-tuning
     * Reinforcement Learning
     * Hyperparameter Optimization
     * Computational Performance
     * AI Safety
-    * Applied Apps
+    * Flask App
     * Misc
-* Code implementation for various algorithms, which will mostly come from online resources/tutorials. 
+* Code implementations for various algorithms, which will mostly come from online resources/tutorials. 
   * The first priority would be to get implementations that work.
   * If time permits, a stretch goal would be to refactor the code with a greater emphasis on OOP, e.g. [John's repo](https://github.com/johnma2006/candle/tree/main)
-  * I want to emphasize that the goal of these implementations would be to ensure that I have a thorough understanding of topics, rather than being the most involved projects. Notebooks may be more sparse if I believe my understanding to be sufficient. To that effect, notebooks for the classical ML topics will largely be calling scikit-learn libraries (from-scratch implementations of algorithms like SVMs, AdaBoost and K-means can be found in my other repos). 
+  * Code currently includes:
+    * From scratch implementations, including BERT, GPT-2, Llama 2-3.2, DDPM, Real-NVP.
+    * Post-training experiments, including (LoRA) fine-tuning and (classifier-free) guidance. 
+    * Data and model parallelism, with and without JAX (+FLAX).
 * Interview Preparation
 
-I shall try to be diligent in citing my sources. Due to visa-related time constraints, I do apologize for any lapses in citation. At the current moment (1/8/25), I have pulled most heavily from the following sources:
+I shall try to be diligent in citing my sources. Due to visa-related time constraints, I do apologize for any lapses in citation. At the current moment (1/10/25), I have pulled most heavily from the following sources:
 * [UvA Deep Learning Tutorials by Lippe](https://uvadlc-notebooks.readthedocs.io/en/latest/)
 * Notes / Code from classes I took at Duke.
 * [Hands-On Machine Learning by Aurélien Géron](https://www.amazon.com/Hands-Machine-Learning-Scikit-Learn-TensorFlow/dp/1098125975)
 * [Dive into Deep Learning by Zhang, Lipton, Li and Smola](http://d2l.ai)
 * [Build a Large Language Model (From Scratch) by Raschka](https://github.com/rasbt/LLMs-from-scratch)
-* Hugging Face Courses ([NLP](https://huggingface.co/learn/nlp-course/en/chapter1/1), [Diffusion](https://huggingface.co/learn/diffusion-course/unit0/1))
+* [Hugging Face's Diffusion Course](https://huggingface.co/learn/diffusion-course/unit0/1)
 * [Deep Learning by Goodfellow, Bengio and Courville](https://www.deeplearningbook.org)
-* [Implementations of Various LLMs by Ma](https://github.com/johnma2006/candle)
 * [Designing Machine Learning Systems by Huyen](https://www.amazon.com/Designing-Machine-Learning-Systems-Production-Ready/dp/1098107969)
 * [Machine Learning System Design Interview by Aminian and Xu](https://bytebytego.com/intro/machine-learning-system-design-interview)
 * [Machine Learning System Design Interview by Pham](https://www.amazon.com/Machine-Learning-Design-Interview-System/dp/B09YQWX59Z)
 * [System Design Interview by Xu](https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF)
 * [Anthropic's Research](https://www.anthropic.com/research)
-* [Distill](https://distill.pub)
 * [Lilian Weng's Blog](https://lilianweng.github.io)
-* [Christopher Olah's Blog](https://colah.github.io/about.html)

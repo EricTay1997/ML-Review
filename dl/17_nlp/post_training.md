@@ -16,18 +16,17 @@
       - The goal is to predict the start and end of the text span.
 - Encoder-Decoder
   - T5
-    - "Task description" tokens can be added to input
-    - Can already generate sequences with arbitrary length
-    - No additional layers are needed.
+    - Prompt-Tuning (see [Post-Training](../20_post_training/notes.md)).
 - Decoder Only
   - InstructGPT/ChatGPT used RLHF to generate "human-like" responses
 
+## PEFT
+- See [Post-Training](../20_post_training/notes.md).
+
 ## Reinforcement Learning with Human Feedback (RLHF)
 
-- See more in [Post-Training](../20_post_training/notes.md).
+- See [Post-Training](../20_post_training/notes.md).
 - Anthropic has a [paper](../21_safety/03_alignment.md) where they do this with an AI.
-
-## LoRA
 
 ## RAG
     
