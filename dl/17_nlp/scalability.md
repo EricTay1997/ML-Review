@@ -8,17 +8,22 @@
     - We can take this one step further by using LLMs to refine text ([Reflection Tuning](https://arxiv.org/pdf/2310.11716), [example](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch07/05_dataset-generation/reflection-gpt4.ipynb))
     - **Fine-tuning on refined text**
       - We can take this one step further as per [Anthropic's Constitutional AI paper](https://arxiv.org/pdf/2212.08073)
-- Generating data (https://github.com/rasbt/LLMs-from-scratch/blob/main/ch07/05_dataset-generation/llama3-ollama.ipynb)
+- Generating training data to fine-tune LLMs to follow instructions
   - [Magpie](https://arxiv.org/pdf/2406.08464) ([Reproduction](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch07/05_dataset-generation/llama3-ollama.ipynb))
     - A typical input to an aligned LLM contains three key components: the pre-query template, the query, and the post-query template.
     - Thanks to their auto-regressive nature, aligned LLMs can generate a user query when we input only the pre-query templates up to the position reserved for user messages
     - The generated user query can then be used to generate responses. 
   - We can then use LLMs to refine both queries and responses.
   - We can further use LLMs to evaluate query-response pairs and filter data appropriately 
+- Generating preference data
+  - Generate multiple responses and have
+    - Humans rank 
+    - LLMs rank ([Constitutional AI]((https://arxiv.org/pdf/2212.08073)))
+  - Generate responses sequentially (make response2 more/less polite than response 1) ([example](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch07/04_preference-tuning-with-dpo/create-preference-data-ollama.ipynb))
 - RLHF
   - One bottleneck in RLHF is the need for human feedback.
   - It is possible to carry out this process with AI feedback instead ([Constitutional AI]((https://arxiv.org/pdf/2212.08073))). 
 - Agents
   - The ability of agents to plan their actions before execution also enables high levels of automation. 
   - We can also have multiple agents work together. 
-  - See more in [Agent notes](../24_applications/agents.md). 
+  - See more in [Agent notes](agents.md). 

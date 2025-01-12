@@ -178,7 +178,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
             - Decay
               - Attention weights are expected to decay when relative positions are larger.
             - Extensions 
-              - I find [this article](https://arxiv.org/pdf/2410.06205) very interesting, but haven't fully digested it. 
+              - I find [this paper](https://arxiv.org/pdf/2410.06205) very interesting, but haven't fully digested it. 
               - Also, it feels like we're not using most of our positional information. Is there a more efficient way to do so? Have we explored e.g. linear $\theta_i$s sufficiently?
           - Re-ordering of features
             - Notice that $\mathbf{R}_{\pmb\Theta, n}^d$ rotates consecutive pairs of features by the same angle. 

@@ -6,6 +6,11 @@
     - Words
     - Characters
   - In embedding, we form a vectorized representation of these tokens.
+- Normalization and pre-tokenization
+  - The normalization step involves some general cleanup, such as removing needless whitespace, lowercasing, and/or removing accents
+  - Pre-tokenization splits text into small entities, like words. 
+    - I feel that this tokenization by definition, but we probably call it pre-tokenization because we usually further use subword tokenization.
+  - SentencePiece is a tokenization algorithm that considers the text as a sequence of Unicode characters, and replaces spaces with a special character, ▁.
 - Stemming 
   - Stemming is converting words to their stem word.
   - However, these "stems" may not be actual words
@@ -21,6 +26,14 @@
       - Allows for variable subwords
       - Fixed vocabulary size
     - Avoids out-of-vocabulary words
+  - WordPiece
+    - Similar to BPE, but on top of considering the frequency of a pair, it normalizes it by the frequency of individual tokens
+  - Unigram
+    - Reverses the process and instead goes from a large vocabulary to small
+    - At each step, you discard the token whereby doing so increases the loss the least. 
+      - The likelihood is the summed log probability of generating each word
+        - The probability of generating a word is the highest probability calculated across all its subword tokens
+          - Probability of a token is given by its proportion in the training set
 - Additional details on [Hugging Face](https://huggingface.co/learn/nlp-course/en/chapter6/1)
 - In the rest of this document, we use "word" to mean "token"
 

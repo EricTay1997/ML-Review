@@ -48,7 +48,7 @@ This repository will include:
   * If time permits, a stretch goal would be to refactor the code with a greater emphasis on OOP, e.g. [John's repo](https://github.com/johnma2006/candle/tree/main)
   * Code currently includes:
     * From scratch implementations, including BERT, GPT-2, Llama 2-3.2, DDPM, Real-NVP.
-    * Post-training experiments, including (LoRA) fine-tuning and (classifier-free) guidance. 
+    * Post-training experiments, including (LoRA) fine-tuning and DPO. 
     * Data and model parallelism, with and without JAX (+FLAX).
 * Interview Preparation
 
