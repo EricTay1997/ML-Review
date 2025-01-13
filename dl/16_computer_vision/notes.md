@@ -35,39 +35,56 @@
 
 ## Object Detection
 
-- Rectangular boxes
+- Bounding boxes vs image segmentation
+  - Segmentation
+    - Given per-pixel labelled data, 
+      -  Segmentation labels regions on a pixel level.
+    - Fully convolutional networks are useful here
+      - ![fully_convolutional.png](fully_convolutional.png)[Source](http://d2l.ai/chapter_computer-vision/fcn.html)
+      - One channel per class
+  - Bounding boxes
+    - Given images with "correct" bounding boxes, 
+      - The goal of the detector is to propose bounding boxes that "looks similar" to the "correct" bounding boxes
+        - Looks similar: The loss has two parts
+          - We want the bounding boxes to be at the same place (localization error), e.g. l1 loss for the offset
+          - We want to correctly predict the class of the object it encapsulates
+        - Implicit in this is that we need to map the proposed bounding box to the ground truth bounding box
+          - To do so, we [use the IOU metric](http://d2l.ai/chapter_computer-vision/anchor.html)
+    - At inference, we use Non-Maximum Suppression to reduce the number of proposed bounding boxes
+      - Iteratively keep the box with the highest predicted class probability 
+      - Remove any box that predicts the same class, that overlaps heavily (IOU) with the selected box
+- Two-Stage Detectors
+  - Stage 1: Proposes a set of regions 
+  - Stage 2: Classifier processes the region candidates
+    - For each region candidate, we make a prediction of the class of the encapsulated object and the offset to best encapsulate this object.
+  - [R-CNN and friends](https://lilianweng.github.io/posts/2017-12-31-object-recognition-part-3/)
+      - ![rcnn.png](rcnn.png)[Source](https://lilianweng.github.io/posts/2017-12-31-object-recognition-part-3/)
+      - Start with a pre-trained CNN network on image classification tasks, e.g. VGG or ResNet. 
+      - R-CNN
+        - Propose region proposals with selective search, which works by oversegmenting an image and iteratively grouping adjacent segments based on similarity 
+        - Warp region proposals to fit CNN input
+        - Fine-Tune CNN to generate a feature vector for each region proposal
+        - Feature vector is consumed by: 
+          - Binary SVMs trained for each class independently
+          - A regression model to reduce localization errors
+      - Fast R-CNN
+        - CNN forward propagation performed on the entire image, rather than each proposed region.
+          - Replaces the last max pooling layer of the pre-trained CNN with a RoI pooling layer, which outputs fixed-length feature vectors regardless of proposed region size. 
+        - Uses a softmax estimator for classes instead of individual SVMs
+      - Faster R-CNN
+        - Uses a region proposal network rather than selective search. 
+          - The region proposal network considers multiple regions of various scales and ratios for each $n \times n$ window that is sliding across the image.
+            - Positive samples have IoU > 0.7 and negative samples have IoU < 0.3 
+      - Mask R-CNN 
+        - Introduces an additional fully convolutional network to leverage pixel-level labels to further improve the accuracy of object detection.
+- Two-Stage Detector
   - Single Shot Multibox Detection (one stage)
-    - Reuse a base network, and use multiscale feature maps to draw anchor boxes of different resolutions. 
-    - For each of these anchor boxes, we make a prediction of the class of the encapsulated object and the offset to best encapsulate this object. 
-    - To obtain the target class and offset, we [use the IOU metric](http://d2l.ai/chapter_computer-vision/anchor.html)
-    - The loss we minimize has two parts
-      - The predicted class
-      - The l1 localization loss for the offset
-    - Inference
-      - We run the model to get candidate anchor boxes with associated predictions.
-      - We use Non-Maximum Suppression to reduce the number of anchor boxes
-        - Iteratively keep the box with the highest predicted probability
-        - Remove any box that predicts the same class, that overlaps heavily (IOU) with the selected box
+    - Reuse a base network, and use multiscale feature maps to draw anchor boxes of different resolutions.
   - YOLO (one stage)
     - Splits image into $S \times S$ cells. 
     - For each cell, we predict $B$ bounding boxes of the same class and its confidence for each of the $C$ classes.
     - The output of YOLO is a tensor of $S \times S \times (B\times 5+C)$.
     - This can be followed by NMS to remove duplicate detections.
-  - R-CNN and friends (two stage)
-    - R-CNN
-      - Extracts many region proposals from the input image, uses a CNN to perform forward propagation on each region proposal to extract its features, then uses these features to predict the class and bounding box of this region proposal.
-    - Fast R-CNN
-      - CNN forward propagation is only performed on the entire image. 
-      - Introduces the region of interest pooling layer, so that features of the same shape can be further extracted for regions of interest that have different shapes.
-    - Faster R-CNN
-      - Replaces the selective search used in the fast R-CNN with a jointly trained region proposal network, requiring fewer region proposals
-    - Mask R-CNN 
-      - Introduces an additional fully convolutional network to leverage pixel-level labels to further improve the accuracy of object detection.
-- Semantic segmentation
-  - Labels semantic regions on a pixel level.
-  - Fully convolutional networks are useful here
-    - ![fully_convolutional.png](fully_convolutional.png)[Source](http://d2l.ai/chapter_computer-vision/fcn.html)
-    - One channel per class
 
 ## Neural Style Transfer
 
