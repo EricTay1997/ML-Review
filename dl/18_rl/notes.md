@@ -29,7 +29,6 @@
   - Duality of objective:
     - Value-based: We can approximate $V^*$ or $Q^*$: This defines a greedy policy $\pi^*$ where at each stage $s$ we take action $a$ that maximizes $Q^*(s,a)$
     - Policy-based: We can directly approximate $\pi^*$ without learning $V^*$ or $Q^*$.
-    - Policy-based methods:
       - Pros
         - Can learn a stochastic policy
         - More effective in high-dimensional/continuous action spaces
@@ -38,6 +37,8 @@
         - Converges to a local maxima
         - Takes longer to train
         - Has higher variance
+      - Proximal Policy Optimization
+        - The idea is to constrain policy updates so that $\pi^{t+1}(a\mid s)$ does not deviate too much from $\pi^{t}(a\mid s)$.
     - Moving on, we focus on value-based methods. 
   - Two ways of training:
     - Monte Carlo

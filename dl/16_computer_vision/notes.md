@@ -73,18 +73,42 @@
         - Uses a softmax estimator for classes instead of individual SVMs
       - Faster R-CNN
         - Uses a region proposal network rather than selective search. 
-          - The region proposal network considers multiple regions of various scales and ratios for each $n \times n$ window that is sliding across the image.
+          - The region proposal network considers multiple anchor boxes of various scales and ratios for each $n \times n$ window that is sliding across the image.
             - Positive samples have IoU > 0.7 and negative samples have IoU < 0.3 
       - Mask R-CNN 
         - Introduces an additional fully convolutional network to leverage pixel-level labels to further improve the accuracy of object detection.
-- Two-Stage Detector
-  - Single Shot Multibox Detection (one stage)
-    - Reuse a base network, and use multiscale feature maps to draw anchor boxes of different resolutions.
-  - YOLO (one stage)
+- One-Stage Detector
+  - Faster and simpler, but might potentially drag down performance
+  - YOLO 
     - Splits image into $S \times S$ cells. 
+    - If an object’s center falls into a cell, that cell is “responsible” for detecting the existence of that object.
     - For each cell, we predict $B$ bounding boxes of the same class and its confidence for each of the $C$ classes.
     - The output of YOLO is a tensor of $S \times S \times (B\times 5+C)$.
-    - This can be followed by NMS to remove duplicate detections.
+  - Single Shot Multibox Detection (SSD)
+    - Uses predefined anchor boxes for every location of the feature map. 
+    - Feature maps at different levels have different receptive field sizes. Intuitively, large fine-grained feature maps at earlier levels are good at capturing small objects and small coarse-grained feature maps can detect large objects well.
+  - YOLOv2
+    - Builds on YOLO
+      - Adds BatchNorm
+      - Fine-tuning the base model with high resolution images improves the detection performance
+      - YOLOv2 uses convolutional (instead of fc) layers to predict the location of anchor boxes 
+      - YOLOv2 runs k-mean clustering on the training data to find good priors on anchor box dimensions
+      - YOLOv2 formulates the bounding box prediction in a way that it would not diverge from the center location too much
+      - Adds residual connections
+      - Multi-scale training: a new size of input dimension is randomly sampled every 10 batches
+      - A lighter weight base model is used
+  - RetinaNet
+    - Focal loss is designed to assign more weights on hard, easily misclassified examples, and to down-weight easy examples. 
+      - Let $p_t = p$ if $y=1$ and $1-p$ otherwise. ($CE(p_t)=-\log p_t$)
+      - $FL(p_t)=-(1-p_t)^\gamma\log p_t$
+    - Uses a featurized image pyramid: similar intuition as SSD where we get different receptive field sizes.
+  - YOLOv3
+    - Changes
+      - Logistic regression for confidence scores
+      - Multiple independent logistic classifier for each class rather than one softmax layer
+      - Darknet + ResNet as the base model:
+      - Multi-scale prediction: Adds several convolutional layers and makes prediction at three different scales among these conv layers (image pyramid-like)
+      - Skip-layer concatenations
 
 ## Neural Style Transfer
 
