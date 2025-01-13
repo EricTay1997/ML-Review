@@ -60,7 +60,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
   - What attention head $i$ does to the $a^{th}$ row of $\mathbf{X}$, is to _add_ additional context to its embedding, given by $\sum_b (A_{ab}\mathbf{v}_b^{i\top}\mathbf{W}^{o,i})$
   - Here, we see that every input token can now absorb context from any other input token in the same sequence (limited by $L$). This addresses a major weakness in [RNNs](../07_rnns/notes.md), which faced the context vector bottleneck issue.
   - Why do we need matrices to convert $\mathbf{X}$ into these $\mathbf{q}_j^i, \mathbf{k}_j^i$ and $\mathbf{v}_j^i$ vectors?
-    - This allows us to more flexibly query and match queries. One such example is to find the following word for the last time we encountered the current word. (See [Q and K Composition](../21_safety/02_interpretability.md))
+    - This allows us to more flexibly query and match queries. One such example is to find the following word for the last time we encountered the current word. (See [Q and K Composition](../23_safety/02_interpretability.md))
   - Why do we model $\mathbf{v}_b^i$ and $\mathbf{W}^{o,i}$ separately?
     - My intuition is that it's computational. 
 - Softmax and Temperature
@@ -135,21 +135,25 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 ## Extensions
 
 - A key bottleneck is in the computation of the $\mathbf{Q}^i\mathbf{K}^{i\top}$ matrix, which is $O(L^2d)$.
-  - This is why larger context lengths are a big deal! (But also note that they allow for [increased vulnerabilities](../21_safety/03_alignment.md))
+  - This is why larger context lengths are a big deal! (But also note that they allow for [increased vulnerabilities](../23_safety/03_alignment.md))
   - Reducing compute: algorithmic extensions [(The Transformer Family Version 2.0)](https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/#combination-of-local-and-global-context)
     - Memory methods to "cache" information
     - Methods to selectively incorporate _some_ global context (sparse attention, etc.)
     - Attention free transformers
       - $Y=f(X) ; Y_t=\sigma_q\left(Q_t\right) \odot \frac{\sum_{t^{\prime}=1}^T \exp \left(K_{t^{\prime}}+w_{t, t^{\prime}}\right) \odot V_{t^{\prime}}}{\sum_{t^{\prime}=1}^T \exp \left(K_{t^{\prime}}+w_{t, t^{\prime}}\right)}$
         - I personally wonder how similar this is to normal transformers. To me, the hadamard product would distort values significantly. 
+  - KV Cache in Inference
+    - For decoder-only models, the causal attention mask means that recomputing the attention matrix for each token is wasteful. 
+    - Since we only need to compute attention for the newest token, all we need is a cache of the previous keys and values, along with the recomputation of the newest key and value.  
   - Reducing bandwidth
     - Flash attention performs kernel fusion by using recursion to compute softmax denominator ([explanation](https://gordicaleksa.medium.com/eli5-flash-attention-5c44017022ad))
-    - This is implemented with PyTorch's default attention modules.
+      - This is implemented with PyTorch's default attention modules.
+    - Grouped Attention 
+      - Using the KV cache worsens bandwidth/computation ratio and one way to restore this is to reduce the number of KV heads.
+      - Reduce the number of key and value heads and have multiple query heads attend to one key head.
   - Parallel architectures 
     - [Parallel architectures](https://arxiv.org/pdf/2211.05953) are sometimes used in big models, trading off expressiveness for efficiency
       - ![parallel_architecture.png](parallel_architecture.png)
-- Grouped Attention 
-  - Reduce the number of key and value heads and have multiple query heads attend to one key head.
 - Positional Embeddings
   - While the original paper used absolute positional embeddings, later models like BERT and GPT-2 used learned positional embeddings. 
   - Relative position embeddings simplifies this and only encodes relative positions in attention weights. 

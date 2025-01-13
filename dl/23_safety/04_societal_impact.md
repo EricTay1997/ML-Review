@@ -1,0 +1,36 @@
+# Societal Impact
+
+- [Predictability and Surprise in Large Generative Models (2022)](https://dl.acm.org/doi/abs/10.1145/3531146.3533229)
+  - Although the paper was published in early 2022, pre-dating Chat-GPT, I found that the commentary here is surprisingly apt to today's AI landscape. 
+  - Empirical observations
+    - Large Language Models Are Rapidly Proliferating
+    - Rising Gap Between Industry and Academia
+    - Harm and Controversy
+  - Calls to Action
+    - Reduce compute asymmetries between the private sector and academia
+    - Improve knowledge about how to ‘red team’ models.
+    - Explore and prototype novel governance structures and government interventions.
+    - Improve the tools available for model evaluation.
+    - Improve our understanding of abrupt jumps in capabilities.
+- [Red Teaming Language Models to Reduce Harms: Methods, Scaling Behaviors, and Lessons Learned (2022)](https://www.anthropic.com/news/red-teaming-language-models-to-reduce-harms-methods-scaling-behaviors-and-lessons-learned)
+  - RLHF models are increasingly difficult to red team as they scale, and there is a flat trend with scale for the other model types.
+  - We find that the models that use red team data are, in general, less susceptible to attack and produce less harmful outputs, especially when compared to models that do not incorporate red team data.
+- [Collective Constitutional AI: Aligning a Language Model with Public Input (2023)](https://www.anthropic.com/news/collective-constitutional-ai-aligning-a-language-model-with-public-input)
+  - Anthropic created a publicly sourced constitution and compared it qualitatively with their own constitution. 
+  - They also compared models train on either constitution, which seemed to indicate similar model behavior.
+- [Evaluating and Mitigating Discrimination in Language Model Decisions (2023)](https://www.anthropic.com/news/evaluating-and-mitigating-discrimination-in-language-model-decisions)
+  - Presents a method for proactively evaluating the potential discriminatory impact of LMs in a wide range of use cases, including hypothetical use cases where they have not yet been deployed.
+    - Generating language model prompts and decisions
+      - Generate decision topics, e.g. insurance
+      - Generate template yes/no question, e.g. approve claim?
+      - Fill template with randomly combinations of age, race and gender
+      - Generate decisions
+    - Fit a mixed effects model, where coefficients are the discrimination score. 
+  - Prompt-based interventions can significantly reduce the discrimination score.
+- [Measuring the Persuasiveness of Language Models (2024)](https://www.anthropic.com/news/measuring-model-persuasiveness)
+  - Methodology for measuring persuasiveness:
+    - A person is presented with a claim and asked how much they agree with it, 
+    - They are then shown an accompanying argument attempting to persuade them to agree with the claim, 
+    - They are then asked to re-rate their level of agreement after being exposed to the persuasive argument.
+  - The authors find a clear scaling trend across model generations: each successive model generation is rated to be more persuasive than the previous. 
+  - They also find that Claude 3 Opus produces arguments that don't statistically differ in their persuasiveness compared to arguments written by humans.

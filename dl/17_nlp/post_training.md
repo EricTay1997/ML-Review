@@ -21,19 +21,19 @@
 - Following instructions
   - Predicting the next word is insufficient to for more specialized use cases, e.g. answering (certain) prompts
   - Guidance
-    - Prompt-tuning (see [Post-Training](../20_post_training/notes.md))
+    - Prompt-tuning (see [Post-Training](../22_post_training/notes.md))
     - Retrieval Augmented Generation (RAG) provides relevant context in the input
       - Relevant context is drawn from a larger database of text
       - Database text is first embedded. At inference time, the query is embedded and similarity search is used to find relevant text pieces
   - Fine-Tuning
     - Parameter Efficient Fine Tuning
-      - See [Post-Training](../20_post_training/notes.md).
+      - See [Post-Training](../22_post_training/notes.md).
     - Reinforcement Learning with Human Feedback (RLHF)
-      - See [Post-Training](../20_post_training/notes.md)
+      - See [Post-Training](../22_post_training/notes.md)
       - InstructGPT/ChatGPT used RLHF to generate "human-like" responses
-      - Anthropic has a [paper](../21_safety/03_alignment.md) where they do this with an AI
+      - Anthropic has a [paper](../23_safety/03_alignment.md) where they do this with an AI
     - Direct Preference Optimization (DPO)
-      - See [Post-Training](../20_post_training/notes.md)
+      - See [Post-Training](../22_post_training/notes.md)
     - Retrieval Augmented Generation
     - [Agents](./agents.md)
     

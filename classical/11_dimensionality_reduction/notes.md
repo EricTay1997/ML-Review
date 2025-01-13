@@ -1,8 +1,8 @@
 # Dimensionality Reduction
 
 - Motivation
-  - Recall the [Curse of Dimensionality](../../dl/25_misc/notes.md) - as $p$ increases, training samples are far apart and this makes it hard to train a model that will give good predictions on new training points (which are also likely to be far away from our training points).
-  - Combining this with the [Manifold Hypothesis](../../dl/25_misc/notes.md), that our data naturally llives in a lower dimensional space, we have a motivation to project our high-dimensional data into a lower-dimensional space.
+  - Recall the [Curse of Dimensionality](../../dl/27_misc/notes.md) - as $p$ increases, training samples are far apart and this makes it hard to train a model that will give good predictions on new training points (which are also likely to be far away from our training points).
+  - Combining this with the [Manifold Hypothesis](../../dl/27_misc/notes.md), that our data naturally llives in a lower dimensional space, we have a motivation to project our high-dimensional data into a lower-dimensional space.
   - Pros:
     - Speed up or aid performance of subsequent training algorithm
     - Visualize data and gain insights on most important features
