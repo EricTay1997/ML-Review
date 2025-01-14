@@ -1,4 +1,4 @@
-# Audio
+# Audio (In-Progress)
 
 - Most of the time, we decompose audio into a spectrogram and treat it like an image. 
   - We use a vocoder to convert spectrograms back into audio
@@ -31,3 +31,6 @@ https://www.assemblyai.com/blog/recent-developments-in-generative-ai-for-audio/
 - Steerable https://arxiv.org/pdf/2402.09508
 - https://deepmind.google/discover/blog/pushing-the-frontiers-of-audio-generation/
 - Agents: https://arxiv.org/pdf/2410.03335
+- Scale-invariant convolutions: https://arxiv.org/pdf/2102.02282
+- DO MUSIC GENERATION MODELS ENCODE MUSIC THEORY?: https://arxiv.org/pdf/2410.00872
+- Foundation Models for Music: A Survey - https://arxiv.org/pdf/2408.14340
