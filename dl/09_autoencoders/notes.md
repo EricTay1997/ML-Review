@@ -34,3 +34,8 @@
     - [Understanding Transposed Convolutions](https://towardsdatascience.com/understand-transposed-convolutions-and-build-your-own-transposed-convolution-layer-from-scratch-4f5d97b2967)
   - ToDo:
     - Understand more about why we can approximate the loss with empirical quantities. 
+- Variants
+  - Vector Quantised VAEs (VQ-VAEs) use a discrete latent space, in which the encoder output is mapped to the nearest vector in a learned codebook, preventing collapse by forcing the encoder to output semantically meaningful, discrete codes.
+  - Residual Vector Quantised VAEs (RVQ-VAEs) address limitations of VQ-VAEs, namely the fixed codebook size and potentially limited codebook utilisation.
+    - Uses multiple VQ layers in a hierarchical fashion
+    - Each layer quantises the residual error from the previous layer, allowing for more fine-grained representations.

@@ -6,7 +6,7 @@
 - SimCLR
   - ![simclr.png](simclr.png)[Source](https://simclr.github.io)
   - Loss:
-    - $
+    - Info-NCE: $
 \ell_{i,j}=-\log \frac{\exp(\text{sim}(z_i,z_j)/\tau)}{\sum_{k=1}^{2N}\mathbb{1}_{[k\neq i]}\exp(\text{sim}(z_i,z_k)/\tau)}
 $
     - A similarity metric like cosine similarity can be used.
@@ -20,5 +20,5 @@ $
     - Image classifier objective suffers from needing to pre-specify a list of classes
     - Language model objective suffers possibly because many possible text can accompany an image
     - The contrastive learning objective maximizes the similarity between paired image-text combinations, and minimizes the similarity between unpaired image-text combinations.
-- Contrastive Language-Audio Pretraining (CLAP)
+- Contrastive Language-Audio Pretraining (CLAP) and MuLan
   - Similar to CLIP
