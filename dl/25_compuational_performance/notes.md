@@ -153,3 +153,12 @@ As models and data scale in size, optimizing for more efficient processes become
 - We can break down LLM inference into two stages: prefill and decode.
 - With sliding window attention, we can chunk and parallelize the prefill process.
 - For long prompts, [disaggregated serving](https://docs.vllm.ai/en/latest/features/disagg_prefill.html) may be helpful because the prefill process can be compute bound while the decode process is bandwidth bound.
+  - Why are we in different regimes? In decoding, we move the same number of weights per token as we do for the entire prompt for prefill. 
+  - What is an example of something that we want to change? Batch size. 
+    - This [cursor blogpost](https://www.cursor.com/blog/llama-inference) explains this more
+      - For example, if we're bandwidth-bound in decoding, we can freely increase our batch size without incurring too much additional latency (memory requirements are dominated by model parameters over KV cache)
+      - However, increasing batch size when we're compute-bound would increase latency linearly, and increase our time to first token, for example. 
+      - The article also mentions different cost-dynamics
+        - When using open/closed source models, we pay per second/token. 
+        - Due to the different "regimes", it is cheaper to use open/closed source models when we're compute/memory bound 
+        - This means that open/closed source models are better for prompt-heavy/completion-heavy tasks like classification/qna.

@@ -30,6 +30,8 @@
           - Hence, moving forward, we focus on $L_1, \ldots, L_{T-1}$. 
         - Minimizing $L_{t-1}$ 
           - Returning to $p_\theta\left(\mathbf{x}_{t-1} \mid \mathbf{x}_t\right) \sim \mathcal{N}\left(\mathbf{x}_{t-1} ; \pmb{\mu}_\theta\left(\mathbf{x}_t, t\right), \mathbf{\Sigma}_\theta\left(\mathbf{x}_t, t\right)\right)$,
+            - We wish to minimize the KL divergence with $q\left(\mathbf{x}_{t-1} \mid \mathbf{x}_t, \mathbf{x}_0\right)=\mathcal{N}\left(\mathbf{x}_{t-1} ; \tilde{\pmb{\mu}}_t\left(\mathbf{x}_t, \mathbf{x}_0\right), \tilde{\beta}_t \mathbf{I}\right)$, where we can show
+              - $\quad \tilde{\pmb{\mu}}_t\left(\mathbf{x}_t, \mathbf{x}_0\right):=\frac{\sqrt{\bar{\alpha}_{t-1}} \beta_t}{1-\bar{\alpha}_t} \mathbf{x}_0+\frac{\sqrt{\alpha_t}\left(1-\bar{\alpha}_{t-1}\right)}{1-\bar{\alpha}_t} \mathbf{x}_t \quad$ and $\quad \tilde{\beta}_t:=\frac{1-\bar{\alpha}_{t-1}}{1-\bar{\alpha}_t} \beta_t$
             - Unlike VAEs, where we optimize for both mean and covariance, we instead _set_ $\mathbf{\Sigma}_\theta$ and focus on optimizing for $\pmb{\mu}_\theta$ ([Details, Section 3.2](https://arxiv.org/pdf/2006.11239))
           - Using the reparameterization of $\mathbf{x}_t \mid \mathbf{x}_0$, we find that $L_{t-1}$ is minimized when 
           - $\pmb\mu_\theta(\mathbf{x}_t, t) = \frac{1}{\sqrt{1 - \beta_t}}\left(\mathbf{x}_t-\frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}} \pmb{\epsilon}\right)$
@@ -92,7 +94,19 @@
   - ![latent.png](latent.png)[Source](https://arxiv.org/pdf/2112.10752)
 - Faster Sampling
   - We could use a [strided sampling schedule](https://arxiv.org/pdf/2102.09672) to reduce the number of steps we take.  
-  - [DDIM](https://arxiv.org/pdf/2010.02502) combines the idea of an accelerated trajectory with $\sigma_t = 0$ (deterministic) 
+  - [DDIM](https://arxiv.org/pdf/2010.02502) combines the idea of an accelerated trajectory with $\sigma_t = 0$ (deterministic)
+    - The above is an oversimplification. Technically,
+    - We define a family of distributions indexed by $\sigma$
+      - $q_\sigma\left(\mathbf{x}_{1: T} \mid \mathbf{x}_0\right)=q_\sigma\left(\mathbf{x}_T \mid \mathbf{x}_0\right) \prod_{t=2}^T q_\sigma\left(\mathbf{x}_{t-1} \mid \mathbf{x}_t, \mathbf{x}_0\right)$
+        - This is non-Markovian because $\mathbf{x}_{t-1}$ now depends on $\mathbf{x}_t, \mathbf{x}_0$
+        - We choose parameters such that $q_\sigma(\mathbf{x}_t \mid \mathbf{x}_0) \sim\mathcal{N}\left(\sqrt{\bar{\alpha}_t} \mathbf{x}_0,\left(1-\bar{\alpha}_t\right) \mathbf{I}\right)$ as before. 
+      - As before the model tries to predict the noise at each time step. 
+      - With such a prediction, we define a generative process where we first predict $\hat{\mathbf{x}}_0$, and then sample $\mathbf{x}_{t-1} \sim q_\sigma(\mathbf{x}_{t-1} \mid \hat{\mathbf{x}}_0, \mathbf{x}_{t})$
+        - We sample $\mathbf{x}_{t-1}=\sqrt{\bar{\alpha}_{t-1}} \underbrace{\left(\frac{\mathbf{x}_t-\sqrt{1-\bar{\alpha}_t} \epsilon_\theta^{(t)}\left(\mathbf{x}_t\right)}{\sqrt{\bar{\alpha}_t}}\right)}_{\text {" predicted } \mathbf{x}_0 "}+\underbrace{\sqrt{1-\bar{\alpha}_{t-1}-\sigma_t^2} \cdot \epsilon_\theta^{(t)}\left(\mathbf{x}_t\right)}_{\text {"direction pointing to } \mathbf{x}_t "}+\underbrace{\sigma_t \epsilon_t}_{\text {random noise }}$
+          - We can reparameterize $\sigma_t^2 = \eta\tilde{\beta}_t$. Setting $\eta = 1$ gives us a DDPM reverse process. 
+          - $\sigma_t = 0$ gives a result that is deterministic, and is known as DDIM. 
+      - In fact, because we can use any forward process such that our marginals $q_\sigma(\mathbf{x}_t \mid \mathbf{x}_0)$ match, we can use the above equation to sample from an accelerated schedule. 
+        - Technically, I believe that it is only sound to do so if the parameters of the noise model are not shared across timesteps, but this works in practice.
   - Distillation
     - The ‘student’ model is initialized from the weights of the ‘teacher’ model. 
     - During training, the teacher model performs two sampling steps and the student model tries to match the resulting prediction in a single step. 

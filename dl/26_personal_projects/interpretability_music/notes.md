@@ -18,8 +18,8 @@ In particular, I believe that modern pop music is a good alternative to textual 
 - Spectrogram
   - A common step in audio processing is to encode an audio file as a spectrogram, with frequency on the y-axis and time on the x-axis.
     - ![spectrogram.png](spectrogram.png)
-      - Image from [Roberts](https://medium.com/analytics-vidhya/understanding-the-mel-spectrogram-fca2afa2ce53).
-  - For reasons we explain later, suppose our y-axis is on a log scale for now. 
+      - [Image Source](https://medium.com/analytics-vidhya/understanding-the-mel-spectrogram-fca2afa2ce53)
+  - For reasons we explain in the next subsection, suppose our y-axis is on a log scale for now. 
 - Frequency properties of common 12-tone music
   - Most modern pop music today is written with 12-tones. 
   - In particular, the tones are spaced evenly apart on the logarithmic scale ([equal temperament tuning](https://en.wikipedia.org/wiki/12_equal_temperament))
@@ -32,14 +32,16 @@ In particular, I believe that modern pop music is a good alternative to textual 
       - $\left\{\left(\begin{array}{l}0 \\ 4 \\ 7\end{array}\right),\left(\begin{array}{c}7 \\ 11 \\ 14\end{array}\right), \left(\begin{array}{c}9 \\ 12 \\ 16\end{array}\right), \left(\begin{array}{c}5 \\ 9 \\ 12\end{array}\right)\right\}$, where values indicate vertical displacement on the spectrogram.
       - An alternate representation is $\left\{\left(\begin{array}{l}0 \\ 0\end{array}\right),\left(\begin{array}{c}7 \\ 0\end{array}\right), \left(\begin{array}{c}9 \\ 1\end{array}\right), \left(\begin{array}{c}5 \\ 0\end{array}\right)\right\}$, where the second value of each token embedding encodes the [chord type](https://en.wikipedia.org/wiki/List_of_chords).
       - While this sounds like an oversimplification, the reader should be made aware that there are very limited chord types and chord progressions. Check out [this video](https://www.youtube.com/watch?v=5pidokakU4I) where the Axis of Awesome plays many pop songs that use the 1564 chord progression (with some that use the 6415). 
+    - [Nicole et al.](https://static1.squarespace.com/static/545183b3e4b0f4d5bea12a07/t/65f5a10e913fd3573c476b80/1710596374217/Musicological_Interpretability_in_Generative_Transformers.pdf) demonstrates the ability of generative transformer-based models to learn basic chord progressions and I believe that this is also evident in the music created by generative music companies. 
 - Induction Heads
   - [A Mathematical Framework for Transformer Circuits](https://transformer-circuits.pub/2021/framework/index.html) found the presence of the induction head, a circuit whose function is to look back over the sequence for previous instances of the current token (call it `A`), find the token that came after it last time (call it `B`), and then predict that the same completion will occur again (e.g. forming the sequence `[A][B] … [A] → [B]`).
 - Periodicity of modern pop music
   - Continuing our example of chords as our alphabet,
     - Most modern pop songs use chord progressions that exhibit cycles of period 4. 
-    - In particular, most subsections of a song (e.g. verse, chorus, etc.) typically repeat the same progression multiple times without interruption. 
-    - [A Mathematical Framework for Transformer Circuits](https://transformer-circuits.pub/2021/framework/index.html) show that at least two attention layers are needed to do `[A][B] … [A] → [B]`, and assuming that modern music generation models have the ability to do `[A][B][C][D] … [A][B][C] → [D]`, I believe that studying these models would be fruitful in learning how induction heads form over additional layers. 
-      - If this is successful, I will note that many mandarin pop songs instead use progressions with period 8. 
+    - In particular, most subsections of a song (e.g. verse, chorus, etc.) typically repeat the same progression multiple times without interruption (1,5,6,4,1,5,6,4,1,...). 
+    - [A Mathematical Framework for Transformer Circuits](https://transformer-circuits.pub/2021/framework/index.html) shows that at least two attention layers are needed to do `[A][B] … [A] → [B]`, and assuming that modern music generation models have the ability to do `[A][B][C][D] … [A][B][C] → [D]`, I believe that studying these models would be fruitful in learning how induction heads form over additional layers. 
+      - This might be easier to study in music than in text because of the more extensive repetition that exists in music.
+      - If this is successful, I will note that many mandarin pop songs instead use progressions with period 8, and provides a natural test of any hypotheses being developed.
   - Periodicity exists in other forms:
     - Melodic [motifs](https://en.wikipedia.org/wiki/Motif_(music)) are often repeated throughout a song. 
     - Song structure usually uses repetitions, e.g. {Verse - Prechorus - Chorus - Verse - Prechorus - Chorus - Bridge - Chorus}

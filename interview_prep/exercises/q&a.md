@@ -83,6 +83,7 @@
   - What is an ACID database?
   - What is the CAP theorem?
 - OOP / Python
+  - How is garbage collection done for Python/Java?
   - What are the principles of OOP?
   - What is the difference between an iterator and a generator?
   - What are decorators? Give an example of this. 
@@ -91,6 +92,7 @@
   - Explain the rules for variable scope?
   - What are positional, keyword, and default arguments to a function?
   - Explain trailing and leading underscores in Python. 
+  - Explain `if __name__ == "__main__"`
 
 ## Code
 
