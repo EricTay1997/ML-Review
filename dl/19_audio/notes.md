@@ -75,12 +75,17 @@
       - Similar to AudioLM, but with possible text/melody conditioning using MuLan
       - Melody conditioning is done by training an additional melody embedding model that provides melody embeddings to the MuLan encoder
         - This is trained with a contrastive objective using a dataset of paired audio datapoints, derived from musical covers
+        - The paper doesn't cover how the model learns to use these embeddings, I suspect this is either done in pre or post-training and omitted in the paper. 
+        - As to why we cannot feed this in directly into MuLan, I suspect that doing so may cause the model to copy more than the melody (see MusicGen)
     - Jukebox
       - Trains 3 VQ-VAE models separately on 3 temporal resolutions of music
       - Three autoregressive transformers are used to model these sequences, each conditioned on tokens from the one-level-coarser transformer model.
     - MusicGen 
       - ![musicgen.png](music_gen.png)[Source](https://hackernoon.com/musicgen-from-meta-ai-understanding-model-architecture-vector-quantization-and-model-conditioning)
       - Trained to model sequences of Encodec tokens 
+      - Conditioning
+        - Text: Experimented with T5 encoder, FLAN-T5, and CLAP.
+        - Melody: Took audio, decomposed into drums, bass, vocals, and other, removed drums and bass, quantized to chromagram, and took dominant time-frequency bin in each time step (to prevent overfitting).
       - Token interleaving patterns to alleviate the computational costs of generating multiple codebook streams.
         - ![music_gen_codebook.png](music_gen_codebook.png)[Source](https://arxiv.org/pdf/2306.05284)
         - Codebooks allow us to encode more information for a fixed number of code books.
@@ -89,33 +94,56 @@
 
 ## Music Domain Adaptation for Foundation Models
 
-- There has been applications of prefix/prompt tuning, adaptors and full-tuning, instruction tuning, etc. in the music domain.
+- There has been applications of PEFT like LoRA/prefix/prompt tuning, adaptors and full-tuning, instruction tuning, etc. in the music domain.
 
 ## Interpretability & Controllability on Music Generation
 
-- Use representation learning models to learn a latent space of implicit music concepts, such as pitch contour, accompaniment texture ("Structured Representation Learning for Polyphonic Music") and timbre ("A uni- fied model for zero-shot music source separation, transcription and synthesis.")
-- CocoMulla and AirGen focus on generating music from chords, drums, piano rolls, and text inputs. 
-- MusicControlNet considers rhythm, melody dynamics, and textual cues to generate music.
-- DO MUSIC GENERATION MODELS ENCODE MUSIC THEORY?: https://arxiv.org/pdf/2410.00872
-- Scale-invariant convolutions: https://arxiv.org/pdf/2102.02282
-- Steerable https://arxiv.org/pdf/2402.09508
+- Learn a latent space of implicit music concepts
+  - [PianoTree VAE](https://arxiv.org/pdf/2008.07118) finds that 
+    - Notes order themselves in a helix according to pitch
+    - Different durations of the same note form a fractal parallelogram
+    - 12 major chords arrange themselves in 4 clusters, where each cluster is formed of 3 chords a major third apart. 
+    - The 7 triad chords of a key are arranged in a ring structure where moving counter-clockwise moves us up by thirds.
+  - [Wei](https://arxiv.org/pdf/2410.00872) finds evidence that Jukebox and MusicGen's latent representations contain rich information about notes, intervals, scales, chords, chord progressions, tempos, and time signatures (in that a classifier built on these latents can accurately predict properties of the encoded music)
+  - Potential for future interpretability work:
+    - [Lin et al. (2021)](https://arxiv.org/pdf/2108.03456) separates pitch and timbre, although they do not investigate what these latent features look like. 
+    - MusicLM and MusicGen allow for melodic conditioning. Investigating this latent space for tunes with similar/dissimilar melodies might be interesting.
+- Controllability
+  - In general, the models described above have detailed ways that we can condition our music generation with text, transcription, or audio. 
+  - This section can be considered an extension, where we focus on a specific musical quality we want to imbue in our generation. 
+  - MusicLM and MusicGen, as described above, allows us to pass in melodies. 
+  - MusicControlNet allows for time-varying rhythm, melody dynamics, and textual cues to generate music.
+    - To allow for ease of training, it seems like we can only control for things we can easily extract, e.g. dynamics is the energy of the waveform.
+  - AIRGen and CocoMulla show that we can condition on drum tracks, chord progressions and piano rolls (MIDI).
+    - One difference is that AIRGen first converts all conditioners to audio and adds them to input audio, while CocoMulla conditions using embedding.
 
 ## Foundation Models as Music Agents
 
-- MusicAgent integrates diverse models and an autonomous workflow to address various music tasks like generation, transcription, and conversion. It simplifies the complex process for professionals and amateurs by analyzing requests, decomposing them into subtasks, and invoking external tools to fulfil these tasks.
-- AudioGPT focuses on audio modality and leverages a large language model to process different audio modalities (speech, music, sound) and handle dif- ferent audio understanding and generation tasks. For music tasks, it supports singing voice synthesis by calling external music models.
-- Loop Copilot introduces an innovative system combining large language models with specialised AI music models to streamline the collaborative creation of music loops. This system utilises a conversational interface for dynamic, iterative music editing, and a global attribute table to ensure consistency throughout the creation process. Besides, it is not limited to creating music based on vague text inputs but allows for fine- grained musical edits, including adding or removing tracks and making localised adjustments to modes and tempos. This capability enhances the system’s utility in detailed music production tasks.
-- ComposerX introduces a novel multi-agent framework for polyphonic notated music composition, utilising the reasoning power of large-scale language models as well as extensive knowledge of music history and theory. This approach produces high-quality, coherent compositions better than traditional single-agent systems, and requires no specialised training or services, making it a cost-effective alternative.
-- ByteComposer pioneers a human-like melodic composition process using a four-step agentic framework: conceptual analysis, draft composition, self-assessment, and aesthetic selection. ByteComposer combines the interactive and knowledge-understanding capabilities of LLMs with symbolic music modelling to achieve perfor- mance comparable to that of a human composer and is extensively validated through professional feedback.
-- Audio-Agent
+- MusicAgent
+- AudioGPT additionally enables audio input
+- Loop Copilot features a conversational interface for dynamic, iterative music editing, and a global attribute table to ensure consistency throughout the creation process.
+  - It also allows for fine-grained musical edits, including adding or removing tracks and making localised adjustments to modes and tempos.
+- Audio-Agent decomposes prompts into atomic instructions with a focus on specifying temporal details for the generator
+- ComposerX
+  - Pre-generates prompts that provide the model musical knowledge a user may not provide
+  - Multi-agent specialization and refinement
+- ByteComposer
+  - 4 steps: Conception analysis, draft composition, self-evaluation and modification, aesthetic selection
+  - Music-theory related prompts
+  - Multi-module: Expert, Generator, Voter, Memory
 
 ## Challenges
 
 - Domain Knowledge
   - Input modification
-    - pitch interval, duration and onset - " A domain- knowledge-inspired music embedding space and a novel at- tention mechanism for symbolic music modeling."
-    - Bars "Project magenta: Generating long-term structure in songs and stories, 2016"
-    - Relative positional encoding "Music transformer" - Huang
+    - The music transformer uses relative positional self attention, although RoPE somewhat achieves this. 
+    - [Guo](https://arxiv.org/pdf/2212.00973) uses embeddings that influenced by relative pitch and duration, and positional embeddings that account for absolute offset (default doesn't) and beat.
+  - Layer modification
+    - [Scale-invariant convolutions](https://arxiv.org/pdf/2102.02282) are useful for downbeat tracking.
 - Long Sequence Modeling
   - I see this as an opportunity for more domain knowledge
-  - We can break a song into subsections and model those hierarchically.
+  - We can break a song into subsections and model those hierarchically ([idea](../26_personal_projects/music_hierarchical_subsections/notes.md)).
+
+## Research Ideas
+
+- I have used [this folder](../26_personal_projects) as a "scratchpad" for some research directions I'm interested in. 
