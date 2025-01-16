@@ -1,10 +1,20 @@
 # Audio 
 
 - Due to personal interest, this section will have a heavy tilt toward generative music.
-- I have found [Foundation Models for Music: A Survey](https://arxiv.org/pdf/2408.14340) to be very helpful in understanding this space.
-- Most of the time, we decompose audio into a spectrogram and treat it like an image. 
-  - We use a vocoder to convert spectrograms back into audio
+- I have found [Foundation Models for Music: A Survey](https://arxiv.org/pdf/2408.14340) to be very helpful in understanding this space.yuh
+
+## Audio Tokenizers
+
+- Hand-crafted: Spectrogram
+  - We use a vocoder (e.g. HiFi-GAN) to convert spectrograms back into audio
   - A chromagram is also sometimes used, although this causes a loss in information
+- Continuous Audio Tokens
+  - Commonly used for audio understanding and diffusion model-based audio generation tasks
+  - CLAP, Wav2Vec
+  - AudioMAE
+- Discrete Audio Tokens
+  - Commonly used for language model-based audio generation tasks
+  - SoundStream, Encodec
 
 ## Pre-Training Strategies
 
@@ -12,6 +22,11 @@
 - Contrastive Learning
   - Models like CLAP, MusCALL, and MuLan jointly embed audio and text, training the model with a [contrastive learning](../15_contrastive_learning/notes.md) objective. 
   - CLAP slices data to deal with variable length audio
+- Masked Modeling
+  - This is also used to enhance our understanding of audio.
+  - AudioMAE
+    - ![audio_mae.png](audio_mae.png)
+  - MERT
 - Generative Models
   - ![gen_models.png](gen_models.png)[Source](https://arxiv.org/pdf/2408.14340)
   - Autoencoders
@@ -21,59 +36,60 @@
     - AudioLDM
       - ![audio_ldm.png](audio_ldm.png)
       - Outside of the audio-specific STFT/MelFB/Vocoder components, this is very similar to LDMs 
-      - Note, however, that an important difference is the additional condition of audio encoding $E^{\mathbf{x}}$, which is used to compensate for the lack of captioned audio data (versus that of images)
+      - Note, however, that an important difference is the additional conditional of audio encoding $E^{\mathbf{x}}$, which is used to compensate for the lack of captioned audio data (versus that of images)
     - MusicLDM
       - Retrain CLAP on music data
-      - Proposes a beat-synchronous mixup strategy to enhance diversity and novelty in output generations.
+      - Proposes a mixup strategy to enhance diversity and novelty in output generations
+        - The work also demonstrates that mixing up in a beat-synchronous manner (either in the input or latent space) yields superior results
+      - Admittedly the choice to only use audio encodings $E^{\mathbf{x}}$ in AudioLDM seems arbitrary
+        - MusicLDM tried using just text, or audio which is then fine-tuned on text.
+        - These performed similarly / worse than just using audio per AudioLDM.
     - AudioLDM2
-      - ![audioldm2.png](audioldm2.png)
-      - We replace the audio and text encodings $E^{\mathbf{x}}$ and $E^{\mathbf{y}}$ with AudioMAE Features
-      - By finetuning a GPT2 model to predict the sequential output of an AudioMAE encoder conditioned on text, audio or phoneme data, AudioLDM2 creates a shared sequential conditioning space dubbed ”Language of Audio”
-      - Self-supervision?
+      - ![audioldm2.png](audio_ldm2.png)
+      - In training, we replace the audio encodings $E^{\mathbf{x}}$ in AudioLDM with AudioMAE Features
+        - These capture semantic information, unlike the acoustic tokens in the VAE. 
+      - Text
+        - Previously, we used CLAP embeddings, which allow us to pass in text during sampling. 
+        - However, we have now replaced our image embeddings with AudioMAE. 
+        - Therefore, we need to map text to the same embedding space.
+        - AudioLDM2 does this by fine-tuning a GPT2 model, conditioned on text, audio or phoneme data, to predict the sequential output of an AudioMAE encoder. 
+        - This shared sequential conditioning space is dubbed the ”Language of Audio”, which again we can think of as semantic audio tokens.
     - Stable Audio
       - Diffusion models are usually trained to generate a fixed-size output
       - ![stability_audio.png](stability_audio.png)[Source](https://stability.ai/research/stable-audio-efficient-timing-latent-diffusion)
+      - This is similar to AudioLDM but instead of using audio encoding $E^{\mathbf{x}}$ they use text encodings. Per MusicLDM this should be worse, but this may be dependent on model/data. 
       - Conditions on music start time and duration
-      - Uses a memory-efficient attention implementation
     - Stable Audio 2
-      - Upscales stable audio 1 by using a Diffusion Transformer Architecture
+      - Upscales stable audio by using a Diffusion Transformer instead ot the U-Net
   - Autoregressive Predictive Coding
     - AudioLM
       - Soundstream encoder to extract acoustic tokens
+        - The Soundstream encoder and decoder serves the same function as the VAE in AudioLDM. 
       - k-means-clustered w2v-BERT to extract semantic tokens
+        - Paper has some analysis for why the tokens are "categorized" as such
       - Cascades three autoregressive transformer models
-        - First predict semantic tokens, then coarse acoustic tokens, then finegrained tokens
+        - First predict semantic tokens, then coarse acoustic tokens, then finegrained tokens (See MusicLM for diagram)
+      - In inference, we pass in semantic tokens which can either be sample unconditionally or extracted from a test sample. 
     - MusicLM
-      - Similar, but with possible text conditioning using MuLan
-    - s
+      - ![music_lm.png](music_lm.png)[Source](https://arxiv.org/pdf/2301.11325)
+      - Similar to AudioLM, but with possible text/melody conditioning using MuLan
+      - Melody conditioning is done by training an additional melody embedding model that provides melody embeddings to the MuLan encoder
+        - This is trained with a contrastive objective using a dataset of paired audio datapoints, derived from musical covers
     - Jukebox
-      - Trains 3 VQ-VQE models on 3 temporal resolutions of music
-      - Three autoregressive transformers are used to model these sequences, each conditioned on upsampled tokens from the one-level-coarser transformer model.
+      - Trains 3 VQ-VAE models separately on 3 temporal resolutions of music
+      - Three autoregressive transformers are used to model these sequences, each conditioned on tokens from the one-level-coarser transformer model.
     - MusicGen 
-      - ![musicgen.png](musicgen.png)[Source](https://hackernoon.com/musicgen-from-meta-ai-understanding-model-architecture-vector-quantization-and-model-conditioning)
+      - ![musicgen.png](music_gen.png)[Source](https://hackernoon.com/musicgen-from-meta-ai-understanding-model-architecture-vector-quantization-and-model-conditioning)
       - Trained to model sequences of Encodec tokens 
       - Token interleaving patterns to alleviate the computational costs of generating multiple codebook streams.
-    - MusicLM
-      - 
-  - Masked Modeling
-    - This is also used to enhance our understanding of audio.
-    - MERT
-      - s
+        - ![music_gen_codebook.png](music_gen_codebook.png)[Source](https://arxiv.org/pdf/2306.05284)
+        - Codebooks allow us to encode more information for a fixed number of code books.
+        - However, for each codebook, we now need to predict its contribution at multiple timesteps. 
+        - Typically, we would do this sequentially (flattening), but we could trade off accuracy for efficiency by predicting these in parallel. 
 
 ## Music Domain Adaptation for Foundation Models
 
 - There has been applications of prefix/prompt tuning, adaptors and full-tuning, instruction tuning, etc. in the music domain.
-
-## Audio Tokenizers
-
-- Hand-crafted: Spectrogram
-- Continuous Audio Tokens
-  - Usually used for audio understanding and diffusion model-based audio generation tasks
-  - Wav2Vec
-  - AudioMAE
-- Discrete Audio Tokens
-  - Commonly used for language model-based audio generation tasks
-  - SoundStream, Encodec
 
 ## Interpretability & Controllability on Music Generation
 
@@ -102,6 +118,4 @@
     - Relative positional encoding "Music transformer" - Huang
 - Long Sequence Modeling
   - I see this as an opportunity for more domain knowledge
-  - We can break a song into subsections and model those hierarchically. 
-
-https://www.assemblyai.com/blog/recent-developments-in-generative-ai-for-audio/
+  - We can break a song into subsections and model those hierarchically.

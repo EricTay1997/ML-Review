@@ -8,6 +8,7 @@ We can leverage commonly used musical forms to tackle long sequence modelling pr
 
 - The length of a typical music recording and its resolution means that we need architectures that support long context lengths. 
 - Attention scales quadratically with respect to context length. 
+- Various architectures like LDMs, or techniques like windowed sampling is used to address such issues.
 
 ## Key Idea
 
