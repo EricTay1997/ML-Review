@@ -6,35 +6,39 @@
     - Classification with a sigmoid unit or a softmax layer is equivalent to trying to find a hyperplane to separate points in two classes.
     - Sometimes, we can predict the number of hidden units needed to separate a dataset
 - Unfortunately, immediately after reading both sources, I did not have a clear understanding of the topics discussed (and it seemed like others had similar questions). This notebook will serve as a supplemental to Olah's blog post, using the XOR dataset to provide a geometric understanding of binary classification for small MLP models.
-- Code to generate results and plots can be found in the accompanying [notebook](./code.ipynb).
+- Code to generate the results and plots in this document can be found in the accompanying [notebook](./code.ipynb).
 
 ## Empirical Results
 
-0_hidden_layer 50
-1_hidden_layer_1_unit_identity 50
-1_hidden_layer_2_unit_identity 75
-1_hidden_layer_3_unit_identity 75
-1_hidden_layer_10_unit_identity 50
-1_hidden_layer_1_unit_relu 75
-1_hidden_layer_1_unit_tanh 75
-1_hidden_layer_2_unit_relu 100
-1_hidden_layer_2_unit_tanh 100
-10_hidden_layer_3_unit_identity 50
+- We start by training multilayer perceptrons (MLPs) of different architectures and summarize our results below
+
+| Number of hidden Layers | Number of hidden units per layer | Activation Function | Final Accuracy (%) |
+|-------------------------|----------------------------------|---------------------|--------------------|
+| 0                       | NA                               | NA                  | 50                 |
+| 1                       | 1                                | Identity            | 50                 |
+| 1                       | 2                                | Identity            | 75                 |
+| 1                       | 3                                | Identity            | 75                 |
+| 1                       | 10                               | Identity            | 50                 |
+| 1                       | 1                                | ReLU                | 75                 |
+| 1                       | 1                                | Tanh                | 75                 |
+| 1                       | 2                                | ReLU                | 100                |
+| 1                       | 2                                | Tanh                | 100                |
+| 10                      | 3                                | Identity            | 50                 |
 
 ![training_stats.png](training_stats.png)
 
 These results indicate that:
-* Nonlinearities are required to separate the XOR dataset, as Goodfellow indicates.
-* With the introduction of nonlinearities, 2 hidden units are sufficient to separate the XOR dataset.
+* Nonlinear activation functions are required to separate the XOR dataset, as Goodfellow indicates.
+* With the introduction of nonlinearities, 1 hidden unit is insufficient, and 2 hidden units are sufficient to separate the XOR dataset.
 
-The remainder of this notebook will discuss why this is the case. 
+The remainder of this document will discuss why this is the case. 
 
 ## Model Specification
 - For input $x \in \mathbb{R}^2$, we let the output of our MLP model be $f(x)$. Since we use a sigmoid activation layer for our binary classification task, we are classifying $x$ to be in class 1 if $f(x) > 0$, and class 0 if $f(x) \leq 0$.
 - 0 hidden layers: $f(x) = W_0x + b_0, W_0 \in \mathbb{R}^{1 \times 2}, b_0 \in \mathbb{R}$
 
 ![0_hidden.png](0_hidden.png)
-- 1 hidden layer with $p$ hidden units: $f(x) = W_0g_1(W_1x + b_1) + b_0,$ where $g_1$ is our activation function$, W_0 \in \mathbb{R}^{1 \times p}, b_0 \in \mathbb{R}, W_1 \in \mathbb{R}^{p \times 2}, b_1 \in \mathbb{R^p}$.
+- 1 hidden layer with $p$ hidden units: $f(x) = W_0g_1(W_1x + b_1) + b_0,$ where $g_1$ is our activation function, $W_0 \in \mathbb{R}^{1 \times p}, b_0 \in \mathbb{R}, W_1 \in \mathbb{R}^{p \times 2}, b_1 \in \mathbb{R^p}$.
     - Here, we plot with $p = 3$.
 
 ![1_hidden.png](1_hidden.png)
@@ -63,7 +67,7 @@ Figure credit: https://alexlenail.me/NN-SVG/index.html
     - Drawing a hyperplane in the $p$-dimensional space, then
     - Classifying all points on one side of the hyperplane as 1, and classifying all others as 0.
 - If any of this is confusing, it is a lot easier to think about this for $p = 3$, where our hyperplane is just a conventional plane.
-- Note, this is how the [SVM](../../../classical/08_svms/notes.md) works too!
+- Note, this is how the [SVM](../../../classical/08_svms/notes.md) classifies data too!
 
 ## Geometry of $g(Wx + b)$
 - To understand what the function $g(Wx + b)$ is doing geometrically, it is useful to think in 2D space, and reason how the basis vectors $[1,0]^\top$  and $[0,1]^\top$ move.
@@ -72,34 +76,42 @@ Figure credit: https://alexlenail.me/NN-SVG/index.html
     - Conducting the matrix multiplication, we see that the $i^{th}$ standard basis vector is mapped to the $i^{th}$ column of $W$!
     - For more geometric intuition, when $W$ is square, we can envision it as "rotating" space 
     - ![matmul.gif](matmul.gif)
-    - (see [Khan's video](https://www.youtube.com/watch?v=kYB8IZa5AuE) for a nice visualization)
+      - Note how $[1,0]^\top$ and $[0,1]^\top$ gets mapped to $[2,3]^\top$ and $[-1,2]^\top$ respectively.
+    - If a reader needs more clarification, I like [Khan's video](https://www.youtube.com/watch?v=kYB8IZa5AuE) about this topic.
 - $+ b$ "translates" each point by vector $b$
-- $g$ "stretches and squishes space" in a way that "never cuts, breaks, or folds it" ([Olah](https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/))
-    - ![tanh.gif](tanh.gif) ![relu.gif](relu.gif)
-- The combination of these 3 effects for $W \in \mathbb{R}^{2 \times 2}$ is plotted in [Olah's blog](https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/), under "Continuous Visualization of Layers".
+- $g$ "stretches and squishes space" in a way that "never cuts, breaks, or folds it" (if it is a homeomorphism) ([Olah](https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/))
+    - ![relu.gif](relu.gif) ![tanh.gif](tanh.gif) 
+- We plot the combination of these effects in the next section. 
 
 ## Putting It All Together
-- Why _can_ we separate the XOR dataset with 1 hidden layer, at least 2 hidden units, and nonlinearities?
-    - ![model_tanh.gif](model_tanh.gif) ![model_relu.gif](model_relu.gif)
+- Why can we separate the XOR dataset with 1 hidden layer, 2 hidden units, and nonlinearities?
+    - ![model_relu.gif](model_relu.gif) ![model_tanh.gif](model_tanh.gif) 
+    - We plot the transformation of datapoints for the final weights of the models that were able to separate the XOR dataset. 
+    - Let's now discuss why all the other model architectures were unable to separate the data. 
 - Why can't we separate the XOR dataset with 0 hidden layers?
-    - For 0 hidden layers, we're drawing a line in 2D space. Clearly, the XOR dataset is not linearly separable in 2D.
-    - ToDo: Add visualization
+    - For 0 hidden layers, we skip straight to drawing a hyperplane, i.e. a line in 2D space. 
+    - The XOR dataset is not linearly separable in 2D.
 - Why can't we separate the XOR dataset with 1 hidden layer and 1 hidden unit?
-    - For the first layer, pre-activation, we're drawing a line in 2D space and projecting points onto the line (and then moving them along the line).
-    - No matter which line we choose, we see that the two outer points on the line will be from the same class.
-    - Since the activation functions we chose are monotone, the points maintain their relative ordering.
-    - The final layer just shifts each point along the line the same amount, and so the points remain unseparable.
-    - ToDo: Add visualization
+    - $W_1x + b_1$
+      - For the first layer, pre-activation, this is mathematically equivalent to the 0 hidden layer case. 
+        - Geometrically, we're projecting each point onto the normal vector to $W_1x + b_1$.
+        - The fact that the XOR data is not linearly separable in 2D is equivalent to saying that for this projection, the two points on the extreme ends are of the same class, regardless of the choice of hyperplane $W_1x + b_1$. 
+    - $g(W_1x + b_1)$
+      - Since the activation functions we chose are monotone, the points maintain their relative ordering.
+    - $W_0g(W_1x + b_1) + b_0$
+      - $W_0$ optionally flips points around the origin, and then scales the distance from the origin. This does not change the relative ordering. 
+      - $b_0$ shifts all points along the line the same amount. This too does not change the relative ordering. 
+      - Ultimately, the points remain unseparable.
 - Why can't we separate the XOR dataset without nonlinearities?
     - If all $W_i \in \mathbb{R}^{2 \times 2}$, intuitively, continually rotating and translating space would not allow the points to become linearly separable.
-    - More rigor, which applies to higher dimensions:
-        - Suppose that separation without nonlinearities was possible
+    - Let's now apply more rigor, which applies to higher dimensions:
+        - Suppose that separation without nonlinearities was possible.
         - Label our points $x^{(1)} = [-1, -1]^\top, x^{(2)} = [1, -1]^\top, x^{(3)} = [-1, 1]^\top, x^{(4)} = [1, 1]^\top$
+          - $y^{(1)} = y^{(4)} = 1, y^{(2)} = y^{(3)} = -1$
         - Note that $x^{(4)} = x^{(2)} + (x^{(3)} - x^{(1)})$ (bracketing indicates how we can geometrically think of this as adding two vectors)
-        - Due to our discussion of how basis vectors are transformed in affine transformations $Wx + b$, we have that $f(x^{(4)}) = f(x^{(2)}) + f(x^{(3)} - x^{(1)}) = f(x^{(2)}) + f(x^{(3)}) - f(x^{(1)})$
+        - Due to our discussion of how basis vectors are transformed in affine transformations $Wx + b$, we have that $f(x^{(4)}) = f(x^{(2)}) + f(x^{(3)} - x^{(1)}) = f(x^{(2)}) + f(x^{(3)}) - f(x^{(1)})$ for affine $f$. 
         - Now if all points were correctly classified, $f(x^{(2)}), f(x^{(3)}), - f(x^{(1)}) \leq 0$, but $f(x^{(4)}) > 0$, and we have a contradiction.
-        - Geometrically, $f(x^{(2)})$ is on the "negative" side, and $f(x^{(3)} - x^{(1)})$ is a vector that is pointing in the "negative" direction, so it's impossible for $f(x^{(4)})$ to be positive.
-    - ToDo: Add visualization
+        - Geometrically, $f(x^{(2)})$ is on the "negative" side of the hyperplane, and $f(x^{(3)} - x^{(1)})$ is a vector that is pointing in the "negative" direction, so it's impossible for $f(x^{(4)})$ to be positive.
 
 ## Some Additional Thoughts
 - Technically, the sigmoid function says that the probability that an input $x$ is of class 1 is somewhat proportional to the exponential distance between $f(x)$ and the hyperplane. I wonder if there's use in this exponential function, or if higher temperature settings are more appropriate (and when that is the case).
