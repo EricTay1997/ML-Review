@@ -43,3 +43,6 @@
   - Status line
   - Message body: The server selects an appropriate representation format based on what the request headers contain. 
   - Headers: context, information like server, encoding, date, and content type
+- Implementation
+  - Current app is built with the tutorial from [Krebs and Martinez](https://auth0.com/blog/developing-restful-apis-with-python-and-flask/), which covers basic concepts
+  - We can easily extend this to LLM-specific use cases like [this tutorial](https://medium.com/@shmilysyg/setup-rest-api-service-of-ai-by-using-local-llms-with-ollama-eb4b62c13b71) (Ollama + FastAPI)

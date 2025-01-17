@@ -78,6 +78,7 @@
 - ToDo: CE loss, regularization, optimization, dl questions, applied AI (agents, RAG, RLHF), multimodality
 - System Design
   - Write down the steps/template for a typical SWE SD interview 
+    - Explain each component
   - Write down the steps/template for a typical ML SD interview 
   - Name some common online and offline metrics that can be used for each use case
   - What is an ACID database?
