@@ -3,8 +3,9 @@
 - SVMs are often used for binary classification problems. For convention, we assume $y_i \in \{-1, 1\}$.
 - The prediction for a point $\mathbf{x} \in \mathbb{R}^p$ is given by $\operatorname{sign}(\pmb{\lambda}^{\top}\mathbf{x}+\lambda_0)$
   - Geometrically, $\pmb{\lambda}$ and $\lambda_0$ define a hyperplane in $\mathbb{R}^{p+1}$, where points on different sides are classified as 1 and -1.
+  - See more in [Understanding MLPs](../../dl/26_personal_projects/understanding_mlps/notes)
 - Support Vectors
-  - $\pmb{\lambda} = \sum_i \alpha_iy_i\mathbf{x_i^{\top}}, \alpha_i \geq 0$. This hyperplane is determined by the "support vectors" $\mathbf{x_i}$ for which $\alpha_i > 0$. The number of these vectors typically $\ll n$.
+  - $\pmb{\lambda} = \sum_i \alpha_iy_i\mathbf{x_i}, \alpha_i \geq 0$. This hyperplane is determined by the "support vectors" $\mathbf{x_i}$ for which $\alpha_i > 0$. The number of these vectors typically $\ll n$.
   - Another interpretation is that a prediction is the weighted sum of $y_i\mathbf{x_i^{\top}x}$, where $y_i$ conveys class information and $\mathbf{x_i^{\top}x}$ is the similarity between points
   - Note that the _only_ parameters to estimate are therefore $\pmb\alpha$ and $\lambda_0$. 
 - Pros and Cons
@@ -30,7 +31,7 @@
   - Equivalently, we can set the margin to be 1 and minimize $||\pmb\lambda||_2$:
   - $\min _{\pmb\lambda, \lambda_0} \frac{1}{2}\|\pmb{\lambda}\|_2^2 \quad$ s.t. $\quad-y_i\left(\pmb{\lambda}^T \mathbf{x}_i+\lambda_0\right)+1 \leq 0 \quad i=1 \ldots n$
   - Which permits the lagrangian $\mathcal{L}\left(\left[\pmb{\lambda}, \lambda_0\right], \pmb{\alpha}\right)=\frac{1}{2} \sum_{j=1}^p \lambda_j^2+\sum_{i=1}^n \alpha_i\left[-y_i\left(\pmb{\lambda}^T \mathbf{x}_i+\lambda_0\right)+1\right]$.
-  - Switching to the dual to solve for $\pmb{\alpha}$, we get the following equations:
+  - Switching the minimax we instead solve for $\pmb{\alpha}$, we get the following equations:
     - $\pmb{\lambda}=\sum_{i=1}^n \alpha_i y_i \mathbf{x}_i$, from $\nabla_\lambda \mathcal{L}\left(\left[\pmb{\lambda}, \lambda_0\right], \pmb{\alpha}\right)$
     - $\sum_{i=1}^n \alpha_i y_i=0$ from $\frac{\partial}{\partial \lambda_0} \mathcal{L}\left(\left[\pmb{\lambda}, \lambda_0\right], \pmb{\alpha}\right)$
     - $\alpha_i \geq 0$
@@ -53,7 +54,7 @@
 - Proof:
   - We edit our primal problem to $\min _{\lambda_1, \lambda_0, \xi} \frac{1}{2}\|\pmb{\lambda}\|_2^2+C \sum_{i=1}^n \xi_i$ s.t. $\quad\left\{\begin{array}{l}y_i\left(\pmb{\lambda}^T \mathbf{x}_i+\lambda_0\right) \geq 1-\xi_i \\ \xi_i \geq 0\end{array}\right.$
   - This permits the lagrangian $\mathcal{L}\left(\pmb{\lambda}, \lambda_0, \xi, \pmb{\alpha}, \mathbf{r}\right)=\frac{1}{2}\|\pmb{\lambda}\|_2^2+C \sum_{i=1}^n \xi_i-\sum_{i=1}^n \alpha_i\left[y_i\left(\pmb{\lambda}^T \mathbf{x}_i+\lambda_0\right)-1+\xi_i\right]-\sum_{i=1}^n r_i \xi_i$
-  - Switching to the dual, we get the same equations as the Hard Margin SVM, with the following additions:
+  - Switching the minimax, we get the same equations as the Hard Margin SVM, with the following additions:
     - $\mathbf{r}=C-\pmb{\alpha}$, from $\nabla_{\xi} \mathcal{L}\left(\left[\pmb{\lambda}, \lambda_0, \xi\right], \pmb{\alpha}, \mathbf{r}\right)$
     - $r_i \geq 0$
   - Which when plugged into our dual form of the Lagrangian yields our solution
@@ -72,7 +73,7 @@
 - Back to SVM: Note that when solving for $\hat{\pmb\alpha}$, we see the equation $\mathcal{L}(\pmb{\alpha})= \sum_{i=1}^n \alpha_i-\frac{1}{2} \sum_{i, k=1}^n \alpha_i \alpha_k y_i y_k \mathbf{x}_i^T \mathbf{x}_k$
 - The kernel trick replaces $\mathbf{x}_i^T \mathbf{x}_k$ with $k(\mathbf{x}_i, \mathbf{x}_k) = \phi(\mathbf{x_i})^{\top}\phi(\mathbf{x_k})$. 
 - We then solve for a new $\hat{\pmb\alpha}$, which we use to solve for a new $\hat{\lambda_0} = 1 - \sum_i \hat{\alpha}_i y_i k(\mathbf{x_i}, \mathbf{x_{sv}})$
-- Prediction on a new point $\mathbf{x}$ = $\operatorname{sign}(f(\mathbf{x})),$ where $f(\mathbf{x})= b + \sum_i^n\alpha_ik(\mathbf{x_i, x})$
+- Prediction on a new point $\mathbf{x}$ = $\operatorname{sign}(f(\mathbf{x})),$ where $f(\mathbf{x})= \hat{\lambda_0} + \sum_i^n\alpha_ik(\mathbf{x_i, x})$
   - Why is this useful?
     - It enables us to learn models that are nonlinear as a function of $\mathbf{x}$ using convex optimization techniques that are guaranteed to converge efficiently. 
     - The kernel function $k$ admits an implementation that is significantly more computationally efficient than first constructing the $\phi(\mathbf{x})$ vectors.
@@ -81,9 +82,9 @@
   - However, if most $\alpha_i = 0$, our computation is sped up significantly.
 
 ## Support Vector Regressions
-- Support Vector Regressions similarly minimizes $\frac{1}{2}\|B\|_2^2$, but now subject to $|y_i - (\mathbf{B^{\top}} + B_0)| \leq \epsilon$.
+- Support Vector Regressions similarly minimizes $\frac{1}{2}\|B\|_2^2$, but now subject to $|y_i - (\mathbf{B^{\top}x}_i + B_0)| \leq \epsilon$.
 - In the "soft margin" case, we add two slack variables such that:
-  - $|y_i - (\mathbf{B^{\top}} + B_0)| \leq \epsilon + \xi_n$
-  - $|(\mathbf{B^{\top}} + B_0) - y_i| \leq \epsilon + \xi_n^*$
+  - $|y_i - (\mathbf{B^{\top}x}_i + B_0)| \leq \epsilon + \xi_n$
+  - $|(\mathbf{B^{\top}x}_i) + B_0) - y_i| \leq \epsilon + \xi_n^*$
 - Conceptually, the points that have an error larger than $\epsilon$ are now our support vectors, and unlike linear regression where we minimize the squared loss, we're now minimizing the L1 norm of these errors. 
 - More details can be found on [mathworks](https://www.mathworks.com/help/stats/understanding-support-vector-machine-regression.html).

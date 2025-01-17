@@ -23,11 +23,20 @@
   - If an instance has at least min_samples instances in its ε-neighborhood (including itself), then it is considered a core instance. In other words, core instances are those that are located in dense regions. 
   - All instances in the neighborhood of a core instance belong to the same cluster. This neighborhood may include other core instances; therefore, a long sequence of neighboring core instances forms a single cluster. 
   - Any instance that is not a core instance and does not have one in its neighborhood is considered an anomaly.
+- Agglomerative
+  - Iteratively connect the nearest pair of clusters
 - Spectral Clustering
   - We quote an [_excellent_ tutorial on Spectral Clustering](https://people.csail.mit.edu/dsontag/courses/ml14/notes/Luxburg07_tutorial_spectral_clustering.pdf)
   - ![spectral_clustering.png](spectral_clustering.png)
   - The linked article elaborates how this is related to the RatioCut problem.
-    - A key piece of intuition is that $U_{ik} > 0$ implies that the $i^{th}$ datapoint is likely to belong to the $k^{th}$ cluster. 
+    - $L = D - W$, $D_{ii}$ is the $i^{th}$ row sum of $W$  
+    - $\operatorname{cut}\left(A_1, \ldots, A_k\right):=\frac{1}{2} \sum_{i=1}^k W\left(A_i, \bar{A}_i\right)$, where $W(A, B):=\sum_{i \in A, j \in B} w_{i j}$
+    - $\operatorname{RatioCut}\left(A_1, \ldots, A_k\right):=\frac{1}{2} \sum_{i=1}^k \frac{W\left(A_i, \bar{A}_i\right)}{\left|A_i\right|}$
+    - There exists a construction $v_i$ that depends solely on the partitioning $\{A_i, \bar{A}_i\}$ such that
+      - $\operatorname{RatioCut}\left(A_1, \ldots, A_k\right) = \sum_{i = 1}^k v_i^\top Lv_i$
+      - The intuition is then that the partition is related to the eigenvectors of $L$
+    - Skipping ahead to the solution, the intuition is that $U_{ik} > 0$ implies that the $i^{th}$ datapoint is likely to belong to the $k^{th}$ cluster. 
+    - Note that from the formulation of ratio cut that spectral clustering tends to favor clusters of similar sizes. 
 - Gaussian Mixture Models and Expectation Maximization
   - GMMs is a "soft" clustering algorithm were each point probabilistically "belongs" to all clusters.
   - It is a generative model, where if we want to generate a point from a cluster, we would draw from a multivariate Gaussian. This permits elliptical clusters.

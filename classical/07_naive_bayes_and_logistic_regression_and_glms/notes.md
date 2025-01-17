@@ -27,8 +27,8 @@
   - Note that this form doesn't explicitly handle imbalances in the dataset, but we can always get our desired sensitivity/precision trade off by changing our threshold. Importantly, we require that the covariates need to have information that distinguishes the two classes.
 - Parameter Estimation ([useful reference](https://stats.stackexchange.com/questions/344309/why-using-newtons-method-for-logistic-regression-optimization-is-called-iterati))
   - There is no closed form solution for $\mathbf{B}_{MLE}$, but the loss function is convex. Importantly, we have that
-    - $\nabla_{\pmb\theta}\mathcal{L}(\pmb\theta) = \mathbf{X^{\top}}(\pmb\pi - \mathbf{y})$
-    - $\nabla^2_{\pmb\theta}\mathcal{L}(\pmb\theta) = \mathbf{X^{\top}DX}$, where $D_{ii} = \pi_i(1-\pi_i)$ 
+    - $\nabla_{\mathbf{B}}\mathcal{L}(\mathbf{B}) = \mathbf{X^{\top}}(\pmb\pi - \mathbf{y})$
+    - $\nabla^2_{\mathbf{B}}\mathcal{L}(\mathbf{B}) = \mathbf{X^{\top}DX}$, where $D_{ii} = \pi_i(1-\pi_i)$ 
   - With these forms, we can then use [Newton's method](../../dl/concepts/notes.md) to iteratively update $\mathbf{B}$.
     - The update step turns out to take the form $\mathbf{\hat{B} = (X^{\top}DX)^{-1}X^{\top}DZ}$ ([look familiar?](../06_linear_regression_and_regularization/notes.md)), which is why this is often termed iterative re-weighted least squares
 - Multiple classes
@@ -40,7 +40,7 @@
     - Note that in the 2-class case, this is the same as the likelihood for logistic regression
       - We can interpret logistic regression as producing unnormalized logits $\mathbf{B^{\top}x_i}$.
     - If we denote $\operatorname{softmax}(\hat{o}_{ik}) = \hat{p}_{ik},$ then we have that $\frac{\partial LL}{\partial \hat{o}_{ik}} = y_{ik}-\hat{p}_{ik},$ the gradient is the difference between the truth and the predicted probability.
-    - Permitting some abuse of notation, the loss gradient wrt $W$still permits the form $\nabla_{\pmb\theta}\mathcal{L}(\pmb\theta) = \mathbf{X^{\top}}(\pmb\pi - \mathbf{y}),$ where $\pi_i$ is now $\hat{p}_{ik}$, where $k$ is the class that $y_i$ belongs to.
+    - Permitting some abuse of notation, the loss gradient wrt $W$still permits the form $\nabla_{\mathbf{B}}\mathcal{L}(\mathbf{B}) = \mathbf{X^{\top}}(\pmb\pi - \mathbf{y}),$ where $\pi_i$ is now $\hat{p}_{ik}$, where $k$ is the class that $y_i$ belongs to.
 
 - Comparison vs Naive Bayes
   - Pros for Naive Bayes
@@ -56,4 +56,4 @@
 ## GLMS
 - GLMs extend the concept of logistic regression and assert that $\mathrm{E}(\mathbf{Y} \mid \mathbf{X})=\pmb{\mu}=g^{-1}(\mathbf{X} \mathbf{B})$
   - For logistic regression, we see that $g^{-1} = \sigma$
-- MLE estimates are usually found using iteratively reweighted least squares / Newton's, or [Fisher's scoring method](../../dl/concepts/notes.md).
+- MLE estimates are usually found using iteratively reweighted least squares / Newton's, or [Fisher's scoring method](../../dl/04_optimization_and_regularization/notes.md).

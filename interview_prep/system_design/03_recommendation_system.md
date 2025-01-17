@@ -69,9 +69,8 @@
               - Loss = $\ln \sigma(\hat{y}_{ui} - \hat{y}_{uj})$ (BPR-esque, Bayesian Personalized Ranking)
               - Can also use hinge loss: $\max(margin - \hat{y}_{ui} + \hat{y}_{uj}, 0)$
         - Optimization is usually done via Weighted Alternating Least Squares (alternating between fixing $U$ and $V$), or SGD. WALS is usually converges faster and is parallelizable.
-    - Two Tower: Fix item embeddings and just optimize for user embeddings
-      - ![two_tower.png](two_tower.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/video-recommendation-system)
-        - In CG, rather than using all item features, we usually just embed item ID. 
+    - Two Tower: 
+      - In CG, rather than using all item features, we usually just embed item ID. 
       - ![youtube_cg.png](youtube_cg.png)[Source](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf)
   - Ranking
     - There are multiple Learning To Rank (LTR) algorithms: Pointwise, Pairwise (RankNet, LambdaRank, LambdaMART) and Listwise (SoftRank, ListNet, AdaRank). We focus on the pointwise method for now. 
@@ -138,7 +137,7 @@
   - Embed items into the same space
     - Use session data to group items in the same session / within a certain radius of each other together
       - ![word2vec.png](word2vec.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/similar-listings-on-vacation-rental-platforms)
-        - Loss = $\sum_{(c, p) \in D_p} \log \frac{1}{1+e^{-E_c \cdot E_p}}+\sum_{(c, n) \in D_n} \log \frac{1}{1+e^{E_c \cdot E_n}}+\sum_{(c, b) \in D_{\text {booked }}} \log \frac{1}{1+e^{-E_c \cdot E_b}}+\sum_{(c, n) \in D_{\text {hard }}} \log \frac{1}{1+e^{E_c \cdot E_n}}$
+        - Info-NCE Loss = $\sum_{(c, p) \in D_p} \log \frac{1}{1+e^{-E_c \cdot E_p}}+\sum_{(c, n) \in D_n} \log \frac{1}{1+e^{E_c \cdot E_n}}+\sum_{(c, b) \in D_{\text {booked }}} \log \frac{1}{1+e^{-E_c \cdot E_b}}+\sum_{(c, n) \in D_{\text {hard }}} \log \frac{1}{1+e^{E_c \cdot E_n}}$
     - Use session + sequential data: self-attention.
     - AutoRec
       - Instead of embedding both users and items, we either embed users or items. 

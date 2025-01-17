@@ -13,8 +13,8 @@
     - Computational cost
     - Additional complexity
 - PCA
-  - PCA converts $\mathbf{X} \in \mathbb{R}^{n \times p}$ to $\mathbf{V^k} \in \mathbb{R}^{n \times k}$, $k < p$, such that the variance between points is maximized. Intuitively, we try to retain as much information as we possibly can. 
-  - A cool result is that $\mathbf{Z}$ are the first $k$ eigenvectors of $\mathbf{Z^{\top}}{\mathbf{Z}}$, where $\mathbf{Z}$ is $\mathbf{X}$ with demeaned columns, and we have ordered the eigenvectors in decreasing eigenvalue order. 
+  - PCA converts $\mathbf{X} \in \mathbb{R}^{n \times p}$ to $\mathbf{X^k = XV^k} \in \mathbb{R}^{n \times k}$, $k < p$, such that the variance between points is maximized. Intuitively, we try to retain as much information as we possibly can. 
+  - A cool result is that $\mathbf{V^k}$ are the first $k$ eigenvectors of $\mathbf{Z^{\top}}{\mathbf{Z}}$, where $\mathbf{Z}$ is $\mathbf{X}$ with demeaned columns, and we have ordered the eigenvectors in decreasing eigenvalue order. 
     - Also, the proportion of variance retained is given by $\frac{\sum_i^k \lambda_i}{\sum_i^p \lambda_i}$
   - Proof:
     - $\arg\max _{\mathbf{u}:\|\mathbf{u}\|=1} \mathbf{u}^{\top} \mathbf{S u}$ gives us the direction that projecting $\mathbf{X}$ onto would maximize variance. ($\mathbf{S} = \mathbf{Z^{\top}Z}$ is our sample covariance matrix, where $\mathbf{Z}$ is $\mathbf{X}$ with demeaned columns)
@@ -28,7 +28,7 @@
     - An [inductive proof](https://rich-d-wilkinson.github.io/MATH3030/4.2-pca-a-formal-description-with-proofs.html) is used for the other columns. 
   - SVD: $\mathbf{Z} = \mathbf{UDV^{\top}}$. The eigenvectors we want are the columns of $\mathbf{V}$. 
   - PC Regression
-    - $\mathbf{B} = (\mathbf{V^{k\top}V^k})^{-1}\mathbf{V^{k\top}Y}$
+    - $\mathbf{B} = (\mathbf{X^{k\top}X^k})^{-1}\mathbf{X^{k\top}Y}$
   - Computational Complexity
     - Scikit-Learn has a stochastic algorithm that finds the first $k$ eigenvectors in $O(nk^2) + O(k^3)$ time. 
 - Random Projection

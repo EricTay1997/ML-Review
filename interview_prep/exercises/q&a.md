@@ -42,14 +42,15 @@
   - What is the taylor expansion for $e^x$?.
 - Linear Regression
   - What are the model specifications and associated assumptions?
+  - What are tests for assumptions and remedies?
   - What is the MLE estimate for $\mathbf{B}$? In 2D? With weights?
   - What is the MLE and unbiased estimate for $\sigma^2$?
   - What is the gradient and hessian of the loss function with respect to $\mathbf{B}$?
-  - What is the variance of $\hat{\mathbf{B}}$?
-  - What is the formula of a t-stat and why is it low with multicollinearity?
-  - What is the formula for $R^2$, and that of the sample Pearson correlation coefficient? 
+  - If $\sigma^2$ is known, what is the distribution of $\hat{\mathbf{B}}$? How does SSE relate to $\sigma^2?$
+  - What is the MSE of $\hat{\mathbf{B}}$?
+  - What is the formula of a t-stat and why is it low with multicollinearity? 
+  - What is the formula for $R^2$, adjusted $R^2$ and that of the sample Pearson correlation coefficient? 
   - What is the chow test?
-  - How would you detect for multicollinearity?
 - Naive Bayes, Logistic Regression and GLMs
   - What is the model for Naive Bayes and what are its assumptions?
   - What are the model specifications for Logistic Regression and what are its assumptions?
@@ -61,12 +62,15 @@
   - What are the model specifications and associated assumptions?
   - Give a form that the hyperplane takes. 
   - Write down the equation that needs to be optimized to solve the problem. What about soft-margin SVMs?
-  - How does changing $C$ change the results of an SVM?
+  - What is the formula for kernel regression? How do you apply the kernel trick to SVMs?
+  - How do you change the formula for support vector regressions?
+  - How does changing $C$ change the results of an SVM in `sklern`?
 - Decision Trees
   - Write down the loss used for node splitting.
   - Write down the loss used by CART for pruning.
   - Is a node’s Gini impurity generally lower or higher than its parent’s? Is it generally lower/higher, or always lower/higher? Generally lower.
 - Ensemble Learning
+  - What is bagging/pasting and how is it used in RF?
   - What are two ways of calculating feature importance in an RF?
   - Sketch the pseudo algorithm of AdaBoost
   - Write the general formulae of GAMs
@@ -74,26 +78,30 @@
   - Compare Boosting with RFs
 - Dimensionality Reduction
   - Write down the PCA algorithm
-  - Describe LLE and t-SNE
+  - Describe the algorithm for LLE and t-SNE
   - In what cases would you use regular PCA, incremental PCA, randomized PCA, or random projection?
 - Unsupervised Clustering
-  - Describe K-means, DBSCAN, Spectral Clustering, Agglomerative Clustering, Hierarchical clustering
+  - Describe K-means, DBSCAN, Spectral Clustering, Agglomerative Clustering
   - Write down the model specification, Auxiliary Function and update steps of a GMM
 - Gaussian Process
-  - Write down the model specification of a GP
+  - Write down the model specification of a GP - prior, joint likelihood, conditional likelihood
 - Causal Inference
+  - What are key assumptions in Causal Inference?
   - Write down both the Outcome Modeling and IPW estimates for ATE in an Observational Study. 
   - When would you use a regression, 2-step least squares, or Double ML?
+- ARIMA
+  - Write down the model for an $AR, MA, ARMA, ARIMA, SARIMA$ model
+- DL
+  - Describe the {architecture, I/O, loss, training, sampling} for RNNs, LSTMs, Transformers, Autoencoders, Diffusion, Flows, GANs, GNNs
 - Optimization
   - What's Newton's method?
   - What is the general equation for Quasi-Newton methods?
-- DL
-  - Describe the {architecture, I/O, loss, training, sampling} for RNNs, LSTMs, Transformers, Autoencoders, Diffusion, Flows, GANs, GNNs
 - ToDo: CE loss, regularization, optimization, dl questions, applied AI (agents, RAG, RLHF), multimodality
 - System Design
   - Write down the steps/template for a typical SWE SD interview 
     - Explain each component
   - Write down the steps/template for a typical ML SD interview 
+  - Run through a template recommender system SD interview. Review past architectures used for this problem. 
   - Name some common online and offline metrics that can be used for each use case
   - What is an ACID database?
   - What is the CAP theorem?
@@ -119,5 +127,6 @@
 - Derive and code up various initialization functions
 - Derive and code up various optimization functions
 - Code up a self/cross-attention head
-- Code up the transformer architecture
+- Code up GPT-2 
+- Code up the architecture for an encoder-decoder model
 - Code and analyze Kahn, Dijkstra, Bellman Ford, Floyd Warshall, Kruskal, Prim, Ford Fulkerson, Kosaraju, Manacher, [Union Find](https://leetcode.com/discuss/general-discussion/1072418/Disjoint-Set-Union-(DSU)Union-Find-A-Complete-Guide)

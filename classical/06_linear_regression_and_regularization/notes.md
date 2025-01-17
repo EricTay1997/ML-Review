@@ -27,18 +27,16 @@
   - Instead, an unbiased estimate of $\sigma^2$ is instead $\frac{\mathbf{e}^{\top}\mathbf{e}}{n-rank(\mathbf{X})}$ ([Proof](https://www2.stat.duke.edu/courses/Fall19/sta721/lectures/MLES/mles.pdf)).
 - t-stats
   - Since $\mathbf{\hat{B}} = (\mathbf{X}^{\top}\mathbf{X})^{-1}\mathbf{X}^{\top}\mathbf{y}$ is an affine transformation of $\mathbf{y} \sim \mathcal{N}(\mathbf{XB}, \sigma^2\mathbf{I})$, 
-    - $\mathbf{\hat{B} \mid \mathbf{B}, \sigma^2}\sim\mathcal{N}(\mathbf{B}, \sigma^2(\mathbf{X^\top X})^{-1})$ 
+    - $\mathbf{\hat{B} \mid \mathbf{B}, \sigma^2}\sim\mathcal{N}(\mathbf{B}, \sigma^2(\mathbf{X^\top X})^{-1})$ (using $\operatorname{Var}(\mathbf{Ax}) = \mathbf{A}(\operatorname{Var(\mathbf{x})})\mathbf{A}^{\top}$)
+    - Intuition: The higher the errors in our model, the more uncertain we are about _every_ $\hat{B}_i$.
   - t-stats indicate the significance of each $\hat{B_i}$.
   - Formally, $\frac{\hat{B_i} - B_i}{SE(\hat{B_i})} \sim t_{n-rank(\mathbf{X})},$ where $SE(\hat{B_i}) = \sqrt{\frac{\mathbf{e}^{\top}\mathbf{e}}{n-rank(\mathbf{X})}[(\mathbf{X^{\top}X})^{-1}]_{ii}}$ 
     - In simple linear regression, we have that $SE(\hat{B_1}) = \sqrt{\frac{\mathbf{e}^{\top}\mathbf{e}}{n-2}\frac{1}{\sum_i(x_i - \bar{x})^2}}$ 
     - In regression libraries, we often set $\beta_i = 0$ as our null hypothesis.
-    - Intuition:
-      - The higher the errors in our model, the more uncertain we are about _every_ $\hat{B}_i$.
-      - Since the first term is our unbiased estimate of $\sigma^2$, the higher the noise in the data generating process $\sigma^2$, the more uncertain we are about _every_ $\hat{B}_i$.
-      - **Multicollinearity**: $[(\mathbf{X^{\top}X})^{-1}]_{ii}=\frac{1}{||\epsilon_i||^2},$ where $\epsilon_i$ is the projection of the $i^{th}$ column of $\mathbf{X}$ onto the other columns ([proof](https://math.stackexchange.com/questions/2624986/the-meaning-behind-xtx-1)). 
-        - When columns are very correlated, we get high uncertainty for $\hat{B_i}.$
+    - **Multicollinearity**: $[(\mathbf{X^{\top}X})^{-1}]_{ii}=\frac{1}{||\epsilon_i||^2},$ where $\epsilon_i$ is residual from the projection of the $i^{th}$ column of $\mathbf{X}$ onto the other columns ([proof](https://math.stackexchange.com/questions/2624986/the-meaning-behind-xtx-1)). 
+      - When columns are very correlated, we get high uncertainty for $\hat{B_i}.$
     - The [proof](https://www2.stat.duke.edu/courses/Fall19/sta721/lectures/SamplingDist/sampling.pdf) hinges on two parts:
-      - $\hat{\mathbf{B}}\sim\mathcal{N}(\mathbf{B}, \sigma^2(\mathbf{X^{\top}X})^{-1})$ (using $\operatorname{Var}(\mathbf{Ax}) = \mathbf{A}(\operatorname{Var(\mathbf{x})})\mathbf{A}^{\top}$)
+      - $\hat{\mathbf{B}}\sim\mathcal{N}(\mathbf{B}, \sigma^2(\mathbf{X^{\top}X})^{-1})$
       - $\frac{\mathbf{e}^{\top}\mathbf{e}}{\sigma^2} \sim \chi^2_{n-rank(\mathbf{X})}$ (refer to link for more details)
 - $R^2$
   - SST (sum of squares total) = TSS = $\sum_i (y_i-\bar{y})^2$
@@ -118,5 +116,6 @@
   - Optimization
     - There is no closed form solution for $\mathbf{B}$, so we solve this with a combination of [coordinate descent and subgradients](https://medium.com/@msoczi/lasso-regression-step-by-step-math-explanation-with-implementation-and-example-c37df7a7dc1f). 
     - Looking at the form of the subgradients provides inspiration for why Lasso promotes sparsity.
+      - Similar form to the form we presented in [Statistical Learning Theory](../03_statistical_learning_theory/notes.md)
 - Elastic Net
   - $\mathcal{L}(\mathbf{B}) = ||\mathbf{Y} - \mathbf{XB}||^2_2 + \lambda_1||\mathbf{B}||^2_2 + \lambda_2||\mathbf{B}||^2_1$
