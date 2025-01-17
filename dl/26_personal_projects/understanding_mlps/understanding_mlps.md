@@ -57,7 +57,7 @@ Figure credit: https://alexlenail.me/NN-SVG/index.html
 ## The "Hyperplane"
 - Let's focus on the final layer $W_0x' + b_0, W_0 \in \mathbb{R}^{1 \times p}, x' \in \mathbb{R}^p, b_0 \in \mathbb{R}$
 - We notice that $W_0x' + b_0 = 0$ is the exact equation of a [hyperplane](https://en.wikipedia.org/wiki/Hyperplane). Geometrically, 
-    - Let us denote $W_0 = (w_{01}, \ldots, w_{0p})$ and $x' = (x'_{1}, \ldots, x'_{p})^\top$.
+    - Let us denote $W_0 = (w_{01}, \ldots, w_{0p})$ and $x' = (x_{1}', \ldots, x_{p}')^\top$.
     - $W_0x' = 0$ is the equation of a hyperplane that goes through the origin.
         - It is a "plane" because the equation $\sum_i^p (w_{0i}x'_i) = 0$ has $p-1$ degrees of freedom.
         - The normal vector to this hyperplane is $W_0^\top$: Any vector $v$ along the plane satisfies the equation $W_0v = 0$.
