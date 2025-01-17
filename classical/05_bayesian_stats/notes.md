@@ -47,11 +47,31 @@
 | Inverse Gamma-Normal  | $\sigma^2 \sim \operatorname{IG}(\alpha, \beta)$   | $x \sim \mathcal{N}(\mu, \sigma^2)$                         | $\operatorname{IG}(\alpha + \frac{N}{2}, \beta + \frac{\sum_{i=1}^N (x_i - \mu)^2}{2})$    | Known mean $\mu$. Variance was estimated from $2\alpha$ observations with sample variance $\frac{\beta}{\alpha}$.                                                                                | $t_{2\alpha'}(\mu, \sigma^2 = \frac{\beta'}{\alpha'})$ |
 
 ### Sampling
-- Gibbs sampling
-  - In the section above, we mostly have closed forms for the joint probability that permit for easy sampling, but sometimes it is easier to sample from the conditional distribution instead. 
-  - Gibbs sampling is an MCMC algorithm to sample from the joint distribution by iteratively sampling from conditional distributions. 
-  - Samples are generally not independent and hence effective sample size is lower. 
-  - In addition, samples from the beginning of the chain (the burn-in period) may not accurately represent the desired distribution and are usually discarded.
+- Markov Chain Monte Carlo (MCMC)
+  - Gibbs sampling
+    - Efficient when conditionals are easy to sample
+    - In the section above, we mostly have closed forms for the joint probability that permit for easy sampling, but sometimes it is easier to sample from the conditional distribution instead. 
+    - Gibbs sampling is an MCMC algorithm to sample from the joint distribution by iteratively sampling from conditional distributions. 
+    - Samples are generally not independent and hence effective sample size is lower. 
+    - In addition, samples from the beginning of the chain (the burn-in period) may not accurately represent the desired distribution and are usually discarded.
+  - Metropolis-Hastings
+    - Flexible and works in many cases, but convergence can be slow if the proposal distribution is not well-chosen
+    - Propose a state from a proposal distribution $q(x'\mid x)$, accept/reject depending on $p(x)$ and $p(x')$.
+  - Hamiltonian MC
+    - Efficient exploration of high-dimensional spaces using physics-based dynamics, but requires gradient computation
+    - Treat the parameters of the model as "particles" and simulate their motion using Hamiltonian dynamics
+    - Propose new states by solving the Hamiltonian equations of motion using numerical integration
+    - Accept or reject the new state based on the Metropolis-Hastings acceptance criterion
+  - Langevian MC
+    - Update both the position and momentum using a stochastic differential equation (SDE) that includes a noise term to mimic the random walk
+    - A lighter version of HMC, with more efficient updates but still requiring gradient information
+- Non-MCMC
+  - Rejection Sampling
+    - Inefficient if proposal distribution is not well-chosen
+    - Similar to MH, except we choose the proposal distribution $q(x)$ and accept based on $p(x)$.
+  - Importance Sampling
+    - Can have high variance if proposal distribution is not well-chosen
+    - Weight samples $w(x) = \frac{p(x)}{q(x)}$
 
 ### Uninformative priors
 * One common uninformative prior is the Jeffrey's Prior, $p(\theta) \propto |I(\theta)|^{1/2}$

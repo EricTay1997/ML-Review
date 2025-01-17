@@ -11,7 +11,7 @@
 
 - We start with $\mathbf{z}_0 \sim p_0(\mathbf{z}_0),$ which can be easily sampled from, and transform it into $\mathbf{x}$ with invertible functions $f_i$
   - ![nf.png](nf.png)[Source](https://lilianweng.github.io/posts/2018-10-13-flow-models/)
-  - $\log p(\mathbf{x}) = \log \pi_K(\mathbf{z}_K) = \log \pi_0(\mathbf{z}_0) - \sum_{i=1}^K\log\vert \operatorname{det} \frac{df_i}{d\mathbf{z}_{i-1}}\vert$ [Details]((https://lilianweng.github.io/posts/2018-10-13-flow-models/))
+  - $\log p(\mathbf{x}) = \log \pi_K(\mathbf{z}_K) = \log \pi_0(\mathbf{z}_0) - \sum_{i=1}^K\log\vert \operatorname{det} \frac{df_i}{d\mathbf{z}_{i-1}}\vert$ [Details](https://lilianweng.github.io/posts/2018-10-13-flow-models/)
   - This surfaces two requirements for our $f_i$:
     - They are invertible
     - They yield Jacobians whose log determinants are easy to compute 

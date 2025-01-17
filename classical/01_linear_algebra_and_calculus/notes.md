@@ -62,8 +62,11 @@ x_{i-1}, x_i+h, x_{i+1}, \ldots, x_n\right)-f\left(x_1, \ldots, x_i, \ldots, x_n
 $\nabla_{\mathbf{x}} y=\nabla_{\mathbf{x}}\mathbf{u} \nabla_{\mathbf{u}} y$ 
 - Hessian: The Hessian $\mathbf{H}$ of $f(\mathbf{x})$ is such that $H_{ij} = \frac{\partial^2}{\partial x_i \partial x_j}f(\mathbf{x})$
   - It specifies the curvature in the direction of the basis vectors. 
-  - It's bounded by the minimum and maximum eigenvalues.
-- Taylor expansion: $f\left(x_k+\Delta x\right) \approx f\left(x_k\right)+\nabla f\left(x_k\right)^{\mathrm{T}} \Delta x+\frac{1}{2} \Delta x^{\mathrm{T}} H \Delta x$
+  - Curvature is bounded by the minimum and maximum eigenvalues.
+- Taylor expansion: 
+  - $f(x)=\sum_{i=0}^k \frac{f^{(i)}(a)}{i!}(x-a)^i+h_k(x)(x-a)^k$
+    - Under some conditions, $R_k(x)=\frac{f^{(k+1)}\left(\xi_L\right)}{(k+1)!}(x-a)^{k+1}$ for $\xi_L$ between $a$ and $x$ (Lagrange form)
+  - Multivariate: $f\left(x_k+\Delta x\right) \approx f\left(x_k\right)+\nabla f\left(x_k\right)^{\mathrm{T}} \Delta x+\frac{1}{2} \Delta x^{\mathrm{T}} H \Delta x$
 - Hessian and the nature of a stationary point
   - $f(\mathbf{x})$ is a local minimum $\iff$ $f$ is twice continuously differentiable with $\nabla^2f$ positive semi-definite in the neighborhood of $\mathbf{x}$ and that $\nabla f(\mathbf{x}) = \mathbf{0}$.
   - We can reason this geometrically. 

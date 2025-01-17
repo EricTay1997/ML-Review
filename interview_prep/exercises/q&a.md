@@ -2,29 +2,43 @@
 
 ## Notes
 - General Statistics
+  - What is the definition of the Moore-Penrose pseudoinverse and how does one calculate it?
   - What is the $L^p, L^{\infty}$ and Frobenius norm?
+  - What is the connection between eigenvalues and determinant/trace?
+  - What is the Jacobian, and what is a Hessian?
+  - Write down taylor's theorem, and the 2nd order multivariate approximation of a function. 
+  - What is the relationship between Hessian, eigenvalues and stationary points?
+  - Write down the multivariate change of variables formula. How does this relate to integration / pdfs?
+  - Write down the primal and dual form for the generalized lagrangian, the minimax objectives, and the KKT conditions
   - What is the formula for conditional expectation and the law of iterated expectation?
-  - What's the pdf of $Y = g(X)$, given $p(x)$?
-  - What's the formula for $\operatorname{Cov}(f(X), g(Y))$?
-  - What's the formula for $\pmb{\Sigma} \stackrel{\text { def }}{=} \operatorname{Cov}_{\mathbf{x} \sim p}[\mathbf{x}]$? 
+  - What's the formula for $\operatorname{Cov}(f(X), g(Y))$? 
+  - What's the formula for $\pmb{\Sigma} \stackrel{\text { def }}{=} \operatorname{Cov}_{\mathbf{x} \sim p}[\mathbf{x}]$? Formula for correlation?  Why is this psd?
   - Suppose $X_i$ are iid and $E[X] = \mu$ and $\operatorname{Var}(X) = \sigma^2$.
     - What's an unbiased estimate of $\sigma^2$?
     - What's the variance of this estimate? (Hint: What's its distribution?)
+  - Write down two formulae for the sample covariance matrix $\mathbf{S}$. What is $S_{ij}$?
   - What's the CLT?
-  - What's the MGF? Calculate the MGF of a univariate normal. 
-  - What is Entropy, Perplexity, Cross-Entropy, KL Divergence and Gini Impurity?
-  - Decompose MSE in both the model prediction case and the parameter estimation case. 
+  - What's the MGF/CF? Calculate the MGF of a univariate normal. 
+  - What is Self-Information of an event, Entropy, Cross-Entropy, KL Divergence, Gini Impurity, Perplexity?
+  - What is generalization error?
+  - Decompose MSE in both the model prediction case and the parameter estimation case.
+  - What are 4 reasons to use parameter regularization?
+  - For a quadratic loss function, how do parameter estimates change for L2 regularization? What's the geometric intuition for this? 
+  - For a quadratic loss function with diagonal Hessian, how do parameter estimates change for L2 regularization? What's the geometric intuition for this? 
   - What is a consistent estimator? Give an example of a consistent but biased estimator. What about an unbiased by inconsistent estimator?
+  - What is the relationship between MLE, KL-divergence, CE, and MSE?
   - What are the two formulae for Fisher's Information? What does it mean for an estimator to be efficient?
-  - Write out formulae for Sensitivity, Specificity, Accuracy, Precision, Recall, FPR.
+  - What is the relationship between MLE, consistency and efficiency? Why is regularization useful?
+  - Write out formulae for Sensitivity, Specificity, Accuracy, Precision, Recall, FPR, F1 score. 
+  - Write down formulae for CE, NCE, Huber loss, quantile loss, hinge loss, MAPE, Symmetric MAPE, MRR, mAP, nDCG, FID, Inception Score, FAD, BLEU, InfoNCE. 
   - What is Alpha and Beta in a test?
-  - What is the Chi-squared test statistic?
-  - What is an ANOVA?
+  - What a Z, T, Welch's t, Chi-squared test, ANOVA?
   - What is Multiple Hypothesis Testing and what are ways to correct for it? 
   - What are the formulae for AIC and BIC?
   - What is the probability distribution of a Poisson, Geometric, Exponential, Normal and Multivariate Normal distribution?
   - What is the mean and variance of a Binomial, Poisson, Geometric, Exponential, Beta, Gamma, Chi-Squared distribution?
-  - What is the formula for a Jeffrey's Prior?
+  - What is the formula for a Jeffrey's Prior? What does invariance mean? What's the intuition for it?
+  - Describe Gibbs, MH, HMC, LMC, Rejection, Importance sampling.
   - What is the taylor expansion for $e^x$?.
 - Linear Regression
   - What are the model specifications and associated assumptions?

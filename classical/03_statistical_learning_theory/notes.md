@@ -24,8 +24,9 @@
     * Estimation error: $R^{true}(f^{emp}) - R^{true}(f^*)$
     * Optimization error: $R^{true}(f^{opt}) - R^{true}(f^{emp})$
   * Another type of generalization error
-    * We often say talk about generalization as the difference in train and test error,.
+    * We often say talk about generalization as the difference in train and test error.
     * Note that this difference is _none_ of the terms above, since these measured quantities are $R^{emp}$ values rather than $R^{true}$
+    * Instead, this seems to estimate $R^{true}(f^{opt}) - R^{emp}(f^{opt})$
     * Roughly, the difference between training and test error is of order $\sqrt{\frac{d_{vc}\log n}{n}}$
       * I.e. "generalization" error decreases with lower model capacity / more data.
 * Bias
@@ -91,8 +92,8 @@
       * $p_{data}$ must lie within the model family $p_{model}(\pmb{\theta})$
       * The true distribution of $p_{data}$ must correspond to exactly one value of $\pmb{\theta}$
 * Efficiency (let's switch to scalars for simplicity)
-  * Fisher Information $\mathcal{I}(\theta)=\mathrm{E}\left[\left.\left(\frac{\partial}{\partial \theta} \log f(X ; \theta)\right)^2 \right\rvert\, \theta\right]$ is the variance of the score.
-    * Intuitively, when the score has high variance, i.e. the likelihood function varies significantly wrt $\theta$, the distribution is highly peaked. In other words, the data $\mathbf{x}$ conveys _more_ information about $\theta$ than if the pdf was flatter. 
+  * Fisher Information $\mathcal{I}(\theta)=\mathrm{E}\left[\left.\left(\frac{\partial}{\partial \theta} \log f(X ; \theta)\right)^2 \right\rvert\, \theta\right] = -\mathrm{E}\left[\left.\frac{\partial^2}{\partial^2 \theta} \log f(X ; \theta) \right\rvert\, \theta\right]$ is the variance of the score.
+    * Intuitively, when the score has high variance, i.e. the likelihood function varies significantly wrt $\theta$, the distribution is highly peaked. In other words, the data $\mathbf{x}$ conveys _more_ information about $\theta$ (given $\theta$) than if the pdf was flatter. 
   * The Cramér–Rao lower bound for the scalar unbiased case is then given by $\operatorname{Var}(\hat{\theta})\geq\frac{1}{I(\theta)}$.
     * Again, this makes sense. High $\mathcal{I}(\theta) \rightarrow$ Peaky distribution $\rightarrow$ Smaller lower bound, i.e. our precision for our estimator is higher. 
   * Now, **Efficiency** for an unbiased estimator is then defined as $e(\hat{\theta}) = \frac{I(\theta)^{-1}}{\operatorname{Var}(\hat{\theta})}$. This is bounded above by 1 and it gives a measure of how precise the estimator is (relative to the theoretical maximum precision).
