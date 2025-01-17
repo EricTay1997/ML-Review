@@ -38,13 +38,17 @@ This repository will include:
     * Computer Vision
     * Natural Language Processing
     * Reinforcement Learning
+    * Audio 
+    * Video
+    * Multimodal
+    * Post Training
+    * AI Safety
     * Hyperparameter Optimization
     * Computational Performance
-    * AI Safety
-    * Flask App
+    * Personal Projects
     * Misc
 * Code implementations for various algorithms, which will mostly come from online resources/tutorials. 
-  * The first priority would be to get implementations that work.
+  * The first priority would be to fulfill learning goals.
   * If time permits, a stretch goal would be to refactor the code with a greater emphasis on OOP, e.g. [John's repo](https://github.com/johnma2006/candle/tree/main)
   * Code currently includes:
     * From scratch implementations, including BERT, GPT-2, Llama 2-3.2, DDPM, Real-NVP.
