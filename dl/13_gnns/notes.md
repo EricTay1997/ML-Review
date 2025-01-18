@@ -21,9 +21,9 @@ $
       - Attention is implemented as a one-layer MLP
       - $h_i'=\sigma\left(\sum_{j\in\mathcal{N}_i}\alpha_{ij}\mathbf{W}h_j\right)$
       - $\alpha_{ij} = \frac{\exp\left(\text{LeakyReLU}\left(\mathbf{a}\left[\mathbf{W}h_i||\mathbf{W}h_j\right]\right)\right)}{\sum_{k\in\mathcal{N}_i} \exp\left(\text{LeakyReLU}\left(\mathbf{a}\left[\mathbf{W}h_i||\mathbf{W}h_k\right]\right)\right)}$, where $\alpha_{ij}$ is the attention weight from node $i$ to $j$, having been masked appropriately for adjacency $A$
-      - $\mathbf{a} \in \mathbb{R}^{1 \times 2d}$
-      - $d$ being the dimensionality of $\mathbf{W}h_i$
-      - Leaky ReLU is needed to ensure that attention is dependent of the node itself, if not nodes with the same neighbors will have the same attention.
+        - $\mathbf{a} \in \mathbb{R}^{1 \times 2d}$
+        - $d$ being the dimensionality of $\mathbf{W}h_i$
+        - Leaky ReLU is needed to ensure that attention is dependent of the node itself, if not nodes with the same neighbors will have the same attention.
 - Additional thoughts:
   - Intuition - why is a GNN useful? By maintaining the adjacency properties in each layer, you may “pool” (message passing) information effectively to leverage the graph structure
   - GNNs vs CNNs: Perhaps we can view CNNs as a special case of GNNs, where CNNs draw edges between pixels (nodes) that are close to each other. Edit: Seems like there’s a decent amount of literature on this topic.

@@ -23,6 +23,7 @@
       * Huber Loss: MSE if error is small, if not use MAE
       * Quantile loss: $L(\hat{y}, y) = \max(q(y - \hat{y}), (q-1)(y - \hat{y}))$
       * Hinge loss
+      * Info-NCE loss: $\ell_{i,j}=-\log \frac{\exp(\text{sim}(z_i,z_j)/\tau)}{\sum_{k=1}^{2N}\mathbb{1}_{[k\neq i]}\exp(\text{sim}(z_i,z_k)/\tau)}$
     * Forecast problems:
       * Mean Absolute Percentage Error: $100 \frac{1}{n} \sum_{n=1}^n\left|\frac{A_k-F_5}{A_4}\right|$
       * Symmetric MAPE: $\frac{100}{n} \sum_{t=1}^n \frac{\left|F_t-A_t\right|}{\left(\left|A_t\right|+\left|F_t\right|\right) / 2}$

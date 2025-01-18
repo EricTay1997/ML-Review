@@ -107,6 +107,7 @@
   - What is the formula of sigmoid, tanh, arctan, relu, leaky relu, softplus, elu, gelu, silu?
   - What issues are faced by sigmoid and relu activations? 
 - Initialization
+  - Explain why permutation invariance of networks can be an issue
   - Derive Xavier and Kaiming initialization
 - Optimization
   - Name 7 ways of regularization
@@ -123,14 +124,57 @@
 - RNNs
   - Write down the equations for RNNs, Bidirectional RNNs, LSTMs (+ Peephole connections), GRUs
   - What are 3 issues for RNNs?
-- 
-- DL
-  - Describe the {architecture, I/O, loss, training, sampling} for RNNs, LSTMs, Transformers, Autoencoders, Diffusion, Flows, GANs, GNNs
-- Optimization
-  - What's Newton's method?
-  - What is the general equation for Quasi-Newton methods?
-- ToDo: CE loss, regularization, optimization, dl questions, applied AI (agents, RAG, RLHF), multimodality
-
+- Attention and Transformers
+  - Draw the architecture for encoder-only, encoder-decoder, and decoder-only transformers
+  - Write down the equations for attention
+  - Write down the equations for different types of embeddings
+  - What is the intuition for MLP layers?
+  - Describe how Q and K composition work for the creation of induction heads
+  - Name 3 ways that we have sped up implementation
+  - Pre/Post-layer normalization, GeLU/SwiGLU, LayerNorm/RMSNorm
+- VAEs
+  - Derive the training loss for VAEs
+- Diffusion
+  - Derive the training loss for DDPM, DDIM 
+  - Explain classifier-free guidance
+  - # Todo
+- Flows
+  - # Todo
+- GANs
+  - Describe 2 types of white box attacks. What can we do abotu these? 
+  - Name 4 issues with GANs?
+  - What 5 tricks to improve GAN training?
+  - Describe 3 types of GANs
+- GNNs
+  - What kind of problems can GNNs solve?
+  - What's the intuition behind GNNs, and how does this relate to CNNs?
+  - Describe the architectural differences between GCN, GraphConv and Graph Attention
+- Meta Learning
+  - Describe the 3 approaches to meta learning with examples
+- Contrastive Learning
+  - Describe 3 models trained with this objective
+- Computer Vision 
+  - # Todo
+- NLP
+  - # Todo
+- RL
+  - # Todo
+- Audio 
+  - What audio tokenizers are there? How are they usually trained and consequently different?
+  - Name 5 diffusion-based models and 4 autoregressive models and describe their architecture and any relevant details
+  - What research has been done regarding controllability of music generation? What are you excited about?
+  - How have agents been applied in music generation? What are you excited about?
+  - How has domain knowledge been used in music generation? What are you excited about?
+- Multimodal 
+  - How does NExT-GPT work? Give examples of each component and training objectives.
+- Post-Training 
+  - # Todo
+- Hyperparameter optimization
+  - What are the components of a HPO library?
+  - What is an example of multi-fidelity hyperparameter optimization? How can we make this faster?
+- Computational performance
+  - # Todo
+  - 
 ### SD + Coding Practices
 
 - System Design
@@ -163,6 +207,6 @@
 - Derive and code up various initialization functions
 - Derive and code up various optimization functions
 - Code up a self/cross-attention head
-- Code up GPT-2 
+- Code up GPT-2. With/without custom initialization, dropout, bias, RoPE, grouped attention, and LayerNorm/RMSNorm, pre/post-layer norm, gelu, swiglu
 - Code up the architecture for an encoder-decoder model
 - Code and analyze Kahn, Dijkstra, Bellman Ford, Floyd Warshall, Kruskal, Prim, Ford Fulkerson, Kosaraju, Manacher, [Union Find](https://leetcode.com/discuss/general-discussion/1072418/Disjoint-Set-Union-(DSU)Union-Find-A-Complete-Guide)

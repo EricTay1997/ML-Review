@@ -4,7 +4,7 @@
 - Few-shot classification is an instantiation of meta-learning in the field of supervised learning. 
   - The dataset $\mathcal{D}$ is often split into two parts, a support set $\mathcal{S}$ for learning and a prediction set $\mathcal{B}$ for training or testing, 
   - K-shot N-class classification task: the support set contains K labelled examples for each of N classes.
-- There are three common approaches to meta-learning: Metric-based, model-based and optimization-based
+- There are three common approaches to meta-learning: metric-based, model-based and optimization-based
 
 ## Metric-Based
 - The predicted probability is a weighted sum of labels of support set samples:
