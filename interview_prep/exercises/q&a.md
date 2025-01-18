@@ -70,7 +70,7 @@
 - Decision Trees
   - Write down the loss used for node splitting.
   - Write down the loss used by CART for pruning.
-  - Is a node’s Gini impurity generally lower or higher than its parent’s? Is it generally lower/higher, or always lower/higher? Generally lower.
+  - Is a node’s Gini impurity generally/always lower or higher than its parent’s? 
 - Ensemble Learning
   - What is bagging/pasting and how is it used in RF?
   - What are two ways of calculating feature importance in an RF?
@@ -86,7 +86,7 @@
   - Describe K-means, DBSCAN, Spectral Clustering, Agglomerative Clustering
   - Write down the model specification, Auxiliary Function and update steps of a GMM
 - Gaussian Process
-  - Write down the model specification of a GP - prior, joint likelihood, conditional likelihood
+  - Write down the model specification of the GP prior, joint likelihood, conditional likelihood
 - Causal Inference
   - What are key assumptions in Causal Inference?
   - Categorize the type of experiments we encounter
@@ -135,11 +135,22 @@
 - VAEs
   - Derive the training loss for VAEs
 - Diffusion
-  - Derive the training loss for DDPM, DDIM 
+  - Derive the training loss for DDPM
+  - Explain the intuition for different variance schedules
+  - Draw the U-Net for Stable Diffusion
   - Explain classifier-free guidance
-  - # Todo
+  - Draw the architecture for LDMs
+  - Describe faster sampling techniques and derive the sampling step for DDIM
+  - Without incorporating textual conditioning in training, how might we use guidance to enable textual conditioning in inference?
+  - What are 2 ways to condition on both image and text without additional training? Now give 2 ways to do so with fine-tuning. 
 - Flows
-  - # Todo
+  - Write down the likelihood for normalizing flow
+  - Describe the architecture of RealNVP, GLOW and autoregressive flows. 
+  - Describe residual flows.
+  - Describe continuous normalizing flows. Write down the continuity/transport equation and the log likelihood. 
+  - Describe flow matching. How is this related to diffusion?
+  - What is dequantization and variational dequantization? 
+  - What is the multi-scale architecture?
 - GANs
   - Describe 2 types of white box attacks. What can we do abotu these? 
   - Name 4 issues with GANs?
@@ -154,11 +165,21 @@
 - Contrastive Learning
   - Describe 3 models trained with this objective
 - Computer Vision 
-  - # Todo
+  - Autoregressive modeling: Describe 2 models for generation and 1 for classification
+  - What's the difference between segmentation and object detection? 
+  - How does object detection usually work? 
+  - What's the difference between R-CNN, Fast R-CNN, Faster R-CNN and Mask R-CNN?
+  - Describe YOLO, SSD and RetinaNet
 - NLP
-  - # Todo
+  - Pre-Training
+  - Post-Training
 - RL
-  - # Todo
+  - Write down the Bellman equations for value and action-value function
+  - What are the differences between Value/Q-based and policy-based learning?
+  - For Q-learning, what are two training methodologies we can employ to make parameter updates?
+  - What are on-policy and off-policy methods?
+  - What is Deep Q-Learning? What are 3 tricks we use to stabilize training?
+  - What is Proximal Policy Learning?
 - Audio 
   - What audio tokenizers are there? How are they usually trained and consequently different?
   - Name 5 diffusion-based models and 4 autoregressive models and describe their architecture and any relevant details
@@ -168,13 +189,25 @@
 - Multimodal 
   - How does NExT-GPT work? Give examples of each component and training objectives.
 - Post-Training 
-  - # Todo
+  - How might be reduce latency or storage at the cost of performance?
+  - What is guidance and what does this look like for NLP? 
+  - What is fine-tuning and what are 3 methods of PEFT? 
+  - What is the process for RLHF? DPO? IPO?
 - Hyperparameter optimization
   - What are the components of a HPO library?
   - What is an example of multi-fidelity hyperparameter optimization? How can we make this faster?
 - Computational performance
-  - # Todo
-  - 
+  - What are differences between a CPU and a GPU
+  - What is multithreading vs multiprocessing?
+  - What is vectorization?
+  - What is imperative vs symbolic programming?
+  - What are features of JAX?
+  - What at common bottlenecks and solutions to them?
+  - What is DP and FSDP? What can be sharded in FSDP? What is the difference between `DP` and `DDP`? Elaborate on synchronous computation. 
+  - What is an issue with pipeline parallelism and how can we remedy this?
+  - What is gather and scatter and when would we use these? How can we leverage asynchronous layers to reduce compute time?
+  - What is disaggregated serving? When might we want to avoid this?
+
 ### SD + Coding Practices
 
 - System Design

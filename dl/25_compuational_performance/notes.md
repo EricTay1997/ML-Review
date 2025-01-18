@@ -130,6 +130,8 @@ As models and data scale in size, optimizing for more efficient processes become
   - Tensor parallelism splits the model across the feature dimension. 
   - It does not face the pipeline bubble issue, but requires more communication across devices.
   - Gather vs Scatter
+    - Gather "gathers" data spread across multiple processors such that each processor has a copy. 
+    - Scatter does not copy data, rather it transmits $\frac{n-1}{n}$ of its data to other devices. 
     - ![gather_scatter.png](gather_scatter.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/tensor_parallel_simple.html)
     - Note that here we reverse the order of our activations ($p \times n$ rather than $n \times p$)
     - To reduce both the communication needed (?) and the amount of data stored on each device, gather/scatter is more suitable when $\mathbf{x}$ has fewer/more features than $\mathbf{y}$.
