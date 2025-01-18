@@ -19,9 +19,9 @@
     - What's an unbiased estimate of $\sigma^2$?
     - What's the variance of this estimate? (Hint: What's its distribution?)
   - Write down two formulae for the sample covariance matrix $\mathbf{S}$. What is $S_{ij}$?
-  - What's the CLT?
+  - What's the CLT? LLN?
   - What's the MGF/CF? Calculate the MGF of a univariate normal. 
-  - What is Self-Information of an event, Entropy, Cross-Entropy, KL Divergence, Gini Impurity, Perplexity?
+  - What is Self-Information of an event, Entropy, Information Gain, Cross-Entropy, KL Divergence, Gini Impurity, Perplexity?
   - What is generalization error?
   - Decompose MSE in both the model prediction case and the parameter estimation case.
   - What are 4 reasons to use parameter regularization?
@@ -33,8 +33,8 @@
   - What is the relationship between MLE, consistency and efficiency? Why is regularization useful?
   - Write out formulae for Sensitivity, Specificity, Accuracy, Precision, Recall, FPR, F1 score. 
   - Write down formulae for CE, NCE, Huber loss, quantile loss, hinge loss, MAPE, Symmetric MAPE, MRR, mAP, nDCG, FID, Inception Score, FAD, BLEU, InfoNCE. 
-  - What is Alpha and Beta in a test?
-  - What a Z, T, Welch's t, Chi-squared test, ANOVA?
+  - What is Alpha and Beta in a test? Significance level, confidence level, power?
+  - What is a Z, T, Chi-squared test, ANOVA? What are the different types of t-tests?
   - What is Multiple Hypothesis Testing and what are ways to correct for it? 
   - What are the formulae for AIC and BIC?
   - What is the probability distribution of a Poisson, Geometric, Exponential, Normal and Multivariate Normal distribution?
@@ -74,17 +74,22 @@
 - Ensemble Learning
   - What is bagging/pasting and how is it used in RF?
   - What are two ways of calculating feature importance in an RF?
-  - Sketch the pseudo algorithm of AdaBoost
+  - What are two boosting algorithms?
   - Write the general formulae of GAMs
   - Name features about XGBoost and LightGBM
   - Compare Boosting with RFs
 - Dimensionality Reduction
+  - How would you combat the curse of dimensionality?
   - Write down the PCA algorithm
   - Describe the algorithm for LLE and t-SNE
   - In what cases would you use regular PCA, incremental PCA, randomized PCA, or random projection?
+  - PCA vs LDA
+  - t-SNE vs UMAP?
 - Unsupervised Clustering
   - Describe K-means, DBSCAN, Spectral Clustering, Agglomerative Clustering
   - Write down the model specification, Auxiliary Function and update steps of a GMM
+  - What are metrics used in clustering?
+  - Discuss two clustering algorithms that can scale to large datasets
 - Gaussian Process
   - Write down the model specification of the GP prior, joint likelihood, conditional likelihood
 - Causal Inference
@@ -94,18 +99,19 @@
   - When would you use a regression, 2-step least squares, or Double ML?
 - ARIMA
   - Write down the model for an $AR, MA, ARMA, ARIMA, SARIMA$ model
+  - What are the assumptions of the ARIMA model?
 
 ### DL
 
 - Basics
   - What's the difference between `binary_cross_entropy_with_logits` vs `cross_entropy`?
   - Explain the difference between `view` and `reshape`
-  - Write down equations for Batch and Layer normalization. Why would you use one over the other? 
+  - Write down equations for Batch and Layer normalization. What is their function? Why would you use one over the other? 
   - Why would you use PyTorch buffers?
   - What is PyTorch's default initialization for linear layers?
 - Activations
   - What is the formula of sigmoid, tanh, arctan, relu, leaky relu, softplus, elu, gelu, silu?
-  - What issues are faced by sigmoid and relu activations? 
+  - What issues are faced by sigmoid/tanh and relu activations? Compare the two.
 - Initialization
   - Explain why permutation invariance of networks can be an issue
   - Derive Xavier and Kaiming initialization
@@ -117,13 +123,14 @@
   - What are two issues with Newton's method? What can we do about these issues?
   - Explain the algorithm for momentum, adagrad, RMSProp, Adadelta, Adam. Compare SGD, SGDM and Adam for different loss function contours.
   - How does the convergence rate change for momentum?
+  - How do you deal with the vanishing gradient problem?
 - CNNs
   - How do shapes change after a convolutional kernel? How many parameters does this have? What's the time complexity of this?
-  - Describe changes from LeNet, AlexNet, VGG, NiN, Inception, ResNet, DenseNet, U-Net. 
+  - Describe changes from LeNet, AlexNet, VGG, NiN, Inception, ResNet, DenseNet, U-Net. Touch on depth-wise separable layers.
   - ResNet architectures: pre vs post activation, ResNet-D, ResNeXt
 - RNNs
   - Write down the equations for RNNs, Bidirectional RNNs, LSTMs (+ Peephole connections), GRUs
-  - What are 3 issues for RNNs?
+  - What are 3 issues for RNNs? How do we address them?
 - Attention and Transformers
   - Draw the architecture for encoder-only, encoder-decoder, and decoder-only transformers
   - Write down the equations for attention
@@ -132,6 +139,7 @@
   - Describe how Q and K composition work for the creation of induction heads
   - Name 3 ways that we have sped up implementation
   - Pre/Post-layer normalization, GeLU/SwiGLU, LayerNorm/RMSNorm
+  - What are the advantages of transformers over traditional sequence-to-sequence models?
 - VAEs
   - Derive the training loss for VAEs
 - Diffusion
@@ -160,19 +168,28 @@
   - What kind of problems can GNNs solve?
   - What's the intuition behind GNNs, and how does this relate to CNNs?
   - Describe the architectural differences between GCN, GraphConv and Graph Attention
-- Meta Learning
+Learning
   - Describe the 3 approaches to meta learning with examples
-- Contrastive Learning
-  - Describe 3 models trained with this objective
+  - Describe 3 models trained with contrastive learning
+  - What is active learning?
 - Computer Vision 
   - Autoregressive modeling: Describe 2 models for generation and 1 for classification
   - What's the difference between segmentation and object detection? 
   - How does object detection usually work? 
   - What's the difference between R-CNN, Fast R-CNN, Faster R-CNN and Mask R-CNN?
   - Describe YOLO, SSD and RetinaNet
+  - How would you create a 3D model of an object from imagery and depth sensor measurements taken at all angles around the object?
 - NLP
-  - Pre-Training
-  - Post-Training
+  - What is tokenization, normalization, pre-tokeniation, stemming, lemmatization
+  - Describe 4 subword tokenization algorithms
+  - Explain tf-idf 
+  - What are 3 algorithms for generating context-independent token embeddings?
+  - What are 2 models for generating context-dependent token embeddings?
+  - Describe how BERT and T5 are trained
+  - Describe architectural differences between various decoder-only models
+  - What are 4 ways we can fine-tune BERT for various tasks?
+  - What are 3 ways to guide pre-trained models, and 4 ways to fine-tune them?
+  - What are components of an LLM agent?
 - RL
   - Write down the Bellman equations for value and action-value function
   - What are the differences between Value/Q-based and policy-based learning?
@@ -215,9 +232,18 @@
     - Explain each component
   - Write down the steps/template for a typical ML SD interview 
   - Run through a template recommender system SD interview. Review past architectures used for this problem. 
+  - What's the difference between collaborative filtering and content-based filtering?
   - Name some common online and offline metrics that can be used for each use case
+  - SQL vs No-SQL. 
   - What is an ACID database?
   - What is the CAP theorem?
+- Modeling
+  - How would you deal with outliers?
+  - How can you deal with data imbalance?
+  - Given a left-skewed distribution that has a median of 60, what conclusions can we draw about the mean and the mode of the data?
+  - What are the different ways that data is missing?
+  - How would you deal with missing data?
+  - What are different types of distributional drift?
 - OOP / Python
   - How is garbage collection done for Python/Java?
   - What are the principles of OOP?
@@ -229,6 +255,7 @@
   - What are positional, keyword, and default arguments to a function?
   - Explain trailing and leading underscores in Python. 
   - Explain `if __name__ == "__main__"`
+  - Difference between lists, arrays and sets? 
 
 ## Code
 

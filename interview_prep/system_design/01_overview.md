@@ -80,9 +80,9 @@
   - Databases (SQL vs NoSQL)
     - SQL: relational database that is composed of tables where each row reflects a data entity and each column defines specific information about the field.
       - Pros: Querying, ACID (Atomicity, Consisttency, Isolation, Durability)
-      - Cons: Slower to write to (Use of B-Trees necessitates rewriting), Does not work well for mixed schema data
+      - Cons: Slower to write to (Use of B-Trees necessitates rewriting). Schema needs to be known ahead of time / Does not work well for mixed schema data.
     - NoSQL: Nested Key-Value store, document databases, columnar databases (when search for value), graph databases. 
-      - Pros: Faster writes. Managed NoSQL services come with sharding and scaling out the box.
+      - Pros: Faster writes. Managed NoSQL services come with sharding and scaling out the box. Flexible for when schema changes rapidly e.g. startup.
       - Cons: Limited in the types of efficient queries that can be done. Less suitable where strong consistency is required.
     - ACID properties
       - Atomicity: Transactions are either all or nothing, if a transaction fails, the entire transaction is rolled back.

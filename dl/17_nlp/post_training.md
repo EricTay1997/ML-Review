@@ -25,6 +25,7 @@
     - Retrieval Augmented Generation (RAG) provides relevant context in the input
       - Relevant context is drawn from a larger database of text
       - Database text is first embedded. At inference time, the query is embedded and similarity search is used to find relevant text pieces
+    - [Agents](./agents.md)
   - Fine-Tuning
     - Parameter Efficient Fine Tuning
       - See [Post-Training](../22_post_training/notes.md).
@@ -32,11 +33,9 @@
       - See [Post-Training](../22_post_training/notes.md)
       - InstructGPT/ChatGPT used RLHF to generate "human-like" responses
       - Anthropic has a [paper](../23_safety/03_alignment.md) where they do this with an AI
-    - Direct Preference Optimization (DPO)
+    - Direct Preference Optimization (DPO) / $\Psi$PO
       - See [Post-Training](../22_post_training/notes.md)
-    - Retrieval Augmented Generation
-    - [Agents](./agents.md)
-    
+
 ## Task-specific Architectures
 
 - The ability of pretrained LLMs to tackle a wide range of NLP tasks with minimal architectural changes largely reduces the need for crafting task-specific architectures. 

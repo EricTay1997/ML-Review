@@ -84,6 +84,7 @@
     - $P(x \mid y)$ doesn't change, but $P(y)$ changes, e.g. $y$ = disease, $x$ = symptoms
   - Concept shift
     - Job titles and what they mean change
+  - Solutions: data drift requires drift detection algorithms (K-S test), concept drift requires online learning
 - Degenerate feedback loops
   - Monitoring
     - Check aggregate diversity or average coverage of long-tailed items
@@ -91,7 +92,6 @@
   - Solutions
     - Randomization in recommendations
     - Add positional embeddings that you turn off in inference
-- Distribution Shifts: K-S tests and other drift detection algorithms.
 
 ## Continual Learning and Test in Production
 - Continual Learning

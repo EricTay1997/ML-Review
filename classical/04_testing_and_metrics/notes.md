@@ -61,8 +61,10 @@
   * Student's t-test
     * We use the t-test when the population variance $\sigma^2$ is unknown, and instead estimate this with $s^2$
     * $t = \frac{\bar{x}-\mu_0}{s/\sqrt{n}} \sim t_{n-1}$
-  * Welch's t-test
-    * [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) is used when the two samples have unequal variance. 
+    * To be specific, this is a one-sample t-test. Other variants include:
+      * Paired t-test (two samples from same group)
+      * Two-sample t-test, equal variance (two samples from different groups)
+      * Two-sample t-test, unequal variance: [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test)
   * Chi-squared test statistic
     * This is often used in the analysis of contingency tables to see whether two categorical variables are independent of each other.
     * Importantly, we say that $\sum_i \frac{(O_i-E_i)^2}{E_i} \sim \chi^2,$ and [this example](https://en.wikipedia.org/wiki/Chi-squared_test#Example_chi-squared_test_for_categorical_data) is particularly instructive for how we might use this.

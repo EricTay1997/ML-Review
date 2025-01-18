@@ -68,6 +68,8 @@
             * We now have that $\mathbf{v}^{\top}\mathbf{v}=0$ since $\mathbf{v}^{\top}\mathbf{y}_i = 0$ $\forall$ $i$, which is a contradiction. 
 * CLT
   * The CLT states that for $X_i$ with mean $\mu$ and variance $\sigma^2$, $\bar{X}_n=\frac{X_1+\ldots+X_n}{n} \rightarrow \sim N\left(\mu, \frac{\sigma^2}{n}\right)$ and hence $\frac{\bar{X}_n-\mu}{\sigma / \sqrt{n}} \sim N(0,1)$
+* LLN
+  * The LLN states that given a sample of independent and identically distributed values, the sample mean converges to the true mean
 * Moment Generating Functions 
   * MGFs uniquely identify probability distributions.
   * The MGF of $X$ is $E[\exp(tX)]$.
@@ -83,6 +85,8 @@
 * **Shannon entropy**: The uncertainty in an entire probability distribution
   * $H(P)=\mathbb{E}_{\mathrm{x} \sim P}[I(x)]=-\mathbb{E}_{\mathrm{x} \sim P}[\log P(x)]$
   * If $P(x)$ can take on many values, this is high. If not, this is low.  
+* **Information gain**: The reduction in entropy achieved by learning the state of another random variable
+  * $IG(P,a) = H(P) - H(P \mid a)$
 * **KL divergence**: The difference between two probability distributions $P(x)$ and $Q(x)$
   * $D_{\mathrm{KL}}(P \| Q)=\mathbb{E}_{\mathbf{x} \sim P}\left[\log \frac{P(x)}{Q(x)}\right]=\mathbb{E}_{\mathbf{x} \sim P}[\log P(x)-\log Q(x)]$
   * This is guaranteed to be nonnegative is 0 $\iff$ the distributions are equal. 

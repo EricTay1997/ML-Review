@@ -3,6 +3,12 @@
 - Active Learning
   - Unsupervised tasks often rear their head when labelling is expensive. 
   - Active learning is when a human interacts with a learning algorithm. One such example is uncertainty sampling, where a human iteratively labels the samples that a model is most uncertain about. 
+- Metrics
+  - Silhouette score:
+    - The silhouette score for a datapoint $\mathbf{x}$ is given by $\frac{b-a}{\max(a,b)},$ where $a$ is the average distance between $\mathbf{x}$ and points within its cluster, and $b$ is its distance to the nearest point that is not in its cluster.
+    - The higher the silhouette score the better. Points well inside a cluster will have a score of 1 and those near the edges would have -1. 
+  - Dunn’s Index
+    - Minimum inter-cluster distance divided by the maximum cluster size
 - K-means
   - K-means initializes with $k$ clusters and assigns each $\mathbf{x}_i$ to a cluster, aiming to minimize the distance from every point to the centroid of it's cluster.
   - Algorithm:
@@ -13,8 +19,6 @@
   - To pick $k$
     - We can plot the loss versus $k$ and use the "elbow" method.
     - Alternatively, we can look at the average silhouette score
-      - The silhouette score for a datapoint $\mathbf{x}$ is given by $\frac{b-a}{\max(a,b)},$ where $a$ is the average distance between $\mathbf{x}$ and points within its cluster, and $b$ is its distance to the nearest point that is not in its cluster.
-      - The higher the silhouette score the better. Points well inside a cluster will have a score of 1 and those near the edges would have -1. 
   - K-means may sometimes have high variance and be sensitive to initialization. 
   - K-means also considers distance in the euclidean space, i.e. clusters are circular.
 - DBSCAN works as follows (per [Géron](https://www.amazon.com/Hands-Machine-Learning-Scikit-Learn-TensorFlow/dp/1098125975)):

@@ -21,7 +21,7 @@
     - This can push the model into regions where it is relatively insensitive to small variations in the
 weights, finding minima surrounded by flat regions
   - Can add to outputs
-    - Label moothing changes labels from 0 and 1 to $\frac{\epsilon}{k-1}$ and $1 - \epsilon$.
+    - Label smoothing changes labels from 0 and 1 to $\frac{\epsilon}{k-1}$ and $1 - \epsilon$.
 - Sharing
   - Semi-Supervised Learning
     - We have both unlabeled examples $P(\mathbf{x})$ and lableed examples $P(\mathbf{x,y})$ and we want $P(\mathbf{y \mid x})$
