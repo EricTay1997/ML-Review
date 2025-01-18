@@ -2,7 +2,7 @@
 
 * Two desirable properties
     * The variance of the input should be propagated through the model to the last layer
-    * Similarly, we want a gradient distribution with equal variance across layers. Is this gradient wrt nodes or edges?
+    * Similarly, we want a gradient distribution with equal variance across layers. 
 * Constant initialization
   * Other 3 layers have the same gradient that's close to 0. Why? 
   * Permutation invariance:

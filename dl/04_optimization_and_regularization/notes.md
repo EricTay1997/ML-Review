@@ -64,7 +64,7 @@ associated with the different tasks, some are shared across two or more tasks.
       - Each of these errors follows its own, solitary path to the minimum, decreasing exponentially with a compounding rate of (1- $\eta\lambda_i$)
       - This places constraints on $\eta$, and gives 
         - Optimal $\eta = \frac{2}{\lambda_{min} + \lambda_{max}}$ (The formula here is different because we no longer assume that the gradient is along the direction of the eigenvector associated with $\lambda_{max}$)
-        - Optimal rate $ = \frac{\lambda_{max}/\lambda_{min}-1}{\lambda_{max}/\lambda_{min}+1}$
+        - Optimal covergence rate $ = \frac{\lambda_{max}/\lambda_{min}-1}{\lambda_{max}/\lambda_{min}+1}$
           - Hence, Hessians with larger condition numbers would cause GD to perform more poorly.
   - Scheduling
     - Common decays $\eta$ are piecewise constant, polynomial decay (e.g. $\frac{1}{\sqrt{t}}$) and exponential decay. 

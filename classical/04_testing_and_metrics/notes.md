@@ -36,7 +36,11 @@
       * FID: $d_F\left(\mathcal{N}(\mu, \Sigma), \mathcal{N}\left(\mu^{\prime}, \Sigma^{\prime}\right)\right)^2=\left\|\mu-\mu^{\prime}\right\|_2^2+\operatorname{tr}\left(\Sigma+\Sigma^{\prime}-2\left(\Sigma \Sigma^{\prime}\right)^{\frac{1}{2}}\right)$
       * Inception score: $I S\left(p_{\text {gen }}, p_{\text {dis }}\right):=\exp \left(\mathbb{E}_{x \sim p_{g e n}}\left[D_{K L}\left(p_{\text {dis }}(\cdot \mid x) \| \int p_{\text {dis }}(\cdot \mid x) p_{g e n}(x) d x\right)\right]\right)$
     * NLP
-      * BLEU: $p_n(\hat{S} ; S):=\frac{\sum_{i=1}^M \sum_{s \in G_n\left(\hat{y}^{(i)}\right)} \min \left(C\left(s, \hat{y}^{(i)}\right), \max _{y \in S_i} C(s, y)\right)}{\sum_{i=1}^M \sum_{s \in G_n\left(\hat{y}^{(i)}\right)} C\left(s, \hat{y}^{(i)}\right)}$ (comparing translated sentence and reference sentence). Intelligibility/grammatical correctness is not taken into account.  
+      * BLEU: $p_n(\hat{S} ; S):=\frac{\sum_{i=1}^M \sum_{s \in G_n\left(\hat{y}^{(i)}\right)} \min \left(C\left(s, \hat{y}^{(i)}\right), \max _{y \in S_i} C(s, y)\right)}{\sum_{i=1}^M \sum_{s \in G_n\left(\hat{y}^{(i)}\right)} C\left(s, \hat{y}^{(i)}\right)}$ (comparing translated sentence and reference sentence). Intelligibility/grammatical correctness is not taken into account. 
+        * Matches $n$-grams between the predicted sequence and the target sequence
+        * Bounded between 0 and 1
+        * When similarity is higher, BLEU is higher
+        * Matching longer $n$-grams have higher weight
       * METEOR: Maps unigrams in candidate and reference. Idea is to increase score with more matches, and penalize chunks, where chunks are defined as a set of unigrams that are adjacent in the candidate and in the reference.
       * ROUGE: Overlap of n-grams between candidate and reference. 
       * CIDEr: 

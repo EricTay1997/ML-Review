@@ -73,6 +73,10 @@ b == a.permute(2,0,3,1).reshape(4,4)
         - `(3D, h)` implies we do $W = [W_Q ; W_K ; W_V]$, where each $W_Q$ is then a column-wise concatenation of each head. 
       - Line 3: This is ok to do because permutations don't mess up orders. 
       - Line 6: I believe whether we have `(h, 3D)` or `(3D, h)` here is irrelevant and only changes the order of columns for $W_O$. To be consistent with the other weight matrices this ordering seems natural.
+    - `view` vs `reshape`
+      - `view` creates a view of the original tensor, and the new tensor will always share its data with the original tensor.
+      - In contrast, `reshape` will do so when possible, but may create a new tensor. 
+      - This occurs because we cannot specify the correct stride to detail how threads should read from memory, and we need to rearrange how elements are stored in memory.
 ```
 (1) qkv = nn.Linear(input_dim, 3*embed_dim)(x)
 (2) qkv = qkv.reshape(batch_size, seq_length, self.num_heads, 3*self.head_dim)

@@ -1,6 +1,8 @@
 # Questions 
 
-## Notes
+## Written
+
+### Classical 
 - General Statistics
   - What is the definition of the Moore-Penrose pseudoinverse and how does one calculate it?
   - What is the $L^p, L^{\infty}$ and Frobenius norm?
@@ -87,16 +89,50 @@
   - Write down the model specification of a GP - prior, joint likelihood, conditional likelihood
 - Causal Inference
   - What are key assumptions in Causal Inference?
+  - Categorize the type of experiments we encounter
   - Write down both the Outcome Modeling and IPW estimates for ATE in an Observational Study. 
   - When would you use a regression, 2-step least squares, or Double ML?
 - ARIMA
   - Write down the model for an $AR, MA, ARMA, ARIMA, SARIMA$ model
+
+### DL
+
+- Basics
+  - What's the difference between `binary_cross_entropy_with_logits` vs `cross_entropy`?
+  - Explain the difference between `view` and `reshape`
+  - Write down equations for Batch and Layer normalization. Why would you use one over the other? 
+  - Why would you use PyTorch buffers?
+  - What is PyTorch's default initialization for linear layers?
+- Activations
+  - What is the formula of sigmoid, tanh, arctan, relu, leaky relu, softplus, elu, gelu, silu?
+  - What issues are faced by sigmoid and relu activations? 
+- Initialization
+  - Derive Xavier and Kaiming initialization
+- Optimization
+  - Name 7 ways of regularization
+  - What are 3 issues with GD?
+  - Under the quadratic approximation of loss, what's the optimal learning rate or and associated convergence rate?
+  - Derive Newton's method
+  - What are two issues with Newton's method? What can we do about these issues?
+  - Explain the algorithm for momentum, adagrad, RMSProp, Adadelta, Adam. Compare SGD, SGDM and Adam for different loss function contours.
+  - How does the convergence rate change for momentum?
+- CNNs
+  - How do shapes change after a convolutional kernel? How many parameters does this have? What's the time complexity of this?
+  - Describe changes from LeNet, AlexNet, VGG, NiN, Inception, ResNet, DenseNet, U-Net. 
+  - ResNet architectures: pre vs post activation, ResNet-D, ResNeXt
+- RNNs
+  - Write down the equations for RNNs, Bidirectional RNNs, LSTMs (+ Peephole connections), GRUs
+  - What are 3 issues for RNNs?
+- 
 - DL
   - Describe the {architecture, I/O, loss, training, sampling} for RNNs, LSTMs, Transformers, Autoencoders, Diffusion, Flows, GANs, GNNs
 - Optimization
   - What's Newton's method?
   - What is the general equation for Quasi-Newton methods?
 - ToDo: CE loss, regularization, optimization, dl questions, applied AI (agents, RAG, RLHF), multimodality
+
+### SD + Coding Practices
+
 - System Design
   - Write down the steps/template for a typical SWE SD interview 
     - Explain each component
@@ -109,7 +145,7 @@
   - How is garbage collection done for Python/Java?
   - What are the principles of OOP?
   - What is the difference between an iterator and a generator?
-  - What are decorators? Give an example of this. 
+  - What are decorators? Give examples of these. 
   - What are `*args` and `*kwargs`?
   - How to initialize a 2d array in python? What about nested list comprehension?
   - Explain the rules for variable scope?

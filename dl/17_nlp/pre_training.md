@@ -143,4 +143,12 @@
   - Llama 3.1 to Llama 3.2
     - 7B to 1B parameters
     - Half embed dim (2k), half layers (16), almost half hidden dim (8k), weight_tying, rope freq rescaling factor of 32. 
-  
+
+## Inference
+
+- Generation
+  - Beam Search
+    - When outputting text sequentially, the most probable next _sequence_ may not start with the most probable next _token_. 
+    - Beam search trades off accuracy and computational cost by maintaining a fixed number of "beams", until the decoder predicts the "<END>" token.
+      - ![beam_search.png](beam_search.png)[Source](https://towardsdatascience.com/foundations-of-nlp-explained-visually-beam-search-how-it-works-1586b9849a24)
+  - Top-p, Top-k and temperature

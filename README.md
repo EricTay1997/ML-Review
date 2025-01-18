@@ -15,10 +15,10 @@ This repository will include:
     * Decision Trees
     * Ensemble Learning, Random Forests and Boosting
     * Dimensionality Reduction
-    * K-means
-    * Gaussian Mixtures and EM
+    * Unsupervised Clustering
     * Gaussian Process
     * Causal Inference
+    * ARIMA
   * DL (Note that some topics may bleed into each category)
     * Basics
     * Activation Functions
@@ -30,7 +30,7 @@ This repository will include:
     * Attention & Transformers
     * Autoencoders
     * Diffusion Models
-    * Normalizing Flows
+    * Flow-based Models
     * Generative Adversarial Networks
     * Graph Neural Networks
     * Meta-Learning
