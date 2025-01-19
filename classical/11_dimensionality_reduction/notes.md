@@ -17,7 +17,7 @@
   - A cool result is that $\mathbf{V^k}$ are the first $k$ eigenvectors of $\mathbf{Z^{\top}}{\mathbf{Z}}$, where $\mathbf{Z}$ is $\mathbf{X}$ with demeaned columns, and we have ordered the eigenvectors in decreasing eigenvalue order. 
     - Also, the proportion of variance retained is given by $\frac{\sum_i^k \lambda_i}{\sum_i^p \lambda_i}$
   - Proof:
-    - $\arg\max _{\mathbf{u}:\|\mathbf{u}\|=1} \mathbf{u}^{\top} \mathbf{S u}$ gives us the direction that projecting $\mathbf{X}$ onto would maximize variance. ($\mathbf{S} = \mathbf{Z^{\top}Z}$ is our sample covariance matrix, where $\mathbf{Z}$ is $\mathbf{X}$ with demeaned columns)
+    - $\arg\max _{\mathbf{u}:\|\mathbf{u}\|=1} \mathbf{u}^{\top} \mathbf{S u}$ gives us the direction that projecting $\mathbf{X}$ onto would maximize variance. ($\mathbf{S} = \frac{1}{n-1}\mathbf{Z^{\top}Z}$ is our sample covariance matrix, where $\mathbf{Z}$ is $\mathbf{X}$ with demeaned columns)
       - We start by trying to find $\mathbf{u} \in \mathbb{R}^p$ such that projecting $\mathbf{X}$ onto $\mathbf{u}$ maximizes variance. 
       - Note that $\mathbf{Xu} \in \mathbb{R}^n$ is this projection. 
         - Why? Each entry is the dot product of a row (sample) with $\mathbf{u}$, and the dot product is the cosine distance, where the sample is the hypotenuse and $\mathbf{u}$ is the adjacent. 

@@ -55,7 +55,7 @@
         * We can view $\mathbf{X}$ as $n$ draws from $\mathbf{x}$, and we denote each draw (row) by $\mathbf{x}_i \in \mathbb{R}^p$, and their sample mean by $\bar{\mathbf{x}}$.
       * The sample covariance matrix $\mathbf{S} \in \mathbb{R}^{p \times p}$ is an unbiased estimate of $\pmb{\Sigma} = \operatorname{Cov}(\mathbf{x})$. I.e. $E[S_{jk}] = \operatorname{Cov}(X_j, X_k)$.
         * Concretely, 
-          * $\mathbf{S} = \mathbf{Z^{\top}Z},$ where $\mathbf{Z}$ is $\mathbf{X}$ with demeaned columns.
+          * $\mathbf{S} = \frac{1}{n-1}\mathbf{Z^{\top}Z},$ where $\mathbf{Z}$ is $\mathbf{X}$ with demeaned columns.
           * $S_{jk} = S_{kj} :=\frac{1}{n-1} \sum_{i=1}^n[\left(X_{i j}-\bar{X}_j\right)\left(X_{i k}-\bar{X}_k\right)]$ (To avoid confusion, we're dealing with scalars here)
           * Note that this extends the unbiased estimator for population variance above to the unbiased estimator of $\operatorname{Cov}(X_j, X_k)$.
           * Note that this is also very similar to the $\mathbf{X^{\top}X}$ we often use in regression, except that $\mathbf{S}$ notably demeans the columns.

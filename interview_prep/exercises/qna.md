@@ -1,3 +1,7 @@
+---
+geometry: margin=20mm
+...
+
 # Questions 
 
 ## Written
