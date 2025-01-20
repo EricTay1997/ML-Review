@@ -22,15 +22,16 @@
     * Losses
       * Huber Loss: MSE if error is small, if not use MAE
       * Quantile loss: $L(\hat{y}, y) = \max(q(y - \hat{y}), (q-1)(y - \hat{y}))$
-      * Hinge loss
+        * Intuition is to expect the proportion of over-predictions to be $q$.
+      * Hinge loss: $\max(0, 1 - yf(x))$
       * Info-NCE loss: $\ell_{i,j}=-\log \frac{\exp(\text{sim}(z_i,z_j)/\tau)}{\sum_{k=1}^{2N}\mathbb{1}_{[k\neq i]}\exp(\text{sim}(z_i,z_k)/\tau)}$
     * Forecast problems:
-      * Mean Absolute Percentage Error: $100 \frac{1}{n} \sum_{n=1}^n\left|\frac{A_k-F_5}{A_4}\right|$
+      * Mean Absolute Percentage Error: $100 \frac{1}{n} \sum_{t=1}^n\left|\frac{A_t-F_t}{A_t}\right|$
       * Symmetric MAPE: $\frac{100}{n} \sum_{t=1}^n \frac{\left|F_t-A_t\right|}{\left(\left|A_t\right|+\left|F_t\right|\right) / 2}$
     * Ranking
       * Mean Reciprocal Rank (MRR): $\frac{1}{n} \sum_i^n \frac{1}{rank_i}$ Average of the reciprocal of the first/top relevant item 
-      * Mean Average Precision (mAP): $\frac{1}{nk}\sum_{ik}(P@k_i)$ 
-      * Normalized Discounted Cumulated Gain (nDCG):
+      * Mean Average Precision (mAP): $\frac{1}{nK}\sum_{ik}(P@k_i)$ 
+      * Normalized Discounted Cumulative Gain (nDCG):
         * DCG: $\sum_i^n \frac{rel_i}{\log_2(i+1)}$
         * nDCG: $\frac{DCG}{Ideal DCG}$
     * Image generation
@@ -77,7 +78,7 @@
   * Bonferroni correction: Change $\alpha = \alpha_0 /m $. This is often criticized as being too conservative, so we have other forms of correction: 
   * Šidák correction: $\alpha = 1 - (1-\alpha_0)^{1/m}$
   * Holm-Bonferroni correction:
-    * Sort the $m$ p-values, and if $p_i \leq \frac{\alpha_0}{m+1-k}$, we reject $H_i$
+    * Sort the $m$ p-values, and if $p_i \leq \frac{\alpha_0}{m+1-i}$, we reject $H_i$
     * This applies early stoppage, so the moment we do not reject $H_i$, all subsequent hypotheses are not rejected too.
 * Model Statistics
   * Overfitting
