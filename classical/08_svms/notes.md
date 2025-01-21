@@ -29,7 +29,7 @@
 - Proof:
   - We want to maximize the margin $\operatorname{min}_i \left( y_i(\pmb\lambda^{\top}\mathbf{x}+\lambda_0) \right)$
   - Equivalently, we can set the margin to be 1 and minimize $||\pmb\lambda||_2$:
-  - $\min _{\pmb\lambda, \lambda_0} \frac{1}{2}\|\pmb{\lambda}\|_2^2 \quad$ s.t. $\quad-y_i\left(\pmb{\lambda}^T \mathbf{x}_i+\lambda_0\right)+1 \leq 0 \quad i=1 \ldots n$
+    - $\min _{\pmb\lambda, \lambda_0} \frac{1}{2}\|\pmb{\lambda}\|_2^2 \quad$ s.t. $\quad y_i\left(\pmb{\lambda}^T \mathbf{x}_i+\lambda_0\right) \geq 1,\quad i=1 \ldots n$
   - Which permits the lagrangian $\mathcal{L}\left(\left[\pmb{\lambda}, \lambda_0\right], \pmb{\alpha}\right)=\frac{1}{2} \sum_{j=1}^p \lambda_j^2+\sum_{i=1}^n \alpha_i\left[-y_i\left(\pmb{\lambda}^T \mathbf{x}_i+\lambda_0\right)+1\right]$.
   - Switching the minimax we instead solve for $\pmb{\alpha}$, we get the following equations:
     - $\pmb{\lambda}=\sum_{i=1}^n \alpha_i y_i \mathbf{x}_i$, from $\nabla_\lambda \mathcal{L}\left(\left[\pmb{\lambda}, \lambda_0\right], \pmb{\alpha}\right)$
@@ -47,6 +47,9 @@
 
 ## Soft Margin SVMs
 - Soft margin SVMs do not require linear separability. In addition, this can help our hyperplane be more robust to outliers. 
+- We edit our previous objective to: 
+  - $\min _{\pmb\lambda, \lambda_0} \frac{1}{2}\|\pmb{\lambda}\|_2^2 + C\sum_i \xi_i \quad$ s.t.  $\quad y_i\left(\pmb{\lambda}^T \mathbf{x}_i+\lambda_0\right) \geq 1-\xi_i, \quad \xi_i \geq 0,\quad i=1 \ldots n$
+  - This is the [hinge loss](../04_testing_and_metrics/notes.md).
 - Jumping ahead, we have the following solution:
   - $\hat{\pmb\alpha} = \operatorname{argmax}_{\pmb\alpha}\mathcal{L}(\pmb{\alpha}), \mathcal{L}(\pmb{\alpha})= \sum_{i=1}^n \alpha_i-\frac{1}{2} \sum_{i, k=1}^n \alpha_i \alpha_k y_i y_k \mathbf{x}_i^T \mathbf{x}_k \quad$ s.t. $\quad\left\{\begin{array}{l}0 \leq \alpha_i \leq C \quad i=1 \ldots n \\ \sum_{i=1}^n \alpha_i y_i=0\end{array}\right.$
   - $\hat{\pmb{\lambda}}=\sum_{i=1}^n \hat{\alpha}_i y_i \mathbf{x}_i$

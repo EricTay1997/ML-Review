@@ -18,8 +18,8 @@
 - Assumptions:
   - Observations are independent
   - Linearity of log odds and dependent variables
-  - Low multicollinearity
   - For good estimates, we generally also want
+    - Low multicollinearity
     - Larger sample size
     - And no extreme outliers
 - Loss
@@ -33,14 +33,14 @@
     - The update step turns out to take the form $\mathbf{\hat{B} = (X^{\top}DX)^{-1}X^{\top}DZ}$ ([look familiar?](../06_linear_regression_and_regularization/notes.md)), which is why this is often termed iterative re-weighted least squares
 - Multiple classes
   - The extention of logistic regression to multiple classes is termed softmax regression, which can be viewed as a one-layer neural network. 
-  - To compute the probabilities over $k$ classes for $y_i$, we do $\operatorname{softmax}(\mathbf{Wx}_i)$, where $W \in \mathbb{R}^{k \times p}$, and $[\operatorname{softmax}(\mathbf{x})]_i = \frac{\exp(x_i)}{\sum_i \exp(x_i)}$
+  - To compute the probabilities over $k$ classes for $y_i$, we do $\operatorname{softmax}(\mathbf{Wx}_i)$, where $\mathbf{W} \in \mathbb{R}^{k \times p}$, and $[\operatorname{softmax}(\mathbf{x})]_i = \frac{\exp(x_i)}{\sum_i \exp(x_i)}$
     - The softmax functions as a normalizing function, which also places even higher emphasis on large values (than a simple scaling function).
   - The log likelihood is now $LL =\sum_i\sum_k [y_{ik}\log(\hat{p}_{ik})$], where $y_i \in \mathbb{R}^k$ takes a one-hot encoding form and $\hat{p}_i$ represents our predictions for this data point.
     - Note that this is still the negative of the **[cross-entropy loss](../02_probability_and_info_theory/notes.md)** ($\sum_k [y_{ik}\log(\hat{p}_{ik})]$ is the cross-entropy loss between $y_i$ and $\hat{p}_i$)
     - Note that in the 2-class case, this is the same as the likelihood for logistic regression
       - We can interpret logistic regression as producing unnormalized logits $\mathbf{B^{\top}x_i}$.
     - If we denote $\operatorname{softmax}(\hat{o}_{ik}) = \hat{p}_{ik},$ then we have that $\frac{\partial LL}{\partial \hat{o}_{ik}} = y_{ik}-\hat{p}_{ik},$ the gradient is the difference between the truth and the predicted probability.
-    - Permitting some abuse of notation, the loss gradient wrt $W$still permits the form $\nabla_{\mathbf{B}}\mathcal{L}(\mathbf{B}) = \mathbf{X^{\top}}(\pmb\pi - \mathbf{y}),$ where $\pi_i$ is now $\hat{p}_{ik}$, where $k$ is the class that $y_i$ belongs to.
+    - Permitting some abuse of notation, the loss gradient wrt $\mathbf{W}_j \in \mathbb{R}^{p}$ (transpose of $j^{th}$ row) still permits the form $\nabla_{\mathbf{W}_j}\mathcal{L}(\mathbf{W}) = \mathbf{X^{\top}}(\pmb\pi - \mathbf{y}),$ where $\pi_i$ is now $\hat{p}_{ij}$, $y_i =1$ if the $i^{th}$ datapoint's class is $j$ and 0 otherwise.
 
 - Comparison vs Naive Bayes
   - Pros for Naive Bayes

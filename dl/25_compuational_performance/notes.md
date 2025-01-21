@@ -152,15 +152,30 @@ As models and data scale in size, optimizing for more efficient processes become
 
 ## Inference
 
+- Speculative decoding
 - We can break down LLM inference into two stages: prefill and decode.
-- With sliding window attention, we can chunk and parallelize the prefill process.
-- For long prompts, [disaggregated serving](https://docs.vllm.ai/en/latest/features/disagg_prefill.html) may be helpful because the prefill process can be compute bound while the decode process is bandwidth bound.
-  - Why are we in different regimes? In decoding, we move the same number of weights per token as we do for the entire prompt for prefill. 
-  - What is an example of something that we want to change? Batch size. 
-    - This [cursor blogpost](https://www.cursor.com/blog/llama-inference) explains this more
-      - For example, if we're bandwidth-bound in decoding, we can freely increase our batch size without incurring too much additional latency (memory requirements are dominated by model parameters over KV cache)
-      - However, increasing batch size when we're compute-bound would increase latency linearly, and increase our time to first token, for example. 
-      - The article also mentions different cost-dynamics
-        - When using open/closed source models, we pay per second/token. 
-        - Due to the different "regimes", it is cheaper to use open/closed source models when we're compute/memory bound 
-        - This means that open/closed source models are better for prompt-heavy/completion-heavy tasks like classification/qna.
+  - With sliding window attention, we can chunk and parallelize the prefill process.
+  - For long prompts, [disaggregated serving](https://docs.vllm.ai/en/latest/features/disagg_prefill.html) may be helpful because the prefill process can be compute bound while the decode process is bandwidth bound.
+    - Why are we in different regimes? In decoding, we move the same number of weights per token as we do for the entire prompt for prefill. 
+    - What is an example of something that we want to change? Batch size. 
+      - This [cursor blogpost](https://www.cursor.com/blog/llama-inference) explains this more
+        - For example, if we're bandwidth-bound in decoding, we can freely increase our batch size without incurring too much additional latency (memory requirements are dominated by model parameters over KV cache)
+        - However, increasing batch size when we're compute-bound would increase latency linearly, and increase our time to first token (TFT), for example. 
+        - The article also mentions different cost-dynamics
+          - When using open/closed source models, we pay per second/token. 
+          - Due to the different "regimes", it is cheaper to use open/closed source models when we're compute/memory bound 
+          - This means that open/closed source models are better for prompt-heavy/completion-heavy tasks like classification/qna.
+- Batching
+  - No batching: each request is processed one at a time.
+  - Static batching: requests are placed in batches that are run when full.
+  - Dynamic batching: requests are placed in batches as they’re received and batches run once full or once enough time has elapsed since the first request.
+    - Dynamic batching is great for live traffic on models like Stable Diffusion XL, where each inference request takes about the same amount of time. 
+    - For LLMs, however, output sequences will vary in length. If you use a dynamic batching approach, each batch of requests is going to need to wait for the longest output to finish before the next batch can begin.
+  - Continuous batching: requests are processed token-by-token, with new requests getting processed as older requests finish and free up space on the GPU.
+    - Model servers like TGI and VLLM offer continuous batching, while TensorRT-LLM uses “in-flight batching” to essentially the same effect.
+    - This, however, increases TFT
+      - Since the prefill phase takes compute and has a different computational pattern than generation, it cannot be easily batched with the generation of tokens
+      - Continuous batching frameworks currently manage this via hyperparameter: waiting_served_ratio, or the ratio of requests waiting for prefill to those waiting end-of-sequence tokens.
+  - Speculative decoding 
+    - The process of coordinating a large LLM (the target model) and a smaller LLM (the draft model) on the same GPU to combine the quality of the large model with the speed of the small model.
+    - The idea is to additionally have the large LLM validate the drafts - if it accepts the drafts then time per output token (TPOT) is decreased.

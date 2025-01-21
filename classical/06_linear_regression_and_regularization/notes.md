@@ -62,20 +62,27 @@
 * Model Selection
   * Since every additional feature would increase $R^2$, how do we combat over-fitting?
   * [AIC and BIC](../02_probability_and_info_theory/notes.md)
-  * Adjusted $R^2_{adj} = 1 - \frac{(1-R^2)(n-1)}{n-p-1}$
+  * Adjusted $R^2_{adj} = 1 - \frac{(1-R^2)(n-1)}{n-p}$ ($p$ includes the intercept)
   * Chow Test (F-test)
     * If a reduced model $R$ with $p_R$ parameters is nested in the full model $F$ with $p_F$ parameters, then 
-    * $\frac{(SSE(R) - SSE(F))/\Delta p}{\hat{\sigma}^2_F} \sim F_{\Delta p, n-p_2}$ ($\hat{\sigma}^2_F = \frac{SSE_F}{n-p_F}$)
+    * $\frac{(SSE(R) - SSE(F))/\Delta p}{\hat{\sigma}^2_F} \sim F_{\Delta p, n-p_F}$ ($\hat{\sigma}^2_F = \frac{SSE(F)}{n-p_F}$)
+* Linearity
+  * Single variable scatter plots
+  * Residual vs fitted plots
+* Independence
+  * Durbin-Watson test (autocorrelation)
 * Homoskedasticity 
   * Detection: Scale/Location plot
+    * Scale is the square root of standardized residuals. These transformations prevent extreme/highly influential plots from skewing analysis.
   * Remedies: Robust Standard Errors
     * White's Estimator (heteroskedastic, but still diagonal)
       * $\hat{\operatorname{Var}(\hat{\beta})} =\frac{\mathbf{1}}{\mathbf{n}}\left[\frac{\mathbf{1}}{\mathbf{n}}\left(\mathbf{X}^{\prime} \mathbf{X}\right)\right]^{-\mathbf{1}}\left[\frac{\mathbf{1}}{\mathbf{n}} \mathbf{X}^{\prime} \hat{\pmb{\Omega}} \mathbf{X}\right]\left[\frac{\mathbf{1}}{\mathbf{n}}\left(\mathbf{X}^{\prime} \mathbf{X}\right)\right]^{-\mathbf{1}}$, $\hat{\pmb{\Omega}} =\operatorname{diag}\left(\hat{\mathrm{u}}_1^2, \hat{\mathrm{u}}_2^2, \cdots, \hat{\mathrm{u}}_{\mathrm{n}}^2\right)$ from OLS errors.
     * Newey-West Estimator (HAC Standard Errors, accounts for autocorrelation)
     * Driskoll and Kraay Standard Errors (Accounts for temporal and cross-sectional dependencies)
-* Normality - QQ plot
+* Normality - QQ plot, Shapiro-Wilk test, Kolmogorov-Smirnov test
 * Outliers - Cook's Distance
   * Outliers matter when they influence our model. The cook's distance sums up the squared changes of predictions. $D_i=\frac{\sum_{j=1}^n\left(\widehat{y}_j-\widehat{y}_{j(i)}\right)^2}{rank(\mathbf{X}) s^2}$
+  * Residual-Leverage plot
 * Multicollinearity 
   * Detection
     * VIF = $\frac{\operatorname{Var}(B_j)_{full}}{\operatorname{Var}(B_j)_{reduced}}$, where the reduced model only has parameter $j$.
