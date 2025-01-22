@@ -165,7 +165,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
         - We can show that this reduces to $\mathbf{q}_m^\top\mathbf{R}_{\pmb\Theta, n-m}^d\mathbf{k}_n$
           - Hence, this form encodes relative positions into attention weights. 
           - Geometrically, this is natural to reason in 2D. 
-            - $\mathbf{R}_{\pmb\Theta, n-m}^d\mathbf{k}_n$ rotates $\mathbf{k}_n$ counter-clockwise by $n\theta_1$. 
+            - $\mathbf{R}_{\pmb\Theta, n}^d\mathbf{k}_n$ rotates $\mathbf{k}_n$ counter-clockwise by $n\theta_1$. 
             - The dot product $\mathbf{q}_m^\top\mathbf{k}_n $ is the unnormalized cosine angle of the two vectors, $\theta_0$. 
             - Hence, the new dot product is another unnormalized cosine angle, where the angle is now $\theta_0 + (n-m)\theta_1$.
         - Implementation details
@@ -183,7 +183,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
               - Attention weights are expected to decay when relative positions are larger.
             - Extensions 
               - I find [this paper](https://arxiv.org/pdf/2410.06205) very interesting, but haven't fully digested it. 
-              - Also, it feels like we're not using most of our positional information. Is there a more efficient way to do so? Have we explored e.g. linear $\theta_i$s sufficiently?
+              - Also, it feels like we're not using most of our positional information. Is there a more efficient way to do so?
           - Re-ordering of features
             - Notice that $\mathbf{R}_{\pmb\Theta, n}^d$ rotates consecutive pairs of features by the same angle. 
             - Regardless of how we permute the features prior to rotation (thereby choosing pairs), the transformation is still a function of $n-m$

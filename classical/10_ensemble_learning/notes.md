@@ -57,7 +57,7 @@
 
 ## Generalized Additive Models
 - Consider the [Generalized Linear Model](../07_naive_bayes_and_logistic_regression_and_glms/notes.md) that says $\mathrm{E}(\mathbf{Y} \mid \mathbf{X})=\pmb{\mu}=g^{-1}(B_0 + B_1x_1 + \ldots + B_px_p)$
-- Now let's add many smooth functions $g(\mu) = b_0 + f(x_1) + \ldots + f(x_p)$. 
+- Now let's add many smooth functions $g(\mu) = b_0 + f(x_1) + \ldots + f(x_p), \quad \mathbf{x} = (x_1, \ldots, x_p)^\top$. 
 - One example is polynomial splines, where $f(x_1)$ can define how $x$ varies on various coordinates, and $f(x_2)$ can define how $x^2$ varies over those coordinates, etc.
 
 ## Bayesian Model Averaging

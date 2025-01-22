@@ -75,7 +75,7 @@
         - Skipping derivation steps where we differentiate $A(\pmb\theta, \pmb\theta_t)$ (or the Lagrangian for $\mathbf{w}_t$), we get
         - $\pmb\mu_{k, t+1} = \frac{\sum_i(\gamma_{ikt}\mathbf{x}_i)}{\sum_i \gamma_{ikt}}$ (Centroid of points, weighted by probability of each point being in said cluster)
         - $\pmb\Sigma_{k, t+1} = \frac{\sum_i(\gamma_{ikt}(\mathbf{x}_i - \pmb\mu_{k, t+1})(\mathbf{x}_i - \pmb\mu_{k, t+1})^{\top})}{\sum_i \gamma_{ikt}}$  (Sample variance of points wrt cluster center, weighted by probability of being in said cluster)
-        - $w_{k', t+1} = \frac{\sum_i \gamma_{ik't}}{n}$ (Summed probability of each point belonging to cluster $k'$)
+        - $w_{k, t+1} = \frac{\sum_i \gamma_{ikt}}{n}$ (Summed probability of each point belonging to cluster $k$)
   - GMMs can be used for anomaly detection, where low probability points are likely outliers. 
   - Bayesian Gaussian Mixture Models can also allow us to form a posterior over the number of clusters needed, rather than have $K$ be a hyperparameter to tune. 
   - Computational Complexity: Due to the relatively slow speed of convergence, one may use k-means to initialize starting points and number of clusters. 

@@ -50,7 +50,7 @@
   - Merging cell state and hidden state
   - Getting rid of additional $\tanh$ step (all "components" have already gone through $\tanh$ activation)
   - Introducing a reset gate
-- Update gate $z_t = \sigma(W_z\cdot [h_{t-1}, x_t] + b_z)$ (Think of this as 1-$f_t$)
+- Update gate $z_t = \sigma(W_z\cdot [h_{t-1}, x_t] + b_z)$ (Think of this as $i_t$)
 - Reset gate $r_t = \sigma(W_r\cdot [h_{t-1}, x_t] + b_r)$ 
 - Cell state update $\tilde{C}_t = \tanh(W_c \cdot [r_t \odot h_{t-1}, x_t] + b_C)$
 - Output = Cell state $h_t = C_t = (1-z_t) \odot C_{t-1} + z_t \odot \tilde{C}_t$

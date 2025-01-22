@@ -39,7 +39,7 @@ In particular, I believe that modern pop music is a good alternative to textual 
   - Continuing our example of chords as our alphabet,
     - Most modern pop songs use chord progressions that exhibit cycles of period 4. 
     - In particular, most subsections of a song (e.g. verse, chorus, etc.) typically repeat the same progression multiple times without interruption (1,5,6,4,1,5,6,4,1,...). 
-    - [A Mathematical Framework for Transformer Circuits](https://transformer-circuits.pub/2021/framework/index.html) shows that at least two attention layers are needed to do `[A][B] … [A] → [B]`, and assuming that modern music generation models have the ability to do `[A][B][C][D] … [A][B][C] → [D]`, I believe that studying these models would be fruitful in learning how induction heads form over additional layers. 
+    - [A Mathematical Framework for Transformer Circuits](https://transformer-circuits.pub/2021/framework/index.html) shows that at least two attention layers are needed to do `[A][B] … [A] → [B]`, and assuming that modern music generation models have the ability to do `[A][B][A][C] … [A][B][A] → [C]`, I believe that studying these models would be fruitful in learning how induction heads form over additional layers. 
       - This might be easier to study in music than in text because of the more extensive repetition that exists in music.
       - If this is successful, I will note that many mandarin pop songs instead use progressions with period 8, and provides a natural test of any hypotheses being developed.
   - Periodicity exists in other forms:

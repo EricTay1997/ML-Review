@@ -12,7 +12,7 @@
   - We define a forward diffusion process in which we add small amount of Gaussian noise to the sample in $T$ steps, producing a sequence of noisy samples $\mathbf{x}_1, \ldots, \mathbf{x}_T$. The step sizes are controlled by a variance schedule $\{\beta_t \in (0,1)\}_{t=1}^T$. 
     - $q\left(\mathbf{x}_t \mid \mathbf{x}_{t-1}\right) \sim \mathcal{N}\left(\mathbf{x}_t ; \sqrt{1-\beta_t} \mathbf{x}_{t-1}, \beta_t \mathbf{I}\right)$ 
     - $q\left(\mathbf{x}_{1: T} \mid \mathbf{x}_0\right)=\prod_{t=1}^T q\left(\mathbf{x}_t \mid \mathbf{x}_{t-1}\right)$
-    - Note that this implies $q\left(\mathbf{x}_t \mid \mathbf{x}_0\right) \sim\mathcal{N}\left(\mathbf{x}_t ; \sqrt{\bar{\alpha}_t} \mathbf{x}_0,\left(1-\bar{\alpha}_t\right) \mathbf{I}\right)$, where $\bar{\alpha}_t = \prod_{i=1}^t (1 - \beta_t)$
+    - Note that this implies $q\left(\mathbf{x}_t \mid \mathbf{x}_0\right) \sim\mathcal{N}\left(\mathbf{x}_t ; \sqrt{\bar{\alpha}_t} \mathbf{x}_0,\left(1-\bar{\alpha}_t\right) \mathbf{I}\right)$, where $\bar{\alpha}_t = \prod_{i=1}^t (1 - \beta_i)$
       - This permits us to sample from $\mathbf{x}_t$ directly given $\mathbf{x}_0$
       - In addition, we can reparameterize $\mathbf{x}_t \mid \mathbf{x}_0$ = $\sqrt{\bar{\alpha}_t} \mathbf{x}_0+\sqrt{1-\bar{\alpha}_t} \pmb{\epsilon}$ for $\pmb{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$
   - If we can sample from $q(\mathbf{x}_{t-1} \mid \mathbf{x}_t)$, **we can recreate the true sample from a Gaussian noise input**, $\mathbf{x}_t \sim \mathcal{N}(\mathbf{0, I})$.
@@ -22,7 +22,7 @@
     - What is a good $p_\theta$? One that maximizes $p_\theta(\mathbf{x}_0)$.
       - As before, we instead maximize the variational lower bound
         - $\log p_\theta(\mathbf{x}_0) \geq \log p_\theta(\mathbf{x}_0) - D_{\mathrm{KL}}\left(q\left(\mathbf{x}_{1: T} \mid \mathbf{x}_0\right) \| p_\theta\left(\mathbf{x}_{1: T} \mid \mathbf{x}_0\right)\right)$, which expands to 
-        - -$\mathbb{E}_q[\underbrace{D_{\mathrm{KL}}\left(q\left(\mathbf{x}_T \mid \mathbf{x}_0\right) \| p\left(\mathbf{x}_T\right)\right)}_{L_T}+\sum_{t>1} \underbrace{D_{\mathrm{KL}}\left(q\left(\mathbf{x}_{t-1} \mid \mathbf{x}_t, \mathbf{x}_0\right) \| p_\theta\left(\mathbf{x}_{t-1} \mid \mathbf{x}_t\right)\right)}_{L_{t-1}} \underbrace{-\log p_\theta\left(\mathbf{x}_0 \mid \mathbf{x}_1\right)}_{L_0}]$ [Source, Appendix A](https://arxiv.org/pdf/2006.11239)
+        - $-\mathbb{E}_q[\underbrace{D_{\mathrm{KL}}\left(q\left(\mathbf{x}_T \mid \mathbf{x}_0\right) \| p\left(\mathbf{x}_T\right)\right)}_{L_T}+\sum_{t>1} \underbrace{D_{\mathrm{KL}}\left(q\left(\mathbf{x}_{t-1} \mid \mathbf{x}_t, \mathbf{x}_0\right) \| p_\theta\left(\mathbf{x}_{t-1} \mid \mathbf{x}_t\right)\right)}_{L_{t-1}} \underbrace{-\log p_\theta\left(\mathbf{x}_0 \mid \mathbf{x}_1\right)}_{L_0}]$ [Source, Appendix A](https://arxiv.org/pdf/2006.11239)
         - This form is nice because:
           - $L_1, \ldots, L_T$ compares two Gaussian distributions and therefore they can be computed in closed form.
           - $L_T$ is constant and can be ignored during training because $q$ has no learnable parameters and $\mathbf{x}_T$ is a Gaussian noise
@@ -95,18 +95,24 @@
 - Faster Sampling
   - We could use a [strided sampling schedule](https://arxiv.org/pdf/2102.09672) to reduce the number of steps we take.  
   - [DDIM](https://arxiv.org/pdf/2010.02502) combines the idea of an accelerated trajectory with $\sigma_t = 0$ (deterministic)
-    - The above is an oversimplification. Technically,
-    - We define a family of distributions indexed by $\sigma$
-      - $q_\sigma\left(\mathbf{x}_{1: T} \mid \mathbf{x}_0\right)=q_\sigma\left(\mathbf{x}_T \mid \mathbf{x}_0\right) \prod_{t=2}^T q_\sigma\left(\mathbf{x}_{t-1} \mid \mathbf{x}_t, \mathbf{x}_0\right)$
-        - This is non-Markovian because $\mathbf{x}_{t-1}$ now depends on $\mathbf{x}_t, \mathbf{x}_0$
-        - We choose parameters such that $q_\sigma(\mathbf{x}_t \mid \mathbf{x}_0) \sim\mathcal{N}\left(\sqrt{\bar{\alpha}_t} \mathbf{x}_0,\left(1-\bar{\alpha}_t\right) \mathbf{I}\right)$ as before. 
-      - As before the model tries to predict the noise at each time step. 
-      - With such a prediction, we define a generative process where we first predict $\hat{\mathbf{x}}_0$, and then sample $\mathbf{x}_{t-1} \sim q_\sigma(\mathbf{x}_{t-1} \mid \hat{\mathbf{x}}_0, \mathbf{x}_{t})$
-        - We sample $\mathbf{x}_{t-1}=\sqrt{\bar{\alpha}_{t-1}} \underbrace{\left(\frac{\mathbf{x}_t-\sqrt{1-\bar{\alpha}_t} \epsilon_\theta^{(t)}\left(\mathbf{x}_t\right)}{\sqrt{\bar{\alpha}_t}}\right)}_{\text {" predicted } \mathbf{x}_0 "}+\underbrace{\sqrt{1-\bar{\alpha}_{t-1}-\sigma_t^2} \cdot \epsilon_\theta^{(t)}\left(\mathbf{x}_t\right)}_{\text {"direction pointing to } \mathbf{x}_t "}+\underbrace{\sigma_t \epsilon_t}_{\text {random noise }}$
-          - We can reparameterize $\sigma_t^2 = \eta\tilde{\beta}_t$. Setting $\eta = 1$ gives us a DDPM reverse process. 
-          - $\sigma_t = 0$ gives a result that is deterministic, and is known as DDIM. 
-      - In fact, because we can use any forward process such that our marginals $q_\sigma(\mathbf{x}_t \mid \mathbf{x}_0)$ match, we can use the above equation to sample from an accelerated schedule. 
-        - Technically, I believe that it is only sound to do so if the parameters of the noise model are not shared across timesteps, but this works in practice.
+    - The paper generalizes the DDPM sampling equation to
+      - $\mathbf{x}_{t-1}=\sqrt{\bar{\alpha}_{t-1}} \underbrace{\left(\frac{\mathbf{x}_t-\sqrt{1-\bar{\alpha}_t} \epsilon_\theta^{(t)}\left(\mathbf{x}_t\right)}{\sqrt{\bar{\alpha}_t}}\right)}_{\text {" predicted } \mathbf{x}_0 "}+\underbrace{\sqrt{1-\bar{\alpha}_{t-1}-\sigma_t^2} \cdot \epsilon_\theta^{(t)}\left(\mathbf{x}_t\right)}_{\text {"direction pointing to } \mathbf{x}_t "}+\underbrace{\sigma_t \epsilon_t}_{\text {random noise }}$
+        - Let $\sigma_t^2 = \eta\tilde{\beta}_t$. Setting $\eta = 1$ gives us a DDPM reverse process. 
+        - $\sigma_t = 0$ gives a result that is deterministic, and is known as DDIM.
+    - The crux of the DDIM paper is arguing that the training objective for DDPM is appropriate for: 
+      - Any choice of $\sigma_t$
+      - A strided sampling schedule
+      - Details
+        - Instead of defining a Markovian forward process, we instead define a family of distributions indexed by $\sigma$
+          - $q_\sigma\left(\mathbf{x}_{1: T} \mid \mathbf{x}_0\right)=q_\sigma\left(\mathbf{x}_T \mid \mathbf{x}_0\right) \prod_{t=2}^T q_\sigma\left(\mathbf{x}_{t-1} \mid \mathbf{x}_t, \mathbf{x}_0\right)$
+            - This is non-Markovian because $\mathbf{x}_{t-1}$ now depends on $\mathbf{x}_t, \mathbf{x}_0$
+            - We choose parameters such that $q_\sigma(\mathbf{x}_t \mid \mathbf{x}_0) \sim\mathcal{N}\left(\sqrt{\bar{\alpha}_t} \mathbf{x}_0,\left(1-\bar{\alpha}_t\right) \mathbf{I}\right)$ as before.
+          - We then define a generative process where we first predict $\hat{\mathbf{x}}_0$, and then sample $\mathbf{x}_{t-1} \sim q_\sigma(\mathbf{x}_{t-1} \mid \hat{\mathbf{x}}_0, \mathbf{x}_{t})$ (this is encapsulated in the equation all the way above)
+          - One can then show that the variational inference objective is equivalent in form to the DDPM variational inference objective, subject to a certain weighting of $L_{t-1}$
+          - The authors argue that if the parameters of the noise model are not shared across timesteps, then the parameters are invariant to the weighting scheme and the original training objective is then appropriate. 
+            - This is not true, but the model works empirically. 
+          - For an accelerated forward process, we can now similarly define a factorization of the inference process as above such that the "marginals" match. 
+          - Again, we can show that the variational inference objective under this factorization also takes the "$L_\gamma$ form", and apply a similar reasoning for us not to change the training objective.
   - Distillation
     - The ‘student’ model is initialized from the weights of the ‘teacher’ model. 
     - During training, the teacher model performs two sampling steps and the student model tries to match the resulting prediction in a single step. 

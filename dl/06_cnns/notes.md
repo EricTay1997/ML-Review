@@ -14,7 +14,7 @@
       - The intuitive idea is that we can split the frequencies and add them together with a phase shift. 
       - This divide and conquer algorithm, $T(n) = 2T(n/2)+O(n)$ is $O(n\log n)$
     - With padding and stride, we get the following output shape
-      - $H_{out} = \left\lfloor\frac{H_{in}  + 2 \times \text{padding}[0] - \text{dilation}[0] \times (\text{kernel_size}[0] - 1) - 1}{\text{stride}[0]} + 1\right\rfloor$
+      - $H_{out} = \left\lfloor\frac{H_{in}  + 2 \times \text{padding} - \text{dilation} \times (\text{kernel_size} - 1) - 1}{\text{stride}} + 1\right\rfloor$
 - Pooling
   - Pooling operates per channel and so $C_{out}$ = $C_{in}$
 - We typically use [Batch Normalization](../01_basics/notes.md) to help training.

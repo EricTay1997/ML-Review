@@ -57,6 +57,6 @@
       - Intuition: The higher the perplexity, the higher the entropy, the more uncertain we are, the lower variance the $p_{j \mid i}$ values, the larger $\sigma_i$ is / the more neighbors we're considering. 
     - Calculate $p_{ij} = \frac{p_{j \mid i} + p_{i \mid j}}{2}$
     - Then, define distances in the low-dimesional space with a Student t-distribution with one degree of freedom.
-    - $q_{i j}=\frac{\left(1+\left\|y_i-y_j\right\|^2\right)^{-1}}{\sum_{k \neq l}\left(1+\left\|y_k-y_l\right\|^2\right)^{-1}}$
+    - $q_{i j}=\frac{\left(1+\left\|y_i-y_j\right\|^2\right)^{-1}}{\sum_{k,l,k \neq l}\left(1+\left\|y_k-y_l\right\|^2\right)^{-1}}$
       - The choice of the heavier-tailed distribution is so that dissimilar points are spread out further apart ([vis](https://www.linkedin.com/posts/avi-chawla_why-t-sne-algorithm-uses-t-distribution-instead-activity-7206974556593410048-wbIM/)).
     - Finally, use gradient descent to minimize $C=K L(P \| Q)=\sum_i \sum_j p_{i j} \log \frac{p_{i j}}{q_{i j}}$.

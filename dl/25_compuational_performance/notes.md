@@ -152,7 +152,6 @@ As models and data scale in size, optimizing for more efficient processes become
 
 ## Inference
 
-- Speculative decoding
 - We can break down LLM inference into two stages: prefill and decode.
   - With sliding window attention, we can chunk and parallelize the prefill process.
   - For long prompts, [disaggregated serving](https://docs.vllm.ai/en/latest/features/disagg_prefill.html) may be helpful because the prefill process can be compute bound while the decode process is bandwidth bound.
@@ -176,6 +175,6 @@ As models and data scale in size, optimizing for more efficient processes become
     - This, however, increases TFT
       - Since the prefill phase takes compute and has a different computational pattern than generation, it cannot be easily batched with the generation of tokens
       - Continuous batching frameworks currently manage this via hyperparameter: waiting_served_ratio, or the ratio of requests waiting for prefill to those waiting end-of-sequence tokens.
-  - Speculative decoding 
-    - The process of coordinating a large LLM (the target model) and a smaller LLM (the draft model) on the same GPU to combine the quality of the large model with the speed of the small model.
-    - The idea is to additionally have the large LLM validate the drafts - if it accepts the drafts then time per output token (TPOT) is decreased.
+- Speculative decoding 
+  - The process of coordinating a large LLM (the target model) and a smaller LLM (the draft model) on the same GPU to combine the quality of the large model with the speed of the small model.
+  - The idea is to additionally have the large LLM validate the drafts - if it accepts the drafts then time per output token (TPOT) is decreased.

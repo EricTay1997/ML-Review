@@ -95,7 +95,7 @@ geometry: margin=20mm
   - What are metrics used in clustering?
   - Discuss two clustering algorithms that can scale to large datasets
 - Gaussian Process
-  - Write down the model specification of the GP prior, joint likelihood, conditional likelihood
+  - Write down the model specification of the GP joint likelihood and conditional likelihood
 - Causal Inference
   - What are key assumptions in Causal Inference?
   - Categorize the type of experiments we encounter
@@ -154,7 +154,7 @@ geometry: margin=20mm
   - Draw the architecture for LDMs
   - Describe faster sampling techniques and derive the sampling step for DDIM
   - Without incorporating textual conditioning in training, how might we use guidance to enable textual conditioning in inference?
-  - What are 2 ways to condition on both image and text without additional training? Now give 2 ways to do so with fine-tuning. 
+  - What are 2 ways to condition on both image and text without additional training? Now give 1 way to do so with guidance and 1 way with fine-tuning. 
 - Flows
   - Write down the likelihood for normalizing flow
   - Describe the architecture of RealNVP, GLOW and autoregressive flows. 
