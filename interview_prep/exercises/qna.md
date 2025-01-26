@@ -142,7 +142,7 @@ geometry: margin=20mm
   - What is the intuition for MLP layers?
   - Describe how Q and K composition work for the creation of induction heads
   - Name 3 ways that we have sped up implementation
-  - Pre/Post-layer normalization, GeLU/SwiGLU, LayerNorm/RMSNorm
+  - Pre/Post-layer normalization, GeLU/SwiGLU, LayerNorm/RMSNorm, MHA/GQA
   - What are the advantages of transformers over traditional sequence-to-sequence models?
 - VAEs
   - Derive the training loss for VAEs

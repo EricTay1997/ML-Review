@@ -6,7 +6,7 @@
   - Encapsulation: Hiding data implementation by restricting access to public methods.
   - Data Abstraction: A concept or an idea which is not associated with any particular instance.
   - Inheritance: Allows derived classes to reuse the code of existing super classes.
-  - Polymorphism: Code that works on the superclass works on any subclass.
+  - Polymorphism: Code that works on the superclass works on any subclass, but behavior depends on subclass.
 ```
 class ActivationFunction(nn.Module):
     def __init__(self):

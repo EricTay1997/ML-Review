@@ -50,7 +50,7 @@
     - One may have more masters for reliability, but trade off some consistency.
   - Cache
     - Cache aside pattern - check cache first, then DB if needed.
-    - Write throught / write behind - App writes to cache, cache writes to DB. 
+    - Write through / write behind - App writes to cache, cache writes to DB. 
     - Tradeoffs between consistency and availability
   - Content Delivery Network (CDN)
     - A network of geographically dispersed servers used to deliver static content like images, videos, JavaScript files, etc.

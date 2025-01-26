@@ -18,7 +18,9 @@ As models and data scale in size, optimizing for more efficient processes become
   - PyTorch (amongst other libraries) allow us to use these tensor cores for training DL models. 
 - Multithreading vs Multiprocessing
   - Multithreading (`threading`) is the ability of a processor to execute multiple threads concurrently, where each thread runs a process.
-    - Useful in I/O with a lot of latency - one thread can wait while the other reads. 
+    - Useful in I/O with a lot of latency (rather than performing computations)
+      - The GIL ensures that only one thread executes Python bytecode at a time, but it doesn't prevent threads from being created or from performing I/O operations. 
+      - When one thread is waiting for I/O, the GIL is released, allowing other threads to run and do useful work. 
     - Threads run in the same memory space
     - Precautions have to be taken in case threads write to the same memory at the same time
     - The Global Interpreter Lock (GIL) synchronizes the execution of threads
@@ -152,18 +154,45 @@ As models and data scale in size, optimizing for more efficient processes become
 
 ## Inference
 
-- We can break down LLM inference into two stages: prefill and decode.
-  - With sliding window attention, we can chunk and parallelize the prefill process.
-  - For long prompts, [disaggregated serving](https://docs.vllm.ai/en/latest/features/disagg_prefill.html) may be helpful because the prefill process can be compute bound while the decode process is bandwidth bound.
-    - Why are we in different regimes? In decoding, we move the same number of weights per token as we do for the entire prompt for prefill. 
-    - What is an example of something that we want to change? Batch size. 
-      - This [cursor blogpost](https://www.cursor.com/blog/llama-inference) explains this more
-        - For example, if we're bandwidth-bound in decoding, we can freely increase our batch size without incurring too much additional latency (memory requirements are dominated by model parameters over KV cache)
-        - However, increasing batch size when we're compute-bound would increase latency linearly, and increase our time to first token (TFT), for example. 
-        - The article also mentions different cost-dynamics
-          - When using open/closed source models, we pay per second/token. 
-          - Due to the different "regimes", it is cheaper to use open/closed source models when we're compute/memory bound 
-          - This means that open/closed source models are better for prompt-heavy/completion-heavy tasks like classification/qna.
+- We can break down LLM inference into two stages: prefill and decoding.
+  - Terminology
+    - For pre-fill, we are concerned with the **time to first token (TFT)**, or **latency**.
+      - Human visual reaction time is around **200ms**, so [Baseten recommends](https://www.baseten.co/blog/understanding-performance-benchmarks-for-llm-inference/) <200ms latency.
+    - For decoding, we are concerned with the **time per output token**, or **throughput**.
+      - Reading time averages between 3-5 words per second. 
+      - For most LLMs, 4 tokens approximately equals 3 words. 
+      - [Baseten recommends](https://www.baseten.co/blog/understanding-performance-benchmarks-for-llm-inference/) around 30 tokens per second. 
+  - Quick math (based on [Cursor's article](https://www.cursor.com/blog/llama-inference#prompt-processing-is-really-cheap) of serving Llama-2-70B)
+    - Compute
+      - FLOPS per token $\approx$ 2*70B
+        - We technically also have attention calculations, which scale linearly with sequence length $N$, but this is small for large models (70B) with relatively short sequences (8k). I have not checked what this means for longer context lengths. 
+        - Compute therefore **scales linearly** with $N$
+    - Memory
+      - Storing model params $\approx$ 140GB
+      - Storing kv cache $\approx 4BNn_gn_ld_{head} \approx 320BN$ KB. 
+    - Memory bandwidth
+      - Key: Every parameter is passed from HBM to SRAM around once (especially with flash attention), so this is usually **the same** as memory (per second)
+      - All model params needs to be passed only once for prefill, but **once per token** for decoding
+        - For prefill, bandwidth is **generally constant** wrt $N$.
+      - If memory is mostly dominated by model params / kv cache, we would expect memory bandwidth to be mostly dominated by model params / kv cache.
+  - Inference characteristic differences
+    - Since model params needs to be passed only once for prefill, but one per token for decoding,
+      - Pre-fill tends to be compute bound (for $N > 156$ on an A100, per [Cursor's calculations]((https://www.cursor.com/blog/llama-inference#prompt-processing-is-really-cheap))).
+      - Decoding tends to be bandwidth bound.
+      - Costs:
+        - When using open-sourced models, we pay **per second**, and when using closed-sourced models, we pay **per token**.
+        - Due to the different bounds for pre-fill/decoding, Cursor found it cheaper to use open-sourced models for prompt processing and closed-sourced models for completion-heavy tasks.
+  - Levers
+    - Increasing Batch Size
+      - Increasing batch size will increase compute linearly, but bandwidth sublinearly (only KV cache part). This can increase throughput. 
+      - Batch size is upper bounded by GPU memory, since KV cache memory grows linearly with batch size.
+      - Increasing compute worsens latency
+        - [Disaggregated serving](https://docs.vllm.ai/en/latest/features/disagg_prefill.html) is helpful because of the different characteristics of prefill and decoding.
+      - Increasing batch size is sometimes not feasible for startups with "bursty" request profiles. 
+    - Number of GPUs
+      - If we increase the number of GPUs, we can shard model weights, and therefore increase our batch size limit. 
+      - It is important to note that parallelism is therefore not only done out of necessity, but **useful** in increasing throughput. 
+      - Additional parallelism also incurs communication cost, however.
 - Batching
   - No batching: each request is processed one at a time.
   - Static batching: requests are placed in batches that are run when full.
@@ -176,5 +205,11 @@ As models and data scale in size, optimizing for more efficient processes become
       - Since the prefill phase takes compute and has a different computational pattern than generation, it cannot be easily batched with the generation of tokens
       - Continuous batching frameworks currently manage this via hyperparameter: waiting_served_ratio, or the ratio of requests waiting for prefill to those waiting end-of-sequence tokens.
 - Speculative decoding 
-  - The process of coordinating a large LLM (the target model) and a smaller LLM (the draft model) on the same GPU to combine the quality of the large model with the speed of the small model.
-  - The idea is to additionally have the large LLM validate the drafts - if it accepts the drafts then time per output token (TPOT) is decreased.
+  - The process of coordinating a large LLM (the target model) and a smaller LLM (the draft model) on the same GPU to combine the quality of the large model with the speed of the small model. Some ways of creating draft models are: 
+    - Incorporating draft generation into the target model, and training the model from the start.
+    - Using sequence level distillation to generate a second model which predicts 𝐾 tokens in parallel.
+    - Setting a portion of the activations of the target model as an input to the draft model, and training the draft model with this input.
+  - The idea is to additionally have the large LLM validate the drafts - if it accepts the drafts then throughput is increased.
+    - The idea hinges on the fact that decoding tends to be memory bound. 
+    - Hence, we can parallelize $f(x_1)$ and $f(\hat{x}_2) = f(f^*(x_1))$. If $f(x_1) \approx x_2$, we can output 2 tokens, and if not we simply output 1. 
+- With sliding window attention, we can chunk and parallelize the prefill process.

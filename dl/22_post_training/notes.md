@@ -75,7 +75,7 @@
 
 - Similar to RLHF, but we skip generation of the reward model
   - ![dpo.png](dpo.png)[Source](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch07/04_preference-tuning-with-dpo/dpo-from-scratch.ipynb)
-- Loss is based on $P(y_1 > y_2 \mid x) = \sigma(\beta(\log\frac{\pi_{PPO}(y_2\mid x)}{\pi_{base}(y_2\mid x)} - \log\frac{\pi_{PPO}(y_1\mid x)}{\pi_{base}(y_1\mid x)}))$
+- Loss is based on $P(y_1 > y_2 \mid x) = \sigma(\beta(\log\frac{\pi_{PPO}(y_1\mid x)}{\pi_{base}(y_1\mid x)} - \log\frac{\pi_{PPO}(y_2\mid x)}{\pi_{base}(y_2\mid x)}))$
   - $\beta$ is a temperature parameter. Higher $\beta$ means that model is more sensitive to rankings.
 - The simplicity of not needing to model a reward model comes at the cost of DPO being more prone to overfitting to preferences and ending up generating nonsense.
   - While the loss above does have some flavor of minimizing the divergence between $\pi_{PPO}$ and $\pi_{base}$, we find that this KL-regularization is actually insignificant when preferences are very strong, which is exacerbated by our finite data regime (Section 4.2 of [$\Psi$PO paper](https://arxiv.org/pdf/2310.12036))
@@ -87,5 +87,5 @@
 - DPO corresponds to when $\Psi(q) = \log(\frac{q}{1-q})$, and the unboundedness of this $\Psi$ causes DPO to overfit. 
 - The [paper](https://arxiv.org/pdf/2310.12036) proposes taking $\Psi$ to be the identity, but unlike RLHF and like DPO, proposes an empirical solution for this optimization problem. 
   - Sampled IPO
-    - We minimize $\underset{\left(y_w, y_l, x\right) \sim D}{\mathbb{E}}\left(\log \left(\frac{\pi_{PPO}(y_w \mid x) \pi_{\mathrm{base}}\left(y_l \mid x\right)}{\pi_{PPO}\left(y_l \mid x\right) \pi_{\mathrm{base}}(y_w \mid x)}\right)-\frac{\tau^{-1}}{2}\right)^2$
+    - We minimize $\underset{\left(y_1, y_2, x\right) \sim D}{\mathbb{E}}\left(\log\frac{\pi_{PPO}(y_1\mid x)}{\pi_{base}(y_1\mid x)} - \log\frac{\pi_{PPO}(y_2\mid x)}{\pi_{base}(y_2\mid x)}-\frac{\tau^{-1}}{2}\right)^2$, where $y_w$ is preferred over $y_l$.
     - Intuitively, when the weight on the KL-divergence term $\tau$ is larger, we penalize deviations from our base model, which prevents overfitting.

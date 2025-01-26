@@ -107,12 +107,13 @@
           - $q_\sigma\left(\mathbf{x}_{1: T} \mid \mathbf{x}_0\right)=q_\sigma\left(\mathbf{x}_T \mid \mathbf{x}_0\right) \prod_{t=2}^T q_\sigma\left(\mathbf{x}_{t-1} \mid \mathbf{x}_t, \mathbf{x}_0\right)$
             - This is non-Markovian because $\mathbf{x}_{t-1}$ now depends on $\mathbf{x}_t, \mathbf{x}_0$
             - We choose parameters such that $q_\sigma(\mathbf{x}_t \mid \mathbf{x}_0) \sim\mathcal{N}\left(\sqrt{\bar{\alpha}_t} \mathbf{x}_0,\left(1-\bar{\alpha}_t\right) \mathbf{I}\right)$ as before.
-          - We then define a generative process where we first predict $\hat{\mathbf{x}}_0$, and then sample $\mathbf{x}_{t-1} \sim q_\sigma(\mathbf{x}_{t-1} \mid \hat{\mathbf{x}}_0, \mathbf{x}_{t})$ (this is encapsulated in the equation all the way above)
-          - One can then show that the variational inference objective is equivalent in form to the DDPM variational inference objective, subject to a certain weighting of $L_{t-1}$
+          - We then define a generative process where we first predict $\hat{\mathbf{x}}_0$, and then sample $\mathbf{x}_{t-1} \sim q_\sigma(\mathbf{x}_{t-1} \mid \hat{\mathbf{x}}_0, \mathbf{x}_{t})$ (this is the interpretation of the DDIM sampling equation quoted above)
+          - One can then show that the variational inference objective is equivalent in form to the DDPM variational inference objective, subject to a certain weighting of each $L_{t-1}$ term.
           - The authors argue that if the parameters of the noise model are not shared across timesteps, then the parameters are invariant to the weighting scheme and the original training objective is then appropriate. 
             - This is not true, but the model works empirically. 
           - For an accelerated forward process, we can now similarly define a factorization of the inference process as above such that the "marginals" match. 
           - Again, we can show that the variational inference objective under this factorization also takes the "$L_\gamma$ form", and apply a similar reasoning for us not to change the training objective.
+          - We can then reformat the sampling equation appropriately to allow us to sample from this accelerated schedule. Empirically, $\eta = 0$ yields higher quality samples under this accelerated schedule than $\eta = 1$.
   - Distillation
     - The ‘student’ model is initialized from the weights of the ‘teacher’ model. 
     - During training, the teacher model performs two sampling steps and the student model tries to match the resulting prediction in a single step. 

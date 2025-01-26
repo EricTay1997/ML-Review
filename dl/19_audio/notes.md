@@ -50,7 +50,7 @@
         - These capture semantic information, unlike the acoustic tokens in the VAE. 
       - Text
         - Previously, we used CLAP embeddings, which allow us to pass in text during sampling. 
-        - However, we have now replaced our image embeddings with AudioMAE. 
+        - However, we have now replaced our audio embeddings with AudioMAE. 
         - Therefore, we need to map text to the same embedding space.
         - AudioLDM2 does this by fine-tuning a GPT2 model, conditioned on text, audio or phoneme data, to predict the sequential output of an AudioMAE encoder. 
         - This shared sequential conditioning space is dubbed the ”Language of Audio”, which again we can think of as semantic audio tokens.
@@ -73,7 +73,7 @@
     - MusicLM
       - ![music_lm.png](music_lm.png)[Source](https://arxiv.org/pdf/2301.11325)
       - Similar to AudioLM, but with possible text/melody conditioning using MuLan
-      - Melody conditioning is done by training an additional melody embedding model that provides melody embeddings to the MuLan encoder
+      - Melody conditioning is done by training an additional melody embedding model that concatenates melody embeddings with those from the MuLan encoder
         - This is trained with a contrastive objective using a dataset of paired audio datapoints, derived from musical covers
         - The paper doesn't cover how the model learns to use these embeddings, I suspect this is either done in pre or post-training and omitted in the paper. 
         - As to why we cannot feed this in directly into MuLan, I suspect that doing so may cause the model to copy more than the melody (see MusicGen)
