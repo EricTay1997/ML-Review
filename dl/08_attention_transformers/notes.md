@@ -193,3 +193,10 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
             - Concretely, expressing $\mathbf{K} = \left[ \mathbf{K}_1 ; \mathbf{K}_2\right]$, for $\mathbf{K}_1, \mathbf{K}_2$ with equal columns, we do:
               - $\left[ \mathbf{K}_1 ; \mathbf{K}_2\right] \odot \left[ \mathbf{C}_{cos}; \mathbf{C}_{cos}\right] + \left[ -\mathbf{K}_2; \mathbf{K}_1\right] \odot \left[ \mathbf{C}_{sin}; \mathbf{C}_{sin}\right]$, for $\left(\mathbf{C}_{g}\right)_{ij} = i\theta_j$
             - Note that we do the same transformations for $\mathbf{Q}$. 
+- [Titans: Learning to Memorize at Test Time](https://arxiv.org/pdf/2501.00663)
+  - With costs being quadratic in $L$, memorization is an issue. 
+  - Titans proposes a way to train a neural memory:
+    - $\mathcal{M}_t=\left(1-\alpha_t\right) \mathcal{M}_{t-1}+S_t$ (forgetting and surprise)
+    - $S_t=\eta_t S_{t-1}-\theta_t \nabla \ell\left(M_{t-1} ; x_t\right)$ ("momentum" is because surprising events are memorable for some time)
+    - $\ell(\mathcal{M}_{t-1}; x_{t}) = ||\mathcal{M}_{t-1}(x_tW_K)-x_tW_V||^2_2$ is the surprise of current token. 
+  - Importantly, this memory can be trained at test time, and could be used as a context, as a gate, or as a layer.

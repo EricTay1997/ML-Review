@@ -44,11 +44,13 @@ As models and data scale in size, optimizing for more efficient processes become
   - Broadly speaking, PyTorch has a frontend for direct interaction with the users, e.g., via Python, as well as a backend, e.g. via C++, used by the system to perform the computation.
   - Thus, there is little impact on the program’s overall performance, regardless of Python’s performance.
   - Conversions to NumPy are blocking because NumPy has no notion of asynchrony.
+- `torch.compile` makes PyTorch code run faster by JIT-compiling PyTorch code into optimized kernels
+  - A Just-In-Time (JIT) compiler compiles code at runtime into a fast executable
+  - The `max-autotune` configuration with profile the model with different optimization configurations and generate optimized machine code for the model using the best found configuration
 - JAX
   - JAX is a numerical computing library that has various desirable characteristics for the computations done in DL. 
     - Provides a unified NumPy-like interface to computations that run on CPU, GPU, or TPU, in local or distributed settings
     - Features Just-In-Time (JIT) compilation via Open XLA
-      - A JIT-compiler compiles code at runtime into a fast executable
       - XLA significantly increases execution speed and lowers memory usage by fusing low-level operations
       - Warning: The intermediate `jaxpr` representation is specialized to the shapes of input arguments 
         - Hence, running a jitted function with different input shapes requires multiple recompilations. 
@@ -84,11 +86,19 @@ As models and data scale in size, optimizing for more efficient processes become
     - Use 16-bit floating-point numbers for most computations
       - Loss scaling may be needed because `float16` may induce underflow/overflow issues
       - `bfloat16` has a larger range but lower precision, and is an alternative to avoid loss scaling
+    - This reduces both memory and compute costs
+  - Quantization
+    - We represent the weights and activations with lower-precision data types
+    - Quantization-aware Training (QAT) is a way of training that simulates quantization whilst training
+    - Double quantization is when we quantize the scaling factors from the first quantization.
+      - QLoRA combines double quantization with [LoRA](../22_post_training/notes.md).
   - Gradient Checkpointing / Activation Recomputation
     - Trade compute for memory by recomputing activations during the backward pass.  
   - Gradient Accumulation
     - We can accumulate gradients over batches and take steps once every few batches.
     - This to me doesn't feel like it "speeds up" a forward pass. Rather, it just remedies the instability induced by memory limitations that force smaller batch sizes than we would like.
+  - Pruning
+    - Pruning is a technique that removes less important connections, neurons, or structures from a trained model 
   - Donating buffers (JAX-specific)
     - Since JAX employs functional programming, we cannot modify variables in place.
     - If we don't need our input variables, JAX provides a mechanism to donate buffers, which allows us to reuse the memory of the input arguments for the output arguments.
@@ -158,7 +168,7 @@ As models and data scale in size, optimizing for more efficient processes become
   - Terminology
     - For pre-fill, we are concerned with the **time to first token (TFT)**, or **latency**.
       - Human visual reaction time is around **200ms**, so [Baseten recommends](https://www.baseten.co/blog/understanding-performance-benchmarks-for-llm-inference/) <200ms latency.
-    - For decoding, we are concerned with the **time per output token**, or **throughput**.
+    - For decoding, we are concerned with the **time per output token**, or **tokens per second (TPS)**, or **throughput**.
       - Reading time averages between 3-5 words per second. 
       - For most LLMs, 4 tokens approximately equals 3 words. 
       - [Baseten recommends](https://www.baseten.co/blog/understanding-performance-benchmarks-for-llm-inference/) around 30 tokens per second. 
@@ -188,27 +198,50 @@ As models and data scale in size, optimizing for more efficient processes become
       - Batch size is upper bounded by GPU memory, since KV cache memory grows linearly with batch size.
       - Increasing compute worsens latency
         - [Disaggregated serving](https://docs.vllm.ai/en/latest/features/disagg_prefill.html) is helpful because of the different characteristics of prefill and decoding.
+      - So far, we've been focusing on total TPS. Perceived TPS considers what an individual user sees. Increasing batch size, generally decreases perceived TPS, and we're lower bounded by non-functional requirements.
       - Increasing batch size is sometimes not feasible for startups with "bursty" request profiles. 
     - Number of GPUs
       - If we increase the number of GPUs, we can shard model weights, and therefore increase our batch size limit. 
       - It is important to note that parallelism is therefore not only done out of necessity, but **useful** in increasing throughput. 
       - Additional parallelism also incurs communication cost, however.
+- Tensor-RT
+  - TensorRT works by taking a model description, such as an ONNX file, and compiling the model to run more efficiently on a given GPU (optimized runtime engines).
+  - As opposed to the more general `torch.compile` mentioned above, it is optimized specifically for NVIDIA hardware. 
+    - `torch.compile` does allow us to specify the Tensor-RT backend.
+- vLLM
+  - Tailored for efficient LLM inference, while Tensor-RT supports a broader range of model types.
+  - Designed to be more flexible in terms of hardware, while Tensor-RT is optimized specifically for NVIDIA GPUs.
+- LoRA Swapping
+  - We usually build a single engine that works for the foundation model and swap LoRAs in and out as needed at inference time.
+  - LoRAs can be stored on 
+    - GPU memory: the LoRA is actively being used on the GPU to fulfill an inference request. 
+      - Capacity: 10s/100s of LoRAs 
+      - Load time: Instant 
+    - Host/CPU memory: the LoRA is cached on system memory within the model serving instance. 
+      - Capacity: 1000s of LoRAs 
+      - Load time: 1-2 ms 
+    - Disk: the LoRA is cached on container storage attached to the model serving instance. 
+      - Capacity: Effectively unlimited 
+      - Load time: 10-100ms 
+    - Network: the LoRA is living in an HF repo, S3 bucket, etc. 
+      - Capacity: Effectively unlimited 
+      - Load time: ~100ms
 - Batching
   - No batching: each request is processed one at a time.
   - Static batching: requests are placed in batches that are run when full.
   - Dynamic batching: requests are placed in batches as they’re received and batches run once full or once enough time has elapsed since the first request.
     - Dynamic batching is great for live traffic on models like Stable Diffusion XL, where each inference request takes about the same amount of time. 
     - For LLMs, however, output sequences will vary in length. If you use a dynamic batching approach, each batch of requests is going to need to wait for the longest output to finish before the next batch can begin.
-  - Continuous batching: requests are processed token-by-token, with new requests getting processed as older requests finish and free up space on the GPU.
+  - Continuous (in-flight) batching: requests are processed token-by-token, with new requests getting processed as older requests finish and free up space on the GPU.
     - Model servers like TGI and VLLM offer continuous batching, while TensorRT-LLM uses “in-flight batching” to essentially the same effect.
     - This, however, increases TFT
       - Since the prefill phase takes compute and has a different computational pattern than generation, it cannot be easily batched with the generation of tokens
       - Continuous batching frameworks currently manage this via hyperparameter: waiting_served_ratio, or the ratio of requests waiting for prefill to those waiting end-of-sequence tokens.
 - Speculative decoding 
   - The process of coordinating a large LLM (the target model) and a smaller LLM (the draft model) on the same GPU to combine the quality of the large model with the speed of the small model. Some ways of creating draft models are: 
-    - Incorporating draft generation into the target model, and training the model from the start.
-    - Using sequence level distillation to generate a second model which predicts 𝐾 tokens in parallel.
-    - Setting a portion of the activations of the target model as an input to the draft model, and training the draft model with this input.
+    - Using a single model for both draft and target, and training the model from the start.
+    - Letting the draft model use part of the target model, and training the draft model.
+    - Distilling the knowledge from the target model into the draft model.
   - The idea is to additionally have the large LLM validate the drafts - if it accepts the drafts then throughput is increased.
     - The idea hinges on the fact that decoding tends to be memory bound. 
     - Hence, we can parallelize $f(x_1)$ and $f(\hat{x}_2) = f(f^*(x_1))$. If $f(x_1) \approx x_2$, we can output 2 tokens, and if not we simply output 1. 

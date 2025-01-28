@@ -4,14 +4,7 @@
 
 ## Model Optimization
 
-- Quantization
-  - Quantization is a technique to reduce the computational and memory costs of running inference by representing the weights and activations with lower-precision data types.
-    - Quantization-aware Training (QAT) is a way of training that simulates quantization whilst training
-    - Also see [Mixed Precision Training](../25_compuational_performance/notes.md)
-  - Double quantization is when we quantize the scaling factors from the first quantization.
-    - QLoRA combines double quantization with LoRA.
-- Pruning
-  - Pruning is a technique that removes less important connections, neurons, or structures from a trained model 
+- See [Computational Performance](../25_compuational_performance/notes.md)
 
 ## Guidance
 
@@ -70,6 +63,8 @@
       - If we have a dataset of $(y,x)$ pairs, this can be couched as supervised learning.
       - The key here is that the model itself generates $y \mid x$. 
         - We then also need the KL divergence term to prevent the model from just generating gibberish that just tricks the imperfect reward model. 
+    - Why is this not RL?
+        - See "Reward Modeling" below. 
 
 ## Direct Preference Optimization (DPO)
 
@@ -77,6 +72,8 @@
   - ![dpo.png](dpo.png)[Source](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch07/04_preference-tuning-with-dpo/dpo-from-scratch.ipynb)
 - Loss is based on $P(y_1 > y_2 \mid x) = \sigma(\beta(\log\frac{\pi_{PPO}(y_1\mid x)}{\pi_{base}(y_1\mid x)} - \log\frac{\pi_{PPO}(y_2\mid x)}{\pi_{base}(y_2\mid x)}))$
   - $\beta$ is a temperature parameter. Higher $\beta$ means that model is more sensitive to rankings.
+  - Subbing this in, new loss function is then no longer dependent on $r:$ 
+    - $\mathcal{L}_{\mathrm{DPO}}\left(\pi_{PPO} ; \pi_{base}\right)=-\mathbb{E}_{\left(x, y_1, y_2\right) \sim \mathcal{D}}\left[\log \sigma\left(\beta \log \frac{\pi_{PPO}\left(y_1 \mid x\right)}{\pi_{base}\left(y_1 \mid x\right)}-\beta \log \frac{\pi_{PPO}\left(y_2 \mid x\right)}{\pi_{base}\left(y_2 \mid x\right)}\right)\right]$
 - The simplicity of not needing to model a reward model comes at the cost of DPO being more prone to overfitting to preferences and ending up generating nonsense.
   - While the loss above does have some flavor of minimizing the divergence between $\pi_{PPO}$ and $\pi_{base}$, we find that this KL-regularization is actually insignificant when preferences are very strong, which is exacerbated by our finite data regime (Section 4.2 of [$\Psi$PO paper](https://arxiv.org/pdf/2310.12036))
     - The paper argues that the reward model is useful as a regularizer because it underfits preferences, preventing this problem. 
@@ -89,3 +86,41 @@
   - Sampled IPO
     - We minimize $\underset{\left(y_1, y_2, x\right) \sim D}{\mathbb{E}}\left(\log\frac{\pi_{PPO}(y_1\mid x)}{\pi_{base}(y_1\mid x)} - \log\frac{\pi_{PPO}(y_2\mid x)}{\pi_{base}(y_2\mid x)}-\frac{\tau^{-1}}{2}\right)^2$, where $y_w$ is preferred over $y_l$.
     - Intuitively, when the weight on the KL-divergence term $\tau$ is larger, we penalize deviations from our base model, which prevents overfitting.
+
+## GRPO
+
+- $\frac{1}{G} \sum_{i=1}^G\left(\min \left(\frac{\pi_\theta\left(o_i \mid q\right)}{\pi_{\theta_{o l d}}\left(o_i \mid q\right)} A_i, \operatorname{clip}\left(\frac{\pi_\theta\left(o_i \mid q\right)}{\pi_{\theta_{o l d}}\left(o_i \mid q\right)}, 1-\varepsilon, 1+\varepsilon\right) A_i\right)-\beta \mathbb{D}_{K L}\left(\pi_\theta \| \pi_{r e f}\right)\right)$,
+  - $\mathbb{D}_{K L}\left(\pi_\theta| | \pi_{r e f}\right)=\frac{\pi_{r e f}\left(o_i \mid q\right)}{\pi_\theta\left(o_i \mid q\right)}-\log \frac{\pi_{r e f}\left(o_i \mid q\right)}{\pi_\theta\left(o_i \mid q\right)}-1$,
+  - Questions $q \sim P(Q),$ Outputs $\left\{o_i\right\}_{i=1}^G \sim \pi_{\theta_{o l d}}(O \mid q)$
+
+## RLCAI
+
+- Uses AI self-revision for SFT (rather than human-labelled answers)
+- Uses AI to rank different outputs (RLAIF)
+
+## SFT Data Generation
+
+- RLHF uses human labelers to generate outputs to prompts, used for SFT.
+- [RLCAI](../23_safety/03_alignment.md) uses AI to refine outputs, used for SFT. 
+- DeepSeek R1 uses AI too, in a more complicated fashion. 
+  - ![deepseek.png](deepseek.png)[Source](https://fireworks.ai/blog/deepseek-r1-deepdive)
+- When the objective of SFT is the same as reward modeling, as in RLCAI, some research skips SFT/critique
+
+## Reward Modeling
+
+- RLHF uses human labels to generate preferences and model rewards.
+- [RLAIF](../23_safety/03_alignment.md) uses AI to generate preferences and model rewards.
+- [GenRM](https://arxiv.org/pdf/2410.12832) uses human labels with AI CoT reasoning to address short-comings
+  - RLHF doesn't generalize to out of distribution data well
+  - RLAIF may not capture human preferences accurately
+- DeepSeek R1 uses:
+  - Rule-based rewards (accuracy and formatting) for reasoning data.
+  - Something else for general data (need to check DeepSeek V3's pipeline)
+- Human ranking provides a poor proxy of the true objective function ([Karpathy](https://x.com/karpathy/status/1821277264996352246?lang=en)). I assume he would have similar thoughts regarding rule-based reward modeling.
+- When the objective of SFT is the same as reward modeling, as in RLCAI, [DPF](https://arxiv.org/pdf/2402.07896) skips reward modeling and uses start and end points of SFT.
+
+## STaR
+
+- Self-Taught Reasoner asks the LLM to provide both a CoT rationale and final answer.
+- We keep the samples where the model arrived at the correct answer and train the model to predict both the rationale and final answer.
+- Post-rationalization is done for questions examples that a model initially fails to solve, where the correct answer is passed to a model and the model is asked to generate a rationale.  

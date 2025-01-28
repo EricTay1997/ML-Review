@@ -114,10 +114,11 @@ Figure credit: https://alexlenail.me/NN-SVG/index.html
         - Geometrically, $f(x^{(2)})$ is on the "negative" side of the hyperplane, and $f(x^{(3)} - x^{(1)})$ is a vector that is pointing in the "negative" direction, so it's impossible for $f(x^{(4)})$ to be positive.
 
 ## Some Additional Thoughts
-- Technically, the sigmoid function says that the probability that an input $x$ is of class 1 is somewhat proportional to the exponential distance between $f(x)$ and the hyperplane. I wonder if there's use in this exponential function, or if higher temperature settings are more appropriate (and when that is the case).
+- Technically, the sigmoid function says that the probability that an input $x$ is of class 1 is somewhat proportional to the exponential distance between $f(x)$ and the hyperplane.
 - Multi-class classification:
     - We can interpret multi-class classification as drawing $n$ hyperplanes (where $n$ is the number of classes), and assigning probabilities based on how far each point is to the hyperplane.
     -  This is an oversimplification because:
         - The columns of $W_0$ are not normalized (so we need to scale the distance)
-        - We need to exponentiate the distance
-    - Again, I wonder if there's a "right" way to formulate the final layer / loss.
+        - We need to exponentiate the distance. 
+          - We can think of exponentiating as "exaggerating" the space. I wonder if this is necessary due to polysemanticity of neurons ([This article](https://transformer-circuits.pub/2022/solu/index.html) covers more about polysemanticity and softmax). 
+          - I wonder if there's a "right" way to think about the temperature of softmax and how it relates to probabilities.
