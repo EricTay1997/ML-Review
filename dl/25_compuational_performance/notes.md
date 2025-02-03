@@ -245,4 +245,9 @@ As models and data scale in size, optimizing for more efficient processes become
   - The idea is to additionally have the large LLM validate the drafts - if it accepts the drafts then throughput is increased.
     - The idea hinges on the fact that decoding tends to be memory bound. 
     - Hence, we can parallelize $f(x_1)$ and $f(\hat{x}_2) = f(f^*(x_1))$. If $f(x_1) \approx x_2$, we can output 2 tokens, and if not we simply output 1. 
+- Chunked prefill
+  - Continuous batching can introduce latency as the decode phases are delayed until the prefill requests are completed.
+  - ![chunked_prefill.png](chunked_prefill.png)[Source](https://developer.nvidia.com/blog/streamlining-ai-inference-performance-and-deployment-with-nvidia-tensorrt-llm-chunked-prefill/)
+  - Chunked prefill prevents the prefill phase from becoming a bottleneck, enables more parallelization with decode phase tokens, and increases GPU utilization.
+  - Using prefill chunks also decouples memory consumption from the context length of incoming requests
 - With sliding window attention, we can chunk and parallelize the prefill process.

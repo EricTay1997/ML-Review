@@ -8,5 +8,20 @@
   - Memory: Short-term (in-context) + Long-term (vector store + fast retrieval)
   - A toolbox from which the agent pick tools to execute. 
     - A tool consists of an input schema, and a function to run, e.g. a Python function.
+    - Tools provide knowledge augmentation and capability extension.
   - ![agents.png](agents.png)[Source](https://lilianweng.github.io/posts/2023-06-23-agent/)
 - Multi-agents, where having agents with separate tool sets and memories allows us to achieve efficient specialization.
+  - Solving a task typically involves the following processes:
+    - (Planner) Plan generation: come up with a plan for accomplishing this task. 
+    - (Evaluator) Reflection and error correction: evaluate the generated plan. If it’s a bad plan, generate a new one.
+    - (Executor) Execution: take actions outlined in the generated plan. This often involves calling specific functions.
+    - (Evaluator) Reflection and error correction: upon receiving the action outcomes, evaluate these outcomes and determine whether the goal has been accomplished. Identify and correct mistakes. If the goal is not completed, generate a new plan.
+  - Evaluation
+    - Failures. The more complex a task an agent performs, the more possible failure points there are. 
+      - Tool use failure: Invalid tool; Valid tool, invalid parameters; Valid tool, incorrect parameter values
+      - Goal failure: plan doesn’t solve task, or it solves the task without following the constraints
+      - It is important to have many tests to find out where the agent fails most
+    - Efficiency
+  - Reflection
+    - Reflexion uses reflection after evaluation to find out what went wrong
+    - ReAct is Reason + Act. Here, "reasoning" encompasses planning + reflection, where reflection is used to devise a plan to act on.

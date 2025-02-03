@@ -120,5 +120,5 @@
     - This process can be repeated multiple times.
 - Other modes
   - [Video](../20_video/notes.md)
-  - [Audio](../19_audio/notes.md)
+  - [Audio](../19_audio/music)
 

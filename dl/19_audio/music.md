@@ -1,9 +1,8 @@
-# Audio 
+# Music 
 
-- Due to personal interest, this section will have a heavy tilt toward generative music.
 - I have found [Foundation Models for Music: A Survey](https://arxiv.org/pdf/2408.14340) to be very helpful in understanding this space.
 
-## Audio Tokenizers
+## Tokenizers
 
 - Hand-crafted: Spectrogram
   - We use a vocoder (e.g. HiFi-GAN) to convert spectrograms back into audio

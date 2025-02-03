@@ -38,6 +38,16 @@
     - Rescales (element-wise) activations of key vectors, query vectors and MLP hidden activations.
 - See examples in [Diffusion](../10_diffusion/notes.md), [NLP](../17_nlp/post_training.md), and [CV](../16_computer_vision/notes.md).
 
+## Distillation
+
+- There are [many ways](https://arxiv.org/pdf/2402.13116) to distill information from a larger model to a smaller one. 
+  - One common way to do so for LLMs is SFT, or "Pseudo-Labelling"
+    - $\mathcal{L}_{\mathrm{SFT}}=\mathbb{E}_{x \sim \mathcal{X}, y \sim p_T(y \mid x)}\left[-\log p_S(y \mid x)\right]$
+  - Another way is to use $KL(P_t || P_s)$
+  - Or a combination of both ([Distil-Whisper](https://arxiv.org/pdf/2311.00430))
+- For smaller models, DeepSeek R1's paper indicated that distillation was more effective than RL.
+  - To me, this feels like the important piece of the puzzle is _high quality data_.
+
 ## Reinforcement Learning with Human Feedback (RLHF)
 
 - In pretraining process, it is hard to incorporate additional (human) preferences
