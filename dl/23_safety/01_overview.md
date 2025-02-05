@@ -9,7 +9,7 @@ To that end, this document will pen down arguments made by others, which will ho
 - Catastrophic AI risks can be grouped under the following categories: [(Main Source)](https://www.safe.ai/ai-risk)
   - Malicious use
   - Disruptive social impact
-  - Accidents 
+  - Alignment - safe, reliable, and steerable: propensity for accidents
   - Rogue AIs
     - Potential to optimize flawed objectives
     - Potential to become power-seeking, resist shutdown, and engage in deception as a result of developing harmful secondary goals.
@@ -20,4 +20,4 @@ To that end, this document will pen down arguments made by others, which will ho
 
 ## Categorizations
 
-The additional notes in this folder function to categorize papers that I have read. Here, I have adopted [Anthropic's categorizations](https://www.anthropic.com/research), but may change this in the future especially if I encounter papers that don't neatly fit into these categorizations.
+The additional notes in this folder function to categorize papers that I have read. 

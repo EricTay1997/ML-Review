@@ -1,0 +1,67 @@
+# Evals
+
+- [Responsible Scaling Policies](https://metr.org/blog/2023-09-26-rsp/)
+  - An RSP specifies what level of AI capabilities an AI developer is prepared to handle safely with their current protective measures, and conditions under which it would be too dangerous to continue deploying AI systems and/or scaling up AI capabilities until protective measures improve.
+  - It aims to keep protective measures ahead of whatever dangerous capabilities AI systems have
+  - Key Components
+    - Limits: which specific observations about dangerous capabilities would indicate that it is (or strongly might be) unsafe to continue scaling?
+    - Protections: what aspects of current protective measures are necessary to contain catastrophic risks?
+    - Evaluation: what are the procedures for promptly catching early warning signs of dangerous capability limits?
+    - Response: if dangerous capabilities go past the limits and it’s not possible to improve protections quickly, is the AI developer prepared to pause further capability improvements until protective measures are sufficiently improved, and treat any dangerous models with sufficient caution?
+    - Accountability: how does the AI developer ensure that the RSP’s commitments are executed as intended; that key stakeholders can verify that this is happening (or notice if it isn’t); that there are opportunities for third-party critique; and that changes to the RSP itself don’t happen in a rushed or opaque way?
+  - Anthropic's RSP 
+    - AI Safety Levels (ASLs)
+      - ASL-1: systems which pose no meaningful catastrophic risk, for example a 2018 LLM or an AI system that only plays chess.
+      - ASL-2: systems that show early signs of dangerous capabilities – for example ability to give instructions on how to build bioweapons – but where the information is not yet useful due to insufficient reliability or not providing information that e.g. a search engine couldn’t.
+      - ASL-3: systems that substantially increase the risk of catastrophic misuse compared to non-AI baselines (e.g. search engines or textbooks) OR that show low-level autonomous capabilities.
+      - ASL-4: speculative, will likely involve qualitative escalations in catastrophic misuse potential and autonomy.
+    - Key components
+      - Capability Thresholds: Specific AI abilities that, if reached, would require stronger safeguards than our current baseline.
+        - Autonomous AI Research and Development
+        - Chemical, Biological, Radiological, and Nuclear (CBRN) weapons
+      - Required Safeguards: The specific ASL Standards needed to mitigate risks once a Capability Threshold has been reached.
+    - Oversight
+      - Capability assessments
+      - Safeguard assessments
+      - Documentation and decision-making
+    - Measures for internal governance and external input
+- [A starter guide for Evals](https://www.apolloresearch.ai/blog/a-starter-guide-for-evals)
+  - Evals are the systematic measurement of properties in AI systems
+    - Making quantitative or qualitative statement about the capabilities or propensities of an AI system
+  - Red-teaming vs benchmarking
+    - Red-teaming: Can we find this capability in a model when we try hard to find it?
+    - Benchmarking: The likelihood of a behavior occurring under real-use conditions
+    - I find this similar to the difference between capability and alignment evaluations.
+- [We need a Science of Evals](https://www.apolloresearch.ai/blog/we-need-a-science-of-evals)
+  - A model's propensity to exhibit capabilities are extremely sensitive to the prompts used.
+  - A "Science of Evals" is the process of turning exploratory research into robust and rigorous standards that can be used as the basis for industry norms and laws.
+  - Open research questions
+    - Are we measuring the right quantity?
+      - Is there a systematic way to get conceptual clarity about the thing we’re trying to measure? 
+      - How can we quantify our confidence that it captures what we want it to capture?
+      - What kind of statement are we trying to make with our eval? Worst-case or average-case?
+    - Are our results trustworthy?
+      - Do we have broad coverage of the distribution in question? Quantify the confidence?
+      - How can we measure specific biases in our evaluation?
+      - Can we define hypothesis testing procedures that provide us with an estimate of statistical significance?
+      - How large is the difference between different elicitation techniques, e.g. prompt engineering vs. fine-tuning? Can we make systematic statements about these differences, e.g. akin to scaling laws?
+- [Challenges in evaluating AI systems](https://www.anthropic.com/news/evaluating-ai-systems)
+  - Helpfulness and harmlessness
+  - Multiple choice evaluations
+    - MMLU, BBQ
+  - Third-party evaluation frameworks like BIG-bench and HELM
+    - Unwieldly, incompatibility, and friction
+  - Using crowdworkers to measure how helpful or harmful our models are
+    - Expensive and time-consuming to run
+    - Subjectivity
+  - Using domain experts to red team for national security-relevant threats
+    - Complicated
+  - Using generative AI to develop evaluations for generative AI
+  - Working with a non-profit organization to audit our models for dangerous capabilities
+    - Hard to understand how much to collaborate
+- [A statistical approach to model evaluations](https://www.anthropic.com/research/statistical-approach-to-model-evals)
+  - Rec 1: Use CLT to report standard error of the mean, SEM
+  - Rec 2: Cluster standard errors
+  - Rec 3: Reduce variance within questions, different methodologies depending on whether CoT is used
+  - Rec 4: Use paired-differences tests
+  - Rec 5: Use power analysis to inform how many times to re-sample answers, number of questions to be used, or whether it is worth carrying out an eval.

@@ -13,8 +13,9 @@
     - Improve the tools available for model evaluation.
     - Improve our understanding of abrupt jumps in capabilities.
 - [Red Teaming Language Models to Reduce Harms: Methods, Scaling Behaviors, and Lessons Learned (2022)](https://www.anthropic.com/news/red-teaming-language-models-to-reduce-harms-methods-scaling-behaviors-and-lessons-learned)
-  - RLHF models are increasingly difficult to red team as they scale, and there is a flat trend with scale for the other model types.
+  - RLHF models are increasingly difficult to red team as they scale, but there is a flat trend with scale for the other model types.
   - We find that the models that use red team data are, in general, less susceptible to attack and produce less harmful outputs, especially when compared to models that do not incorporate red team data.
+  - Released dataset of red-team attacks for others to use.
 - [Collective Constitutional AI: Aligning a Language Model with Public Input (2023)](https://www.anthropic.com/news/collective-constitutional-ai-aligning-a-language-model-with-public-input)
   - Anthropic created a publicly sourced constitution and compared it qualitatively with their own constitution. 
   - They also compared models train on either constitution, which seemed to indicate similar model behavior.

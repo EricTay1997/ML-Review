@@ -87,6 +87,9 @@
       - If we do this inversion with a prompt, the hope is that changing the prompt would give us the ability to condition our image generation.
   - Control
     - Masking
+      - In-painting can be done by drawing a segmentation mask and tasking the model to recreate the masked region. 
+      - [SmartBrush](https://arxiv.org/pdf/2212.05034) conditions the denoising process with the clean background information, mask information and corresponding class text label. 
+        - It additionally uses masks with different precision, and a loss that requires the model to predict the accurate mask, to allow users to provide coarse masks (on top of accurate ones).
     - Cross-attention control 
 - Latent Diffusion
   - Since attention grows quadratically with input size, large images are expensive to generate.

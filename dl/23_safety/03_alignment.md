@@ -1,5 +1,73 @@
 # Alignment
 
+## Safeguards
+
+- Techniques that will enable the safe deployment of more advanced AI systems
+- Defense techniques for misuse and misalignment
+  - [Constitutional Classifiers](https://arxiv.org/pdf/2501.18837)
+    - Synthetic data is used to train classifiers which are used to detect harmful inputs and outputs. 
+    - These classifiers also maintain deployment viability, with an absolute 0.38% increase in production-traffic refusals and a 23.7% inference overhead.
+  - [Transcript-Classifier](https://arxiv.org/pdf/2412.02159)
+    - Employ an LLM with chain-of-thought reasoning to classify transcripts
+    - Explicitly validate each reasoning step
+  - Adversarial Training
+    - SFT, mapping a set of adversarial attack requests to refusal responses
+  - [R2D2](https://arxiv.org/pdf/2402.04249)
+    - As opposed to fine-tuning on a static dataset of harmful prompts, our method fine-tunes LLMs on a dynamic pool of test cases continually updated by a strong optimization-based red teaming method.
+  - [Latent Adversarial Training](https://arxiv.org/pdf/2407.15549)
+    - We perturb the latent activations in an LLM’s residual stream to elicit specific failure modes from the model.
+    - Then, we fine-tune LLMs on the target (harmless) task under these perturbations.
+- Vulnerability identification/automated red teaming
+  - [Many-shot jailbreaking (2024)](https://www.anthropic.com/research/many-shot-jailbreaking)
+    - Many-shot Jailbreaking (MSJ) is a simple long-context attack that uses a large number (i.e. hundreds) of demonstrations to steer model behavior.
+    - It involves including a faux dialogue that portrays the AI Assistant readily answering potentially harmful queries from a User. At the end of the dialogue, one adds a final target query to which one wants the answer.
+    - Larger context windows recently deployed by Anthropic, OpenAI and Google DeepMind present a rich new attack surface. 
+    - This attack is robust to format, style, and subject changes, indicating that mitigating this attack might be difficult.
+    - The effectiveness of MSJ follows simple power laws. This enables us to forecast what context-length is required for given attacks to be successful. 
+    - MSJ tends to be more effective on larger models, since larger models learn faster in context.
+    - Mitigating MSJ at very long context lengths is hard (although we can make it such that longer context lengths are needed for MSJ to succeed). 
+  - [Best-of-N Jailbreaking (2024)](https://arxiv.org/pdf/2412.03556)
+    - BoN Jailbreaking works by repeatedly sampling variations of a prompt with a combination of augmentations—such as random shuffling or capitalization for textual prompts—until a harmful response is elicited.
+    - BoN Jailbreaking achieves high attack success rates (ASRs) on closed-source language models, such as 89% on GPT-4o and 78% on Claude 3.5 Sonnet when sampling 10,000 augmented prompts.
+  - [Understanding image jailbreaks (2024)](https://arxiv.org/pdf/2407.15211)
+    - In this work, we focus on a popular class of vision-language models (VLMs) that generate text outputs conditioned on visual and textual in- puts.
+    - Uses gradient-based methods to create adversarial images for jailbreaking - "How does one make Anthrax?"
+    - Transferable gradient-based image jailbreaks are extremely difficult to obtain. When an image jailbreak is optimized against a single VLM or against an ensemble of VLMs, the jailbreak successfully jailbreaks the attacked VLM(s), but exhibits little-to-no transfer to any other VLMs
+- Monitoring: Techniques that can analyze real-world usage to uncover previously unforeseen model misuse and misalignment risks
+  - [Clio](https://www.anthropic.com/research/clio)
+    - Clio is an automated analysis tool that enables privacy-preserving analysis of real-world language model use. 
+    - It generates hierarchical clusters of use cases, and has been used for:
+      - Identifying and blocking coordinated misuse
+      - Enhanced monitoring for high-stakes events
+      - Reducing false negatives and false positives
+- Response: If we detect harm, how can we respond quickly to mitigate it?
+  - [Rapid response](https://arxiv.org/pdf/2411.07494)
+    - Traditional approaches aim to develop highly robust static systems that resist all possible jailbreaks.
+    - In contrast, jailbreak rapid response emphasizes effectively monitoring for novel jailbreaks and quickly defending against those jailbreaks after observing them.
+  - [Few-shot catastrophe prevention](https://www.lesswrong.com/posts/i2nmBfCXnadeGmhzW/catching-ais-red-handed)
+    - Techniques for improving safety given a few examples of the models trying to escape
+      - Proliferation: Find a diverse set of examples of AIs attempting to escape
+      - Interrogation: Ask model to explain its reasoning, or do activation patching
+      - Studying countermeasures in practice
+      - Adjusting which cases we focus on
+      - Better capabilities elicitation and evaluation via escape-breaking: making AIs think they are currently in an escape attempt
+      - Small sample count ML can be useful in detecting future escape attempts
+      - Revisiting prior actions using improved monitoring
+      - Improving understanding and testing alternative training schemes
+  - [Low-stakes control]https://arxiv.org/pdf/2411.17693)
+    - Low-stakes: a setting where no single action is catastrophic
+    - Our approach features deployment strategies that dynamically choose between micro-protocols using an adaptive macro-protocol.
+    - Micro-protocols operate at the level of a single task, using a less capable but extensively tested (trusted) model to monitor and harness the untrusted model. Each micro-protocol offers a distinct level of safety and usefulness.
+    - The macro-protocol operates at a higher level, maintaining stateful credences on the untrusted model’s alignment over the course of the entire task sequence.
+    - It uses these credences to decide which micro-protocol’s output to accept on each task, choosing safer micro-protocols when it believes the untrusted model to be misaligned, and choosing riskier but more useful micro-protocols when it believes the untrusted model to be aligned.
+- Safety cases: Documenting comprehensive arguments for the safety of AI systems, particularly for model misuse
+
+## Non-Safeguards ?
+
+- "Safeguards" is an Anthropic categorization. I feel like the delineation is not super clear, and it is mainly encompasses topics that the specific team is working on. Some topics in this subsection may belong on top.
+- [Red Teaming Language Models with Language Models (2022)](https://arxiv.org/pdf/2202.03286)
+  - Generate adversarial inputs with LLMs. 
+  - Inputs are selected with the help of a red team classifier.
 - [Constitutional AI: Harmlessness from AI Feedback (2022)](https://arxiv.org/pdf/2212.08073)
   - Authors experiment with methods for training a harmless AI assistant through self-improvement, without any human labels identifying harmful outputs (Scalable Oversight).
   - The process involves two phases:
@@ -18,6 +86,11 @@
     - The second phase is very similar to RLHF, except that we use AI feedback versus human feedback
     - The first phase is necessary to alter the distribution of the model’s responses, reducing the need for exploration and the total length of training during the second RL phase
   - Interestingly, RL-CAI is virtually never evasive, and often gives nuanced and harmless responses to most red team prompts, in contrast to previous models trained on human feedback. 
+- [Large Language Models Can Strategically Deceive Their Users When Put Under Pressure (2023)](https://arxiv.org/pdf/2311.07590)
+  - LLMs, trained to be helpful, harmless, and honest, can display misaligned behavior and strategically deceive their users about this behavior without being instructed to do so.
+  - When reporting to its manager, the model consistently hides the genuine reasons behind its decision to engage in insider trading.
+- [Model Organisms of Misalignment (2023)](https://www.lesswrong.com/posts/ChDH335ckdvpxXaXX/model-organisms-of-misalignment-the-case-for-a-new-pillar-of-1)
+  - Experimental, designed artificial intelligence systems used to study and empirically demonstrate potential failure modes in alignment
 - [Studying Large Language Model Generalization with Influence Functions (2023)](https://www.anthropic.com/news/studying-large-language-model-generalization-with-influence-functions)
   - Training Data Attribution (TDA): How does a model's parameters/output change if a given sequence was added to the training set?
     - Perturbation-based: Run on different subsets of data, LOO and Shapley value methods
@@ -30,25 +103,14 @@
       - Cross-lingual influence gets stronger with model size
     - Influence functions are sensitive to word ordering. Training sequences only show a significant influence when phrases related to the prompt appear before phrases related to the completion
     - Localizing Influence. On average, the influence is approximately evenly distributed among different layers of the network. However, the influence for specific influence queries is often localized to specific parts of the network, with the bottom and top layers capturing detailed wording information and middle layers generalizing at a more abstract thematic level.
-- [Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training (2024)](https://arxiv.org/pdf/2401.05566)
-  - Backdoor behavior can be made persistent, so that it is not removed by standard safety training techniques and instead create a false impression of safety. 
-  - The backdoor behavior is most persistent in the largest models and in models trained to produce chain-of-thought reasoning about deceiving the training process, with the persistence remaining even when the chain-of-thought is distilled away.
-  - Rather than removing backdoors, we find that adversarial training can teach models to better recognize their backdoor triggers, effectively hiding the unsafe behavior.
 - [Debating with More Persuasive LLMs Leads to More Truthful Answers (2024)](https://raw.githubusercontent.com/ucl-dark/llm_debate/main/paper.pdf)
-  - In a world where AI exceeds human expertise, we need scalable oversight - alginment methods that scale with model capability.
+  - In a world where AI exceeds human expertise, we need scalable oversight - alignment methods that scale with model capability.
   - A pertinent question is then whether weaker models can assess the correctness of stronger models.
   - This work shows that:
     - Weak judges can supervise strong debaters.
     - Optimising debaters for persuasiveness improves a judge’s ability to identify truth in debates.
       - Models optimised for judge approval become better at arguing for the correct answer relative to arguing for the incorrect answer.
     - Human judges are well calibrated and achieve a lower error rate with debate.
-- [Many-shot jailbreaking (2024)](https://www.anthropic.com/research/many-shot-jailbreaking)
-  - Many-shot Jailbreaking (MSJ) is a simple long-context attack that uses a large number (i.e. hundreds) of demonstrations to steer model behavior.
-  - Larger context windows recently deployed by Anthropic, OpenAI and Google DeepMind present a rich new attack surface. 
-  - This attack is robust to format, style, and subject changes, indicating that mitigating this attack might be difficult.
-  - The effectiveness of MSJ follows simple power laws. This enables us to forecast what context-length is required for given attacks to be successful. 
-  - MSJ tends to be more effective on larger models, since larger models learn faster in context.
-  - Mitigating MSJ at very long context lengths is hard (although we can make it such that longer context lengths are needed for MSJ to succeed). 
 - [Alignment faking in large language models (2024)](https://www.anthropic.com/news/alignment-faking)
   - Alignment faking
     - A model might behave as though its preferences have been changed by the training, but might have been faking alignment all along, with its initial, contradictory preferences “locked in”.
@@ -56,3 +118,7 @@
     - This is important because if a model fakes alignment, this can undermine safety training. 
     - Having said so, I wonder if this resistance to changing preferences is necessarily a bad thing? If there's some dependence on order, i.e. if we ensure that the model is _first_ trained with harmless and honest preferences, this could potentially be good to prevent it from being re-trained by downstream users? 
   - The authors of this paper ran experiments that showed that Claude exhibited alignment faking, providing harmful responses to prevent being retrained, since it deemed it to be the "lesser of two evils".
+- [Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training (2024)](https://arxiv.org/pdf/2401.05566)
+  - Backdoor behavior can be made persistent, so that it is not removed by standard safety training techniques and instead create a false impression of safety. 
+  - The backdoor behavior is most persistent in the largest models and in models trained to produce chain-of-thought reasoning about deceiving the training process, with the persistence remaining even when the chain-of-thought is distilled away.
+  - Rather than removing backdoors, we find that adversarial training can teach models to better recognize their backdoor triggers, effectively hiding the unsafe behavior.

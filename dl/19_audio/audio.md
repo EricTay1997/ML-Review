@@ -38,7 +38,9 @@
 
 ## Pre-Trained Models
 - Audio classification
-  - XLS-R (encoder-only), Audio Spectrogram Transformer, Whisper
+  - XLS-R (encoder-only), Audio Spectrogram Transformer, Whisper, pyannote
+  - pyannote
+    - Does speaker diarization by first doing local speaker segmentation, then local speaker embedding, and agglomerative clustering.
   - Zero-shot audio classification: classify new examples from previously unseen classes, e.g. CLAP
 - ASR
   - Wav2Vec2, Whisper

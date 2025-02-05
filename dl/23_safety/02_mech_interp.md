@@ -1,4 +1,32 @@
-# Interpretability
+# Mechanistic Interpretability
+
+## Introduction
+
+- Definitions
+  - Per [Sharkey](https://arxiv.org/pdf/2501.16496), there are 3 threads of interpretability:
+    - Build AI systems that are interpretable by design - think simpler models, or explaining the sensitivity of machine learning models to inputs and training data.
+      - Feature importance
+        - Shapley Values
+          - We can randomize the inputs of a particular feature to see how important it was in creating accurate predictions.
+        - Model-specific techniques, e.g. impurity reduction in trees, attention maps
+          - Note: Especially when looking at how these features affect "localized" statistics, without considering its effect on overall predictions, we could potentially draw erroneous conclusions. 
+            - See [Attention is not Explanation](https://arxiv.org/pdf/1902.10186) for more, and [Anthropic's article regarding transformers](https://transformer-circuits.pub/2021/framework/index.html#related-work) for an example of possible misinterpretation. 
+    - Why did my model make this particular decision?
+      - LIME: Local surrogate models are trained to approximate the predictions of the underlying black box model.
+    - Mech Interp: How did my model solve this general class of problems? 
+      - Emphasis on the mechanisms underlying neural network generalization
+- Approaches
+  - Reverse engineering: decompose the network into components and then attempt to identify the function of those components
+    - Think SAEs
+  - Concept-based interpretability: set of concepts that might be used by the network and then looks for components that appear to correspond to those concepts
+    - Think probes
+- Applications
+  - Monitor AI systems for signs of cognition related to dangerous behavior
+  - Modify internal mechanisms and edit model parameters to adapt their behavior to better suit our
+  needs
+  - Predict how models will act in unseen situations or predict when a model might learn specific abilities
+  - Improve model inference, training, and mechanisms to better suit our preferences
+  - Extract latent knowledge from AI systems so we can better model the world
 
 ## Beauty and Curiosity
 
@@ -6,18 +34,15 @@ While its potential use case in safety is certainly very meaningful, the selfish
 
 "While our goal is safety, we also believe there is something deeply beautiful hidden inside neural networks, something that would make our investigations worthwhile even in worlds with less pressing safety concerns. With progress in deep learning, interpretability is **the** research question which is just crying out to be answered! ... The success of deep learning is often bemoaned as scientifically boring. One just stacks on layers, makes the models bigger, and gets lower loss. Elegant and clever ideas are often unnecessary. ... Neural networks are full of beautiful structure, if only we care to look for it."
 
-## General Techniques
-- LIME
-  - Local surrogate models are trained to approximate the predictions of the underlying black box model.
-- Feature importance
-  - Shapley Values
-    - We can randomize the inputs of a particular feature to see how important it was in creating accurate predictions.
-  - Model-specific techniques, e.g. impurity reduction in trees, attention maps
-    - Note: Especially when looking at how these features affect "localized" statistics, without considering its effect on overall predictions, we could potentially draw erroneous conclusions. 
-      - See [Attention is not Explanation](https://arxiv.org/pdf/1902.10186) for more, and [Anthropic's article regarding transformers](https://transformer-circuits.pub/2021/framework/index.html#related-work) for an example of possible misinterpretation. 
-- [Causal ML](../../classical/14_causal_inference/notes.md) 
+## Tools
 
-## Mechanistic Interpretability 
+- Tools like Garcon or TransformerLens are very useful in doing work here.
+- Demos ([link](https://colab.research.google.com/github/neelnanda-io/TransformerLens/blob/main/demos/Main_Demo.ipynb), [link](https://arena3-chapter1-transformer-interp.streamlit.app/[1.2]_Intro_to_Mech_Interp)) show how we can
+  - Cache, access and modify activations for attribution/ablation
+  - Visualize attention heads to identify induction heads
+  - Reverse engineer induction circuits
+
+## Papers
 - [Zoom In: An Introduction to Circuits (2020)](https://distill.pub/2020/circuits/zoom-in/)
   - Takeaways
     - 3 speculative claims about neural nets:
@@ -92,9 +117,10 @@ They correspond to directions.
       - The second layer (“decoder”) attempts to reconstruct the model activations via a linear transformation of the feature activations. 
     - The model is trained to minimize a combination of (1) reconstruction error and (2) an L1 regularization penalty on the feature activations, which incentivizes sparsity.
   - Why not architectural approaches:
-    - Even without superposition, neurons are still polysemantic. 
-    - This is because in many cases models achieve lower loss by representing multiple features ambiguously (in a polysemantic neuron) than by representing a single feature unambiguously and ignoring the others.
-    - ToDo: I don't really understand this point nor the example given for why there is _no_ superposition...
+    - Superposition is defined as when a neural network represents more independent "features" of the data than it has neurons by assigning each feature its own linear combination of neurons
+    - The paper shows that even without explicit assignment (superposition), cross-entropy loss can still promote polysemanticity. 
+      - Models achieve lower loss by representing multiple features ambiguously (in a polysemantic neuron) than by representing a single feature unambiguously and ignoring the others.
+      - I think the argument really is that encouraging activation sparsity does not prevent polysemanticity.
   - Results
     - Sparse Autoencoders extract relatively monosemantic features
     - Sparse autoencoders produce interpretable features that are effectively invisible in the neuron basis
