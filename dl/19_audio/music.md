@@ -43,6 +43,13 @@
       - Admittedly the choice to only use audio encodings $E^{\mathbf{x}}$ in AudioLDM seems arbitrary
         - MusicLDM tried using just text, or audio which is then fine-tuned on text.
         - These performed similarly / worse than just using audio per AudioLDM.
+    - Moûsai
+      - Uses a diffusion autoencoder to better capture long range context and create high-quality 48kHz music.
+        - Autoencoder: auto-encode magnitude spectrogram into a latent representation
+        - Diffusion: 
+          - We corrupt the original audio with a random amount of noise, and train our 1D U-Net to remove that noise.
+          - During the noise removal process, we condition the U-Net on the noise level and the compressed latent, which can have access to a reduced version of the non-noisy audio.
+        - Also uses an efficient and enriched 1D U-Net
     - AudioLDM2
       - ![audioldm2.png](audio_ldm2.png)
       - In training, we replace the audio encodings $E^{\mathbf{x}}$ in AudioLDM with AudioMAE Features

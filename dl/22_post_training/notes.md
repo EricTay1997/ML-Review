@@ -114,7 +114,9 @@
 - [RLCAI](../23_safety/03_alignment.md) uses AI to refine outputs, used for SFT. 
 - DeepSeek R1 uses AI too, in a more complicated fashion. 
   - ![deepseek.png](deepseek.png)[Source](https://fireworks.ai/blog/deepseek-r1-deepdive)
-- When the objective of SFT is the same as reward modeling, as in RLCAI, some research skips SFT/critique
+- Skipping SFT/critique
+  - When the objective of SFT is the same as reward modeling, as in RLCAI, some research may skip this step, i.e. create pairs from the helpful-only model and rank.
+  - For reasoning tasks, one might think that we need data for SFT. Deepseek-R1 Zero showed that it was possible to train a base model to have reasoning capabilities just with RL (providing a reward for getting the answer and formatting right, rather than predicting next token).
 
 ## Reward Modeling
 

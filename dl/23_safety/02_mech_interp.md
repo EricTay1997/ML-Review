@@ -22,8 +22,7 @@
     - Think probes
 - Applications
   - Monitor AI systems for signs of cognition related to dangerous behavior
-  - Modify internal mechanisms and edit model parameters to adapt their behavior to better suit our
-  needs
+  - Modify internal mechanisms and edit model parameters to adapt their behavior to better suit our needs
   - Predict how models will act in unseen situations or predict when a model might learn specific abilities
   - Improve model inference, training, and mechanisms to better suit our preferences
   - Extract latent knowledge from AI systems so we can better model the world

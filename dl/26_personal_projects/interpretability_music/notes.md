@@ -59,5 +59,5 @@ In particular, I believe that modern pop music is a good alternative to textual 
     - MIDI short phrases
       - [Wei et al.](https://arxiv.org/pdf/2410.00872), for example, created a synthetic dataset consisting of various musical concepts. To illustrate the flexibility of music as a medium, they were able to voice the same MIDI through 92 distinct instruments. 
       - I believe that our ability to flexibly modulate the difficulty of this medium would be very useful for interpretability research.
-        - I am excited by the prospect of testing a hypothesis "level by level", which may yield further insights, e.g. at what level might we begin observing polysemanticity?
+        - I am excited by the prospect of testing a hypothesis "level by level", which may yield further insights, e.g. at what level might we begin observing superposition/polysemanticity?
         - In contrast, I might assert that it is harder to flexibly modulate the difficulty of text, in the "mid-level" difficulty range. 
