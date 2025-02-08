@@ -10,7 +10,7 @@
 - Continuous Audio Tokens
   - Commonly used for audio understanding and diffusion model-based audio generation tasks
   - CLAP, Wav2Vec
-  - AudioMAE
+  - w2v-BERT, AudioMAE
 - Discrete Audio Tokens
   - Commonly used for language model-based audio generation tasks
   - SoundStream, Encodec
@@ -75,7 +75,7 @@
         - Paper has some analysis for why the tokens are "categorized" as such
       - Cascades three autoregressive transformer models
         - First predict semantic tokens, then coarse acoustic tokens, then finegrained tokens (See MusicLM for diagram)
-      - In inference, we pass in semantic tokens which can either be sample unconditionally or extracted from a test sample. 
+      - In inference, we pass in semantic tokens which can either be sampled unconditionally or extracted from a test sample. 
     - MusicLM
       - ![music_lm.png](music_lm.png)[Source](https://arxiv.org/pdf/2301.11325)
       - Similar to AudioLM, but with possible text/melody conditioning using MuLan

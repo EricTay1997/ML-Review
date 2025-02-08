@@ -56,6 +56,7 @@
     - `BarkCoarseModel` takes semantic text tokens and predicts the first two audio codebooks necessary for EnCodec
     - `BarkFineModel` iteratively predicts the last codebooks based on the sum of the previous codebooks embeddings
   - MMS
+    - Conditional VAE with flow-based decoder on latent space (AE)
     - ![mms.png](mms.png)[Source](https://arxiv.org/pdf/2106.06103)
   - Vall-E
     - ![vall_e.png](vall_e.png)[Source](https://arxiv.org/pdf/2301.02111)
