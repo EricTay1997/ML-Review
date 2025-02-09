@@ -149,12 +149,16 @@ As models and data scale in size, optimizing for more efficient processes become
     - To reduce both the communication needed (?) and the amount of data stored on each device, gather/scatter is more suitable when $\mathbf{x}$ has fewer/more features than $\mathbf{y}$.
 - Asynchronous layers
   - In the gather strategy, we first need to communicate all the features of $\mathbf{x}$ before we can compute the output. 
+    - ![async_gather.png](async_gather.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/tensor_parallel_async.html)
   - In the scatter strategy, need to compute the output on all devices before we can communicate results and sum them. 
+    - ![async_scatter.png](async_scatter.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/tensor_parallel_async.html)
   - Asynchronous layers allow us to overlap communication with computation and reduce downtime. 
   - Gather
     - ![gather.png](gather.png)[Source](https://arxiv.org/pdf/2302.05442)
   - Scatter
     - ![scatter.png](scatter.png)[Source](https://arxiv.org/pdf/2302.05442)
+  - If we want all nodes to contain all activations, consider Ring Allreduce, which uses the scatter-reduce above, and then an allgather. 
+    - This sums individual arrays on all nodes, and eventually every node will have a copy of this sum.
 
 ### 3D Parallelism
 
