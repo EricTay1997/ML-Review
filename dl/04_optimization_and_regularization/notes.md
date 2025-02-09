@@ -131,7 +131,7 @@ associated with the different tasks, some are shared across two or more tasks.
     - $v^{(t)} = \beta_2 v^{(t-1)} + (1-\beta_2)\left(g^{(t)}\right)^2$
     - $w^{(t)} = w^{(t-1)} - \frac{\eta^{(t)}}{\sqrt{v^{(t)} + \epsilon} }\circ g^{(t)} $, where
       - $\eta^{(t)} = \sqrt{\Delta w^{(t-1)} + \epsilon}$, 
-      - $\Delta w^{(t-1)} = \beta_2\Delta w^{(t-2)} + (1-\beta_2)(w^{(t-1)} - w^{(t-2)})$, 
+      - $\Delta w^{(t-1)} = \beta_2\Delta w^{(t-2)} + (1-\beta_2)(w^{(t-1)} - w^{(t-2)})^2$, 
 - Adam
   - Intuition
     - Momentum
