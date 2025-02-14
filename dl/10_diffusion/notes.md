@@ -72,19 +72,21 @@
         - Update noise that we start generation process with
   - Image + Text conditioning
     - ![image_conditioning.png](image_conditioning.png)[Source](https://arxiv.org/pdf/2208.01618)
-    - Textual inversion
-      - Learn a textual representation of input image.
-      - ![textual_inversion.png](textual_inversion.png)[Source](https://arxiv.org/pdf/2208.01618)
-    - [DreamBooth](https://arxiv.org/pdf/2208.12242)
-      - Leverages semantic prior
-      - Authors label all input images of the subject "a [identifer][class]"
-      - The model is then finetuned with both "a [identifer][class]" and "a [class]" (the latter corresponding to prior preservation loss)
-      - The finetuned model is then applied to new contexts
-    - img2img
-      - Add noise to original image and denoise with new prompt
-    - DDIM Inversion
-      - We invert the sampling process to get a noisy latent which, if used as the starting point for our usual sampling procedure, results in the original image being generated.
-      - If we do this inversion with a prompt, the hope is that changing the prompt would give us the ability to condition our image generation.
+    - Requires Training
+      - Textual inversion
+        - Learn a textual representation of input image.
+        - ![textual_inversion.png](textual_inversion.png)[Source](https://arxiv.org/pdf/2208.01618)
+      - [DreamBooth](https://arxiv.org/pdf/2208.12242)
+        - Leverages semantic prior
+        - Authors label all input images of the subject "a [identifer][class]"
+        - The model is then finetuned with both "a [identifer][class]" (to predict input images) and "a [class]" (to predict images produced from the original model), the latter corresponding to prior preservation loss.
+        - The finetuned model is then applied to new contexts
+    - Doesn't require training
+      - img2img
+        - Add noise to original image and denoise with new prompt
+      - DDIM Inversion
+        - We invert the sampling process to get a noisy latent which, if used as the starting point for our usual sampling procedure, results in the original image being generated.
+        - If we do this inversion with a prompt, the hope is that changing the prompt would give us the ability to condition our image generation.
   - Control
     - Masking
       - In-painting can be done by drawing a segmentation mask and tasking the model to recreate the masked region. 
