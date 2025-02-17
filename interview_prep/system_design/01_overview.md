@@ -61,6 +61,7 @@
   - Queue
     - Functionality:
       - Supports asynchronous communication 
+      - Needs in order processing
       - Decouples producers and consumers, allowing for independent scaling
       - Buffer for bursty traffic
       - Distributes work amongst consumers
@@ -71,9 +72,11 @@
       - What is the partition?
       - Backpressure
     - Options
-      - Kafka, SQS, RabbitMQ
+      - Kafka (does not support retries), SQS (supports retries), RabbitMQ
   - Streams / Event Sourcing
-    - Unlike message queues, streams can retain data for a configurable period of time, allowing consumers to read and re-read messages from the same position or from a specified time in the past
+    - Unlike message queues: 
+      - Consumers read messages from the stream and then process them, but they don't acknowledge that they have processed the message. This allows for more complex processing of the data.
+      - Streams can retain data for a configurable period of time, allowing consumers to read and re-read messages from the same position or from a specified time in the past
     - Functionality
       - Process large amounts of data in real-time
       - Need a chronological record of events (banks)
@@ -89,7 +92,7 @@
         - Write-Through: Write data to both cache and database simultaneously. Consistent but slower.
         - Write-Around: Writes data directly to database. Slower for reads.
         - Write-Back: Writes data to cache, async write to datastore. Can lead to data loss if cache is not persisted to disk.
-    - Options: Redis (supports more data structures), Memcached
+    - Options: Redis (supports more data structures), Memcached, DAX for DynamoDB
   - Content Delivery Network (CDN)
     - Functionality: Uses geographically distributed servers to cache content closer to users
     - Most used for static assets, but can be used to cache dynamic content too 
@@ -101,7 +104,7 @@
         - Complex querying
         - ACID - tends to be more consistent, but some NoSQL DBs also support strong consistency
         - Fast reads through indexing (support for many, multi-column, and specialized indexes)
-      - Options: Postgres, MySQL
+      - Options: Postgres (strongly consistent, complex queries, supports text and geospatial search, compatible with Elasticsearch), MySQL
     - NoSQL
       - Key-value, document, columnar (when search for value), graph
       - Advantages
@@ -109,7 +112,7 @@
         - Scalability to multiple servers
         - Can handle high amounts of data
         - Faster writes
-      - Options: DynamoDB, Cassandra (good for write-heavy workloads due to append-only storage model), MongoDB
+      - Options: DynamoDB (Can enable strong consistency, DAX Cache, DynamoStreams enables Elasticsearch), Cassandra (good for write-heavy workloads due to append-only storage model), MongoDB
   - Blob Storage
     - Functionality: Cheap, and can store unstructured data
     - Options: Amazon S3, GCS, Azure Blob
@@ -120,6 +123,7 @@
       - Text: Elasticsearch (Postgres has GIN), Redis
       - Geospatial: Elasticsearch, Postgres has PostGIS
       - Realtime approximate nearest neighbors systems - Elasticsearch, Annoy, Faiss, ScaNN
+    - Elasticsearch is compatible with DynamoDB and Postgres via Change Data Capture (CDC)
   - Data Centers
     - Each (geo-located) data center has its own servers, databases, and caches.
 
