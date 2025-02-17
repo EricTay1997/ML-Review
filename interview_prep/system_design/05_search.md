@@ -10,7 +10,7 @@
   - It is important to check with the interviewer regarding whether personalization is desired. 
   - For the latter, we focus on the query -> item prediction problem, which is the focus on this document.
 - ![search.png](search.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/youtube-video-search)
-  - For the item encoder, we should encode all the items we talked about in [Recommendation systems](./03_recommendation_system.md)
+  - For the item encoder, we should encode all the items we talked about in [Recommendation systems](./04_recommendation_system)
 - Training
   - Contrastive learning is useful, where we mark items not selected as negative samples.
 - Metrics
