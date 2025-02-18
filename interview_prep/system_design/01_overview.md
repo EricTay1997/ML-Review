@@ -40,6 +40,7 @@
     - Appropriate both before and after API Gateway.
     - Persistent connections (websockets): L4 load balancer. Otherwise, L7 load balancer offers great flexibility in routing traffic to different services while minimizing the connection load downstream.
     - Options: 
+      - Algorithms: Round Robin or Least Connections
       - L4 or L7?
         - Layer 4 load balancers operate at the transport layer (TCP/UDP). They make routing decisions based on network information like IP addresses and ports, without looking at the actual content of the packets.
           - They maintain persistent TCP connections between client and server, i.e. the same server will handle all subsequent requests within that TCP session.
@@ -72,7 +73,8 @@
       - What is the partition?
       - Backpressure
     - Options
-      - Kafka (does not support retries), SQS (supports retries), RabbitMQ
+      - Kafka (does not support retries), SQS (supports retries, delayed message delivery, quicker retries through visibility), RabbitMQ
+    - Note: It is an anti-pattern to store the raw HTML in the queue itself. Queues are not optimized for large payloads and it would be expensive to store the HTML in the queue. 
   - Streams / Event Sourcing
     - Unlike message queues: 
       - Consumers read messages from the stream and then process them, but they don't acknowledge that they have processed the message. This allows for more complex processing of the data.
@@ -92,7 +94,7 @@
         - Write-Through: Write data to both cache and database simultaneously. Consistent but slower.
         - Write-Around: Writes data directly to database. Slower for reads.
         - Write-Back: Writes data to cache, async write to datastore. Can lead to data loss if cache is not persisted to disk.
-    - Options: Redis (supports more data structures), Memcached, DAX for DynamoDB
+    - Options: Redis (supports more data structures), Memcached, DAX for DynamoDB, Elasticsearch has built-in caching capabilities
   - Content Delivery Network (CDN)
     - Functionality: Uses geographically distributed servers to cache content closer to users
     - Most used for static assets, but can be used to cache dynamic content too 
@@ -124,6 +126,7 @@
       - Geospatial: Elasticsearch, Postgres has PostGIS
       - Realtime approximate nearest neighbors systems - Elasticsearch, Annoy, Faiss, ScaNN
     - Elasticsearch is compatible with DynamoDB and Postgres via Change Data Capture (CDC)
+    - Elasticsearch has built-in caching capabilities
   - Data Centers
     - Each (geo-located) data center has its own servers, databases, and caches.
 

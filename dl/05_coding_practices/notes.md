@@ -94,7 +94,7 @@ class Geek:
         - `@torch.no_grad`
   - `*args` and `*kwargs`
     - They pass in a variable number of arguments
-    - You can call `foo(1, 2, 3, 4, num1 = 5, num2 = 6)` for a function defined as `foo(1, 2, *args, **kwargs)`
+    - You can call `foo(1, 2, 3, 4, num1 = 5, num2 = 6)` for a function defined as `foo(a, b, *args, **kwargs)`
   - Default arguments
     - Default arguments are evaluated once when the module is loaded, and are shared across all callers.
     - Mutable default arguments would be passed from function call to function call.

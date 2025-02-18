@@ -1,0 +1,64 @@
+# Concurrency in Python
+
+- OS Basics ([OSTEP](https://pages.cs.wisc.edu/~remzi/OSTEP/))
+  - The operating system (OS) is system software that manages computer hardware and software resources
+    - Virtual machine: The OS takes physical resources, such as a CPU, memory, or disk, and virtualizes them.
+    - Resource manager: The OS handles tough and tricky issues related to concurrency
+    - File system: The OS stores files persistently, thus making them safe over the long-term.
+  - Program: Code, data, etc.
+  - Process: The process is a running program. 
+  - Virtualization
+    - Each process accesses its own private virtual address space (sometimes just called its address space), which the OS somehow maps onto the physical memory of the machine.
+    - The address space of a process contains all of the memory state of the running program
+      - Code
+      - Stack: keep track of where it is in the function call chain as well as to allocate local variables and pass parameters and return values to and from routines. Grows negatively. 
+      - Heap: dynamically-allocated, user-managed memory. It grows positively
+    - Segmentation
+      - Place each segment (code, stack heap) independently in physical memory, thus avoiding filling physical memory with unused virtual address space.
+      - We chop up physical memory into variable-sized pieces.
+      - External fragmentation: physical memory quickly becomes full of little holes of free space, making it difficult to allocate new segments, or to grow existing ones
+      - Internal fragmentation: An allocator hands out chunks of memory bigger than that requested. Any unasked for (and thus unused) space in such a chunk is wasted.
+    - Paging
+      - We chop up physical memory into fixed-sized pieces.
+      - Page table: Per-process data structure that stores address translations for each of the virtual pages of the address space
+      - Speeding up address translations with translation-lookaside buffers (TLBs)
+        - Part of the chip’s memory-management unit (MMU), functions as a cache
+    - Virtual memory > physical memory
+      - Enabled with a swap space: we swap pages out of memory to it and swap pages into memory from it
+      - Page fault: A page is not present and has been swapped to disk
+        - OS looks in the PTE to find the address, and issues the request to disk to fetch the page into memory
+        - Thrashing is when there are many page faults
+  - Concurrency
+    - Thread: A thread is a part of a process that shares the same memory (address space) and resources (data) with other threads in the same process
+    - Semaphore: A semaphore is an object with an integer value that we can manipulate with two routines
+- Multithreading vs Multiprocessing
+  - Multithreading (`threading`) is the ability of a processor to execute multiple threads concurrently.
+    - Useful in I/O with a lot of latency (rather than performing computations)
+      - The GIL ensures that only one thread executes Python bytecode at a time, but it doesn't prevent threads from being created or from performing I/O operations. 
+      - When one thread is waiting for I/O, the GIL is released, allowing other threads to run and do useful work.
+    - Precautions have to be taken in case threads write to the same memory at the same time, since threads run in the same memory space
+    - The Global Interpreter Lock (GIL) synchronizes the execution of threads
+    - In CPython, this means that only one thread can execute at a time
+  - Multiprocessing (`multiprocessing`) is the ability of a system to run multiple processors in parallel
+    - Processes have separate memory
+    - Harder to share objects between processes
+- Global Interpreter Lock (GIL)
+  - Mutex (thread lock) ensuring that only one thread controls the interpreter at a time
+  - In place to prevent race conditions with memory and reference allocation
+  - Particularly important when Python interacts with (multithreaded) C-extensions.
+    - Because Python utilizes reference counting in memory management, running Python from multiple threads could lead to memory leaks or worse, crashing the program.
+- Computers and Latency
+  - CPU Instruction: 0.01ns
+  - Memory reference: 100 ns
+  - Read 1MB from memory: 3 microseconds
+  - Read 1MB from disk: 825 microseconds
+  - Disk seek: 2 milliseconds
+  - Ping USA to Europe: 150 milliseconds
+  - Access RAM, Access Disk, Access Network
+  - I/O Bound - the program spends more time waiting than running instructions
+- Python libraries
+  - I/O-Bound processes
+    - `threading`
+    - `asyncio`
+  - CPU-Bound processes
+    - `multiprocessing`

@@ -22,8 +22,8 @@
   - Vertical
     - Adding more power to the existing machine. This is used when its more efficient to keep certain processes together, e.g. due to geographical restrictions.
   - Horizontal
-    - Add more servers
-    - Shard databases
+    - (Work) Add more servers
+    - (Data) Shard databases
       - Vertical: By feature
       - Key-based
       - Directory-based: Need to maintain a lookup table
@@ -148,7 +148,7 @@
   - Each broker has a number of **partitions**. Each partition is an ordered, immutable sequence of messages that is continually appended to.
   - A **topic** is just a logical grouping of partitions. Topics are the way you publish and subscribe to data in Kafka. When you publish a message, you publish it to a (partition in a) topic, and when you consume a message, you consume it from a topic.
   - A **consumer group** is a group of consumers. Each consumer group subscribes to one topic. Each event is processed by only one consumer in a group.
-  - Fault tolerance
+  - Fault tolerance / Durability
     - Offset management: Consumers commit their offsets to Kafka after they process a message. When a consumer restarts, it reads its last committed offset from Kafka and resumes processing from there, ensuring no messages are missed or duplicated.
 
 ### AWS SQS
@@ -156,6 +156,10 @@
   - ToDo
 - Need to know
   - AWS SQS supports retries for consumers out of box
+  - SQS supports delayed message delivery
+- Good to know
+  - Durability through visibility: When a worker receives a message from the queue, SQS automatically makes that message invisible to other workers for a configurable period. The worker processes the message and deletes it upon successful completion. If the worker crashes or fails to process the message within the visibility timeout period, SQS automatically makes the message visible again for other workers to process.
+    - To optimize for quick failure recovery while still supporting longer-running jobs, we can set a relatively short visibility timeout (e.g. 30 seconds) and have workers periodically "heartbeat" by calling the ChangeMessageVisibility API to extend the timeout.
 
 ### Redis
 - When to use
@@ -211,9 +215,10 @@
   - Not good idea to use as a database. Use Change Data Capture
   - Designed for read-heavy workflows
   - Eventual consistency
+  - Elasticsearch supports text, geospatial and vector search
+  - Elasticsearch has built-in caching capabilities
 - Good to know
   - Elasticsearch can be thought of as a high-level orchestration framework for Apache Lucene, the highly optimized low-level search library. Elasticsearch handles the distributed systems aspects: cluster coordination, APIs, aggregations, and real-time capabilities while the "heart" of the search functionality is handled by Lucene.
   - Elasticsearch is a distributed search engine. When you spin up an Elasticsearch cluster, you're actually spinning up multiple nodes.
   - Lucene indexes are made up of segments, the base unit of our search engine. Segments are immutable containers of indexed data. 
   - Lucene segments are based on inverted indexes and doc values (columnar format to store data)
-- Change Data Capture

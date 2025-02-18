@@ -12,22 +12,10 @@ As models and data scale in size, optimizing for more efficient processes become
   - Terminology differences
     - A GPU is formed by multiple units named SM (Streaming Multiprocessors), these function like CPU cores.
     - Each SM can execute many threads concurrently.
-    - Threads are grouped into warps, a basic execution unit, where each warp contains 32 threads. 
+    - Threads are grouped into warps, a basic execution unit, where each warp contains 32 threads. These function like CPU threads.
     - While CPU threads can each execute different tasks at the same time, all GPU threads in a single warp can only execute one same task. 
     - A threadblock is a collection of warps. The threads in the same thread block run on the same SM. 
-  - PyTorch (amongst other libraries) allow us to use these tensor cores for training DL models. 
-- Multithreading vs Multiprocessing
-  - Multithreading (`threading`) is the ability of a processor to execute multiple threads concurrently, where each thread runs a process.
-    - Useful in I/O with a lot of latency (rather than performing computations)
-      - The GIL ensures that only one thread executes Python bytecode at a time, but it doesn't prevent threads from being created or from performing I/O operations. 
-      - When one thread is waiting for I/O, the GIL is released, allowing other threads to run and do useful work. 
-    - Threads run in the same memory space
-    - Precautions have to be taken in case threads write to the same memory at the same time
-    - The Global Interpreter Lock (GIL) synchronizes the execution of threads
-    - In CPython, this means that only one thread can execute at a time
-  - Multiprocessing (`multiprocessing`) is the ability of a system to run multiple processors in parallel
-    - Processes have separate memory
-    - Harder to share objects between processes
+  - PyTorch (amongst other libraries) allow us to use these tensor cores for training DL models.
 - Row-major vs Column-major
   - Row/column-major means that consecutive elements in a row/column are stored next to each other in memory. 
   - NumPy/PyTorch/CSV are row-major, Parquet is column-major. 
