@@ -84,7 +84,9 @@
       - `asyncio` uses cooperative multitasking. `threading` uses preemptive. 
         - `asyncio`: The tasks decide when to give up control.
         - `threading`: The operating system decides when to switch tasks external to Python.
-      - `asyncio` takes fewer resources and less time than creating threads.
+      - `asyncio` takes fewer resources and less time than creating threads. Single-threaded nature may also make it less buggy.
+        - The operating system maintains data structures for each thread, known as thread control blocks, which store information about the thread's state, priority, and other attributes. These structures consume system memory.
+        - Threads share instruction, global and heap regions but has its own individual stack and registers. The operating system allocates a portion of memory for each thread's execution context, which includes things like the call stack, local variables, and function execution state.
       - `asyncio` needs special asynchronous versions of libraries to gain the full advantage of `asyncio`. For example, `requests` isn't designed to notify the event loop that it’s blocked.
     - `threading` vs `multiprocessing`
 
@@ -131,6 +133,8 @@ s.release()
 q = queue.Queue(maxsize = 10)
 q.put(message)
 q.get()
+q.task_done()
+q.join()
 q.empty()
 ```
 
@@ -138,27 +142,47 @@ q.empty()
 
 ```python
 import asyncio
+import aiohttp
+
+async def fetch_data(url):
+    await asyncio.sleep(2)  # Simulate a network request that takes 2 seconds
+    return f"Data from {url}"
+async def main():
+    data = await fetch_data("https://example.com")  # Pause until fetch_data is complete
+    print(f"Received: {data}")
+    
+async def main():
+    async with aiohttp.ClientSession() as session:
+        async with session.get('http://httpbin.org/get') as resp:
+            await resp.json()
+
+async def download_site(session, url):
+    async with session.get(url) as resp:
+        await resp.json()
+
+async def main(sites):
+    async with aiohttp.ClientSession() as session:
+        tasks = [download_site(session, url) for url in sites]
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+async with aiofiles.open('filename', mode='r') as f:
+    contents = await f.read()
+async with aiofiles.open('filename') as f:
+    async for line in f:
+        ...
+async with aiofiles.open('filename', 'w') as f:
+    await f.write(write_data)
+
+asyncio.run(main())
+loop = asyncio.get_event_loop()
+await loop.run_in_executor(None, blocking_f())
+producers = [asyncio.create_task(produce(n, q)) for n in range(nprod)]
+await asyncio.gather(*producers)
 q = asyncio.Queue(maxsize = 10)
 await q.put(message)
 await q.get()
 q.task_done()
-
-import asyncio
-
-async def fetch_data(url):
-    print(f"Fetching data from {url}...")
-    await asyncio.sleep(2)  # Simulate a network request that takes 2 seconds
-    print(f"Finished fetching data from {url}")
-    return f"Data from {url}"
-
-async def main():
-    data = await fetch_data("https://example.com")  # Pause until fetch_data is complete
-    print(f"Received: {data}")
-
-asyncio.run(main())
-  
-  asyncio.gather()
-  asyncio.Queue()
+await q.join()
 ```
 
 ### Multiprocessing
@@ -200,17 +224,29 @@ See [SuperFastPython](https://superfastpython.com/multiprocessing-pool-shared-gl
 ### `asyncio`
 - **`asyncio`:** Python's built-in library for writing asynchronous code using the `async` and `await` syntax.
     - **Event Loop:** The core of an `asyncio` program is the event loop, which is responsible for scheduling and running asynchronous tasks.
+      - `asyncio.run()` is responsible for getting the event loop, running tasks until they are marked as complete, and then closing the event loop.
+      - Alternatively, we do
+      - ```python
+        loop = asyncio.get_event_loop()
+        try:
+            loop.run_until_complete(main())
+        finally:
+            loop.close()```
     - **Coroutines:** Functions defined with `async def` are called coroutines. They can be paused and resumed at `await` points.
+      - Coroutines are repurposed generators that take advantage of the peculiarities of generator methods
     - **`async`:**
       - Used to define a coroutine function.
       - A coroutine function can be paused at `await` points and resumed later.
       - When called, a coroutine function returns a coroutine object. It doesn't execute the function body immediately.
+      - `async for` iterates over an asynchronous iterator
     - **`await`:**
       - Used inside a coroutine to pause execution until the awaited coroutine, task, or future is complete.
       - Can only be used inside `async def` functions.
       - `await` gives control back to the event loop, allowing other tasks to run.
       - When the awaited object is complete, the coroutine resumes execution from where it left off, and the value of the `await` expression is the result of the awaited object.
+      - Replaces `yield from`
     - **Tasks:** Represent the execution of a coroutine. Created using `asyncio.create_task()`.
+      - We can do `a = await asyncio.gather(t, t2)` to put a collection of coroutines (futures) into a single future. `await` then means that we're waiting for all tasks to be completed.
     - **Futures:** Low-level objects that represent the result of an asynchronous operation that may not be complete yet.
 
 #### What are some common use cases for asynchronous programming?
