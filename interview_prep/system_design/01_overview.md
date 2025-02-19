@@ -1,6 +1,6 @@
 # System Design
 
-## Softwar[e Engineering SD
+## Software Engineering SD
 - Framework
   - Understand the problem and establish scope and requirements
     - Problem:
