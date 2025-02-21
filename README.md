@@ -54,6 +54,7 @@ This repository will include:
     * From scratch implementations, including BERT, GPT-2, Llama 2-3.2, DDPM, Real-NVP.
     * Post-training experiments, including (LoRA) fine-tuning and DPO. 
     * Data and model parallelism, with and without JAX (+FLAX).
+    * Experiments with TensorRT-LLM for model serving
 * Interview Preparation
 
 I shall try to be diligent in citing my sources. Due to visa-related time constraints, I do apologize for any lapses in citation. At the current moment (1/10/25), I have pulled most heavily from the following sources:

@@ -4,6 +4,8 @@ As models and data scale in size, optimizing for more efficient processes become
 
 ![overview.png](overview.png)(Adapted from [Lippe](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/overview.html))
 
+ToDo: Add notes from [How To Scale Your Model](https://jax-ml.github.io/scaling-book/)
+
 ## Single Processor
 
 - CPU vs GPU

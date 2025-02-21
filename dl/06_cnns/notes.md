@@ -75,5 +75,5 @@
 - RegNet uses the AnyNet general architecture and applies constraints to restrict the search space
 
 ## U-Net
-- ![u_net.png](u_net.png)[Source](https://fastai1.fast.ai/vision.models.unet.html)
+- ![u_net.png](u_net.png)[Source](https://arxiv.org/pdf/1505.04597v1)
 - U-Nets also use the concept of skip connections as it downsamples and then upsamples data. 

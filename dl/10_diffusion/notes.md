@@ -126,4 +126,16 @@
 - Other modes
   - [Video](../20_video/notes.md)
   - [Audio](../19_audio/music)
+- Rough notes on the stable diffusion U-Net
+    - Uses Group Norm - Reshape to [N, G, C // G, H, W], and take norm across last 3 dimensions
+      - Layer norm takes across last 2
+      - Batch norm takes across 0, -2, -1
+    - Time-steps first go through sinusoidal embedding, and then some linear layers
+    - As we go down the U-Net, the number of channels increase, and the image size decreases
+    - Each level is composed of multiple Res blocks, which are optionally followed by a spatial attention block
+        - Spatial attention blocks treat pixels as tokens, channels as embed dim
+        - First Res block is responsible for increasing/decreasing the number of channels
+        - Res blocks incorporate time dimension through addition
+        - Attention blocks do {self-attention, cross-attention with conditioner, ffn}
+    - Downsampling is carried out with Conv2d, Upsampling is carried out with Interpolate
 

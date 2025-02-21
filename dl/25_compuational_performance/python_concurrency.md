@@ -175,7 +175,9 @@ async with aiofiles.open('filename', 'w') as f:
 
 asyncio.run(main())
 loop = asyncio.get_event_loop()
-await loop.run_in_executor(None, blocking_f())
+await loop.run_in_executor(None, blocking_f()) # Multithreading
+with concurrent.futures.ProcessPoolExecutor() as pool:
+  result = await loop.run_in_executor(pool, cpu_bound) # Multiprocessing
 producers = [asyncio.create_task(produce(n, q)) for n in range(nprod)]
 await asyncio.gather(*producers)
 q = asyncio.Queue(maxsize = 10)
