@@ -26,7 +26,7 @@
     - Suppose that $\mathbf{A}$ has $n$ linearly independent eigenvectors with eigenvalues $\lambda_i$
     - We concatenante these vectors and values together to form $\mathbf{V}$ and $\mathbf{\lambda}$.
     - Then the eigendecomposition of $\mathbf{A}$ is given by $\mathbf{V}diag(\mathbf{\lambda})\mathbf{V}^{-1}$ (since $\mathbf{AV=V\Lambda}$).
-    - Spectral Theorem: Every real symmetric matrix can be decomposed into $\mathbf{Q}\mathbf{\Lambda}\mathbf{Q}^{\top}$, where $\mathbf{Q}$ is an orthogonal matrix comprising of only real-valued eigenvectors and our eigenvalues are also real-valued.
+    - Spectral Theorem: Every real symmetric matrix can be decomposed into $\mathbf{Q}\mathbf{\Lambda}\mathbf{Q}^{\top}$, where $\mathbf{Q}$ is an orthogonal matrix whose columns are real-valued eigenvectors and our eigenvalues are also real-valued.
     - The matrix is singular $\iff$ any eigenvalue is 0 (this implies that columns are linearly dependent).
     - If all eigenvalues are positive, the matrix is positive definite. ($\forall$ $\mathbf{x}, \mathbf{xA^{\top}x}>0$. Proof: We can express $\mathbf{x}$ as a sum of eigenvectors and $\mathbf{vA^{\top}v}=\lambda>0$).
 - Other Decompositions

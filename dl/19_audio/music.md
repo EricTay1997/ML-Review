@@ -14,6 +14,11 @@
 - Discrete Audio Tokens
   - Commonly used for language model-based audio generation tasks
   - SoundStream, Encodec
+    - Rough notes on codebooks after stepping through encodec code:
+      - An input of length 107520 is split up into 336 (/320) segments, each of embedding length 128
+      - We have 1024 fixed codebooks, each of length (128, )
+      - For each of the 336 segments, we iteratively find the codebook closest to it. 
+      - Encoder's output is of size (1,1,2,336)
 
 ## Pre-Training Strategies
 
@@ -34,13 +39,13 @@
   - Diffusion
     - AudioLDM
       - ![audio_ldm.png](audio_ldm.png)
-      - Outside of the audio-specific STFT/MelFB/Vocoder components, this is very similar to LDMs 
-      - Note, however, that an important difference is the additional conditional of audio encoding $E^{\mathbf{x}}$, which is used to compensate for the lack of captioned audio data (versus that of images)
+      - Outside of the audio-specific STFT/MelFB/Vocoder components, this is very similar to conditional LDMs 
+      - Note, however, that an important difference is that instead of using a text conditioner, we use an audio encoding $E^{\mathbf{x}}$, which is used to compensate for the lack of captioned audio data (versus that of images).
     - MusicLDM
       - Retrain CLAP on music data
       - Proposes a mixup strategy to enhance diversity and novelty in output generations
         - The work also demonstrates that mixing up in a beat-synchronous manner (either in the input or latent space) yields superior results
-      - Admittedly the choice to only use audio encodings $E^{\mathbf{x}}$ in AudioLDM seems arbitrary
+      - Admittedly the choice to only use audio encodings $E^{\mathbf{x}}$ in AudioLDM seems arbitrary if we have text
         - MusicLDM tried using just text, or audio which is then fine-tuned on text.
         - These performed similarly / worse than just using audio per AudioLDM.
     - Moûsai
@@ -52,7 +57,7 @@
         - Also uses an efficient and enriched 1D U-Net
     - AudioLDM2
       - ![audioldm2.png](audio_ldm2.png)
-      - In training, we replace the audio encodings $E^{\mathbf{x}}$ in AudioLDM with AudioMAE Features
+      - In training, we replace the CLAP audio encodings $E^{\mathbf{x}}$ in AudioLDM with AudioMAE Features
         - These capture semantic information, unlike the acoustic tokens in the VAE. 
       - Text
         - Previously, we used CLAP embeddings, which allow us to pass in text during sampling. 
@@ -72,7 +77,8 @@
       - Soundstream encoder to extract acoustic tokens
         - The Soundstream encoder and decoder serves the same function as the VAE in AudioLDM. 
       - k-means-clustered w2v-BERT to extract semantic tokens
-        - Paper has some analysis for why the tokens are "categorized" as such
+        - Paper has some analysis for why the tokens are "categorized" as such:
+          - Semantic tokens are better at phonetic discriminability and acoustic ones are better at reconstruction quality.
       - Cascades three autoregressive transformer models
         - First predict semantic tokens, then coarse acoustic tokens, then finegrained tokens (See MusicLM for diagram)
       - In inference, we pass in semantic tokens which can either be sampled unconditionally or extracted from a test sample. 
@@ -88,6 +94,7 @@
       - Three autoregressive transformers are used to model these sequences, each conditioned on tokens from the one-level-coarser transformer model.
     - MusicGen 
       - ![musicgen.png](music_gen.png)[Source](https://hackernoon.com/musicgen-from-meta-ai-understanding-model-architecture-vector-quantization-and-model-conditioning)
+        - I believe this diagram to be slightly wrong. Melody should be entering the same way as text.
       - Trained to model sequences of Encodec tokens 
       - Conditioning
         - Text: Experimented with T5 encoder, FLAN-T5, and CLAP.
@@ -149,6 +156,35 @@
 - Long Sequence Modeling
   - I see this as an opportunity for more domain knowledge
   - We can break a song into subsections and model those hierarchically ([idea](../26_personal_projects/music_hierarchical_subsections/notes.md)).
+
+## Datasets
+![music_data.png](music_data.png)[Source](https://arxiv.org/pdf/2408.14340)
+
+## Evaluations
+- Audio-domain, quality-focused metrics
+  - Frechét audio distance (FAD; type: P-A, ↓)
+    - Employs an audio encoder (PANN/VGG) pre-trained on, e.g., multilabel audio classification to map an input audio to a feature vector
+    - Then estimate estimates a Gaussian covariance matrix from all feature vectors obtained from generated audios, and likewise for reference audios
+    - Compute the Frechét distance between the two estimated Gaussian distributions
+      - $d^2(F, G)=\min _{X, Y} E|X-Y|^2 = \left|\mu_X-\mu_Y\right|^2+\operatorname{tr}\left[\Sigma_X+\Sigma_Y-2\left(\Sigma_X \Sigma_Y\right)^{1 / 2}\right]$
+  - Inception Score (IS, ↑)
+    - Both audio quality and diversity
+    - $I S\left(p_{\text {gen }}, p_{\text {dis }}\right):=\exp \left(\mathbb{E}_{x \sim p_{g e n}}\left[D_{K L}\left(p_{\text {dis }}(\cdot \mid x) \| \int p_{\text {dis }}(\cdot \mid x) p_{g e n}(x) d x\right)\right]\right)$
+  - Structureness indicator: leverages Fitness Scape-plots, then applies a max operation on the scape-plot as the score(·) function. It aims to describe how much the most-repeated ex- cerpt within a specified time granularity (e.g., 10∼20 seconds) is repeated throughout the entire audio.
+- Audio-domain, control-focused metrics
+  - CLAP Score (CLAP, type: P-I, ↑)
+    - MuLan Score
+  - KL divergence (KL, type: P-I, ↓)
+    - Uses an audio classifier and computes the KL Divergence between the output class distribution of the reference audio (for the text input) and that of the generated audio
+  - Musical controls
+    - Melody: Chroma (frame-wise) cosine similarity
+    - Chords: Chord recognition accuracy
+    - Tempo: Tempo bin accuracy based on beat detection model
+    - Rhythm: Beat F1 score
+    - Intensity: Dynamics correlation  smoothed frame-wise loudness in decibels, and then calculates the Pearson’s correlation between the frame-wise values from reference and generation.
+
+![data_evals.png](data_evals.png)
+- MusicCaps also seems to be a very popular evals dataset. 
 
 ## Research Ideas
 

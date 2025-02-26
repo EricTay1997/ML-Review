@@ -158,7 +158,7 @@
         - Convert business objective to appropriate online metric
         - Convert online metric to offline metric
         - Offline metric and ml training loss can be different too
-        - Should metrics be weighted? Ads by revenue per click, or harmfull posts by number of impressions.
+        - Should metrics be weighted? Ads by revenue per click, or harmful posts by number of impressions.
     - Data
       - Data collection
       - Handling data imbalance

@@ -13,6 +13,7 @@
     - A typical input to an aligned LLM contains three key components: the pre-query template, the query, and the post-query template.
     - Thanks to their auto-regressive nature, aligned LLMs can generate a user query when we input only the pre-query templates up to the position reserved for user messages
     - The generated user query can then be used to generate responses. 
+    - To use this method, **we need to know the pre-query template that the aligned LLM was trained on**.
   - We can then use LLMs to refine both queries and responses.
   - We can further use LLMs to evaluate query-response pairs and filter data appropriately 
 - Generating preference data

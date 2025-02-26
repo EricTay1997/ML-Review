@@ -93,7 +93,7 @@
     - Region-restricted videos
     - Restricted content (misinformation, harm detection)
     - Fairness and bias
-    - Video freshness (both new-ness and whether user has wathced before)
+    - Video freshness (both new-ness and whether user has watched before)
     - Duplicate or near-duplicate videos
 
 ## Session-Based

@@ -113,7 +113,7 @@
             - This is non-Markovian because $\mathbf{x}_{t-1}$ now depends on $\mathbf{x}_t, \mathbf{x}_0$
             - We choose parameters such that $q_\sigma(\mathbf{x}_t \mid \mathbf{x}_0) \sim\mathcal{N}\left(\sqrt{\bar{\alpha}_t} \mathbf{x}_0,\left(1-\bar{\alpha}_t\right) \mathbf{I}\right)$ as before.
           - We then define a generative process where we first predict $\hat{\mathbf{x}}_0$, and then sample $\mathbf{x}_{t-1} \sim q_\sigma(\mathbf{x}_{t-1} \mid \hat{\mathbf{x}}_0, \mathbf{x}_{t})$ (this is the interpretation of the DDIM sampling equation quoted above)
-          - One can then show that the variational inference objective is equivalent in form to the DDPM variational inference objective, subject to a certain weighting of each $L_{t-1}$ term.
+          - One can then show that the variational inference objective for maximizing $\log p_\theta(\mathbf{x}_0)$ is equivalent in form to the DDPM variational inference objective, subject to a certain weighting of each $L_{t-1}$ term.
           - The authors argue that if the parameters of the noise model are not shared across timesteps, then the parameters are invariant to the weighting scheme and the original training objective is then appropriate. 
             - This is not true, but the model works empirically. 
           - For an accelerated forward process, we can now similarly define a factorization of the inference process as above such that the "marginals" match. 

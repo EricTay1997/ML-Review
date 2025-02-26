@@ -73,7 +73,7 @@
     - Regularization can help make matrices invertible
     - Regularization can help convergence properties (pick between multiple "optimal" solutions)
 * Consistency
-  * $\operatorname{lim}_{m \rightarrow \infty} \hat{\theta}_m=\theta$
+  * $\operatorname{lim}_{n \rightarrow \infty} \hat{\theta}_n=\theta$
   * Biased but consistent: 
     * Suppose $x \sim \mathcal{N}(\mu, \sigma^2)$, and we estimate $\hat{\sigma}^2 = \frac1n\sum^n (x_i - \bar{x})^2$
     * Then $\mathbb{E}[\hat{\sigma}^2] = \frac{n-1}{n}\sigma^2$

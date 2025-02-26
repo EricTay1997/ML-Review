@@ -153,7 +153,7 @@
 
 ### AWS SQS
 - When to use
-  - ToDo
+  - Message queue that supports things that Kafka doesn't.
 - Need to know
   - AWS SQS supports retries for consumers out of box
   - SQS supports delayed message delivery
