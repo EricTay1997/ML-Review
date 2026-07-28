@@ -1,3 +1,17 @@
 *cifar*
 *sft*
 *model.ckpt.data-00000-of-00001
+
+# OS / IDE
+.DS_Store
+.idea/
+.virtual_documents/
+
+# Jupyter / Python
+.ipynb_checkpoints/
+__pycache__/
+
+# Large binaries (kept locally, not tracked)
+saved_models/
+fundamentals/dl/17_nlp/gpt2/
+fundamentals/dl/17_nlp/Llama-3.2-1B/
