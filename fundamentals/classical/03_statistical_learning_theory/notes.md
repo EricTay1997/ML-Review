@@ -51,7 +51,7 @@
       * = $`\mathbf{Q}(\pmb\lambda + \alpha\mathbf{I})^{-1}\pmb\lambda\mathbf{Q}^{\top}\pmb\theta^*`$, using the eigendecomposition of $`\mathbf{H}`$ since it is real and symmetric.
       * The component of $`\theta^*`$ that is aligned with the $`i^{th}`$ eigenvector of $`\mathbf{H}`$ is rescaled by a factor of $`\frac{\lambda_i}{\lambda_i + \alpha}`$
         * As a result, the effect of regularization is larger when $`\lambda_i`$ is smaller. 
-        * ![l2.png](l2.png)[Source](https://www.deeplearningbook.org/contents/regularization.html)
+        * ![l2.png](images/l2.png)[Source](https://www.deeplearningbook.org/contents/regularization.html)
           * In this picture, the eigenvalue of $`\mathbf{H}`$ is low in the first dimension ($`x`$ axis). 
           * Because the objective function does not express a strong preference along this direction, the regularizer has a strong effect on this axis.
   * L1 Regularization 
@@ -67,7 +67,7 @@
     - Note that per our discussion around the [Lagrangian](../01_linear_algebra_and_calculus/notes.md), our loss functions above are the "dual" interpretation of the respective optimization problems.
     - We can also think of these problems in their "primal" form, e.g. Minimize $`L(\pmb\theta)`$ subject to $`g(\pmb\theta) \leq c`$.
       - In principle, we can solve for $`c`$, but we need both $`\alpha`$ and $`L`$. 
-    - This helps motivate the effect of these methods on $`\pmb\theta`$. In particular, ridge regression shrinks coefficients to 0, while lasso regression induces sparsity. ![regularization.png](regularization.png)[Source](https://medium.com/codex/understanding-l1-and-l2-regularization-the-guardians-against-overfitting-175fa69263dd)
+    - This helps motivate the effect of these methods on $`\pmb\theta`$. In particular, ridge regression shrinks coefficients to 0, while lasso regression induces sparsity. ![regularization.png](images/regularization.png)[Source](https://medium.com/codex/understanding-l1-and-l2-regularization-the-guardians-against-overfitting-175fa69263dd)
     - Functionally, there are reasons to also use explicit constraints (and reprojection) ([Goodfellow](https://www.deeplearningbook.org/contents/regularization.html))
   - Under-determined problems
     - Regularization can help make matrices invertible

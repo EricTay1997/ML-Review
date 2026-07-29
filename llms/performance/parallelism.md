@@ -1,6 +1,6 @@
 # Parallelism
 
-Training and serving across multiple devices. Drawn heavily from [Lippe's notes](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/overview.html); companion notebooks in this folder (`02_data_parallelism.ipynb`, `03_pipeline_parallelism.ipynb`). See also [Training](training.md), [Inference](inference.md), [TPUs & Rooflines](tpus.md).
+Training and serving across multiple devices. Drawn heavily from [Lippe's notes](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/overview.html); companion notebooks in this folder (`02_data_parallelism.ipynb`, `03_pipeline_parallelism.ipynb`). See also [Basics](basics.md), [Inference](inference.md), [TPUs & Rooflines](tpus.md).
 
 ## Multiple Processors
 
@@ -25,13 +25,13 @@ Training and serving across multiple devices. Drawn heavily from [Lippe's notes]
 
 - Overview
   - Pipeline parallelism splits the model across devices, whilst introducing minimal communication across devices, although also facing the pipeline bubble issue. 
-  - ![pipeline1.png](pipeline1.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/pipeline_parallel_simple.html)
+  - ![pipeline1.png](images/pipeline1.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/pipeline_parallel_simple.html)
 - Micro-Batching
   - Micro-Batching mitigates the pipeline bubble issue.
-  - ![pipeline2.png](pipeline2.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/pipeline_parallel_simple.html)
+  - ![pipeline2.png](images/pipeline2.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/pipeline_parallel_simple.html)
 - Looping Pipelines
   - Looping mitigrates the pipeline bubble issue further.
-  - ![pipeline3.png](pipeline3.png)![pipeline4.png](pipeline4.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/pipeline_parallel_looping.html)
+  - ![pipeline3.png](images/pipeline3.png)![pipeline4.png](images/pipeline4.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/pipeline_parallel_looping.html)
   - We can process mini-batches breadth-first (each GPU processes a batch fully before moving on to the next) or depth-first (process a mini-batch the moment it is ready)
   - [Poirier](https://arxiv.org/pdf/2211.05953) argues that when combining data parallelism and pipeline parallelism, because the former requires us to communicate and sum across devices, breadth-first pipeline parallelism is faster since we can start this communication earlier. 
 
@@ -43,26 +43,26 @@ Training and serving across multiple devices. Drawn heavily from [Lippe's notes]
   - Gather vs Scatter
     - Gather "gathers" data spread across multiple processors such that each processor has a copy. 
     - Scatter does not copy data, rather it transmits $`\frac{n-1}{n}`$ of its data to other devices. 
-    - ![gather_scatter.png](gather_scatter.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/tensor_parallel_simple.html)
+    - ![gather_scatter.png](images/gather_scatter.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/tensor_parallel_simple.html)
     - Note that here we reverse the order of our activations ($`p \times n`$ rather than $`n \times p`$)
     - To reduce both the communication needed (?) and the amount of data stored on each device, gather/scatter is more suitable when $`\mathbf{x}`$ has fewer/more features than $`\mathbf{y}`$.
 - Asynchronous layers
   - In the gather strategy, we first need to communicate all the features of $`\mathbf{x}`$ before we can compute the output. 
-    - ![async_gather.png](async_gather.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/tensor_parallel_async.html)
+    - ![async_gather.png](images/async_gather.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/tensor_parallel_async.html)
   - In the scatter strategy, need to compute the output on all devices before we can communicate results and sum them. 
-    - ![async_scatter.png](async_scatter.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/tensor_parallel_async.html)
+    - ![async_scatter.png](images/async_scatter.png)[Source](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/tensor_parallel_async.html)
   - Asynchronous layers allow us to overlap communication with computation and reduce downtime. 
   - Gather
-    - ![gather.png](gather.png)[Source](https://arxiv.org/pdf/2302.05442)
+    - ![gather.png](images/gather.png)[Source](https://arxiv.org/pdf/2302.05442)
   - Scatter
-    - ![scatter.png](scatter.png)[Source](https://arxiv.org/pdf/2302.05442)
+    - ![scatter.png](images/scatter.png)[Source](https://arxiv.org/pdf/2302.05442)
   - If we want all nodes to contain all activations, consider Ring Allreduce, which uses the scatter-reduce above, and then an allgather. 
     - This sums individual arrays on all nodes, and eventually every node will have a copy of this sum.
 
 ## 3D Parallelism
 
 - We can combine all the 3 parallelism types for increased computational gains.
-  - ![3d.png](3d.png)[Source](http://web.ecs.baylor.edu/faculty/dong/elc5396_DeepLearning/DeepLearningSignalProcessingH3.pdf)
+  - ![3d.png](images/3d.png)[Source](http://web.ecs.baylor.edu/faculty/dong/elc5396_DeepLearning/DeepLearningSignalProcessingH3.pdf)
   - [DeepSpeed](https://www.microsoft.com/en-us/research/blog/deepspeed-extreme-scale-model-training-for-everyone/)
 
 ## Placement: TP within a node, PP across nodes

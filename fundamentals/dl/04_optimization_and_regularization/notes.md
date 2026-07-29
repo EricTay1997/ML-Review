@@ -73,7 +73,7 @@ associated with the different tasks, some are shared across two or more tasks.
 - Condition number
   - When the condition number of the Hessian is high (pathological curves), gradient descent performs poorly. 
   - Intuitively, gradient descent is unaware of the difference in second derivatives, so it does not know to explore in the direction where the derivative remains negative for longer.
-    - ![canyon.png](canyon.png)[Source](https://www.deeplearningbook.org/contents/numerical.html)
+    - ![canyon.png](images/canyon.png)[Source](https://www.deeplearningbook.org/contents/numerical.html)
 
 ## Second-Order Methods
 
@@ -158,4 +158,4 @@ associated with the different tasks, some are shared across two or more tasks.
       - Adam: Adaptive learning rate allows it to stay in minimum, probably because of some consideration of curvature
     - But there are scenarios that SGD (with momentum) may generalize better as Adam tends to overfit.
       - Adam can get stuck in local optima while SGD finds the wider minima that tend to generalize better.
-      - ![adam_overfit.png](adam_overfit.png)[Source](https://arxiv.org/pdf/1609.04836)
+      - ![adam_overfit.png](images/adam_overfit.png)[Source](https://arxiv.org/pdf/1609.04836)

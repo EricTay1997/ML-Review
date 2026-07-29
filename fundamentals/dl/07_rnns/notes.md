@@ -5,12 +5,12 @@
 - Recurrent neural nets deal with sequence information. The idea is to use a hidden state to store sequence information up to time step $t-1$.
   - $P(x_t \mid x_{t-1}, \ldots, x_1) \approx P(x_t \mid h_{t-1})$
 - Concretely, we have 
-  - ![rnn.png](rnn.png)[Source](http://d2l.ai/chapter_recurrent-neural-networks/rnn.html)
+  - ![rnn.png](images/rnn.png)[Source](http://d2l.ai/chapter_recurrent-neural-networks/rnn.html)
   - $h_t = \tanh(W_h\cdot[h_{t-1}, x_t] + b_h),$ where $h_t, h_{t-1}, b_h \in \mathbb{R}^h$, $x_t \in \mathbb{R}^d$, $W_h \in \mathbb{R}^{h \times (h + d)}$
   - $o_t = W_oh_t + b_o$, where $o_t, b_o \in \mathbb{R}^d$, $W_o \in \mathbb{R}^{d \times h}$
 - Bidirectional RNNs
   - Suitable when lookahead is ok.
-  - ![bidirectional.png](bidirectional.png)[Source](http://d2l.ai/chapter_recurrent-modern/bi-rnn.html)
+  - ![bidirectional.png](images/bidirectional.png)[Source](http://d2l.ai/chapter_recurrent-modern/bi-rnn.html)
   - $`h^{(f)}_t = \tanh(W^{(f)}_h\cdot[h_{t-1}, x_t] + b^{(f)}_h)`$ 
   - $`h^{(b)}_t = \tanh(W^{(b)}_h\cdot[h_{t+1}, x_t] + b^{(b)}_h)`$ 
   - $o_t = W_o \cdot [h^{(f)}_t, h^{(b)}_t] + b_o$
@@ -26,7 +26,7 @@
 
 - LSTMs use a combination of gates to better retain information over a long sequence.
 - Concretely, we have
-  - ![lstm.png](lstm.png)[Source](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
+  - ![lstm.png](images/lstm.png)[Source](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
   - Forget gate $f_t = \sigma(W_f \cdot [h_{t-1}, x_t] + b_f)$
     - How much of previous cell state to keep
   - Input gate $i_t = \sigma(W_i \cdot [h_{t-1}, x_t] + b_i)$
@@ -60,7 +60,7 @@
 - So far, our RNN model handles aligned sequence tasks, where the input at each time step aligns with a corresponding target.
 - In seq2seq problems, inputs and outputs each consist of variable-length unaligned sequences, such as in machine translation. 
 - Here, we typically rely on the encoder-decoder architecture:
-  - ![seq2seq.png](seq2seq.png)[Source](http://d2l.ai/chapter_recurrent-modern/seq2seq.html)
+  - ![seq2seq.png](images/seq2seq.png)[Source](http://d2l.ai/chapter_recurrent-modern/seq2seq.html)
   - The RNN encoder encodes the input sequence into a context vector, which is then decoded by the RNN decoder
     - The limited size of the context vector forms a bottleneck, which we address with [attention](../08_attention_transformers/notes.md). 
 - The decoder allows our output to be a different length from our input. 

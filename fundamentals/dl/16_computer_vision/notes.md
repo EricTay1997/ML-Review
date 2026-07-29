@@ -5,9 +5,9 @@
 - For autoregressive image modeling, we predict pixel by pixel in raster scan order. 
 - Let's study the PixelCNN Model
 - To prevent looking ahead, we use masked convolution kernels
-  - ![masked_kernel.png](masked_kernel.png)[Source](https://arxiv.org/pdf/1606.05328)
+  - ![masked_kernel.png](images/masked_kernel.png)[Source](https://arxiv.org/pdf/1606.05328)
   - However, these introduce blind spots, and so we instead use horizontal and vertical convolutions
-    - ![blind_spot.png](blind_spot.png)[Source](https://arxiv.org/pdf/1606.05328)
+    - ![blind_spot.png](images/blind_spot.png)[Source](https://arxiv.org/pdf/1606.05328)
     - Additional explanation
       - Blind spots for 3x3 masked filters: for every feature map (not on the boundary) at position (i,j) does not depend feature maps on (i-1,j+2) in the previous layer.
       - Horizontal stacks look left only, including current spot.
@@ -40,7 +40,7 @@
     - Given per-pixel labelled data, 
       -  Segmentation labels regions on a pixel level.
     - Fully convolutional networks are useful here
-      - ![fully_convolutional.png](fully_convolutional.png)[Source](http://d2l.ai/chapter_computer-vision/fcn.html)
+      - ![fully_convolutional.png](images/fully_convolutional.png)[Source](http://d2l.ai/chapter_computer-vision/fcn.html)
       - One channel per class
   - Bounding boxes
     - Given images with "correct" bounding boxes, 
@@ -58,7 +58,7 @@
   - Stage 2: Classifier processes the region candidates
     - For each region candidate, we make a prediction of the class of the encapsulated object and the offset to best encapsulate this object.
   - [R-CNN and friends](https://lilianweng.github.io/posts/2017-12-31-object-recognition-part-3/)
-      - ![rcnn.png](rcnn.png)[Source](https://lilianweng.github.io/posts/2017-12-31-object-recognition-part-3/)
+      - ![rcnn.png](images/rcnn.png)[Source](https://lilianweng.github.io/posts/2017-12-31-object-recognition-part-3/)
       - Start with a pre-trained CNN network on image classification tasks, e.g. VGG or ResNet. 
       - R-CNN
         - Propose region proposals with selective search, which works by oversegmenting an image and iteratively grouping adjacent segments based on similarity 
@@ -113,7 +113,7 @@
 ## Neural Style Transfer
 
 - Leveraging pretrained networks
-  - ![nst.png](nst.png)[Source](http://d2l.ai/chapter_computer-vision/neural-style.html)
+  - ![nst.png](images/nst.png)[Source](http://d2l.ai/chapter_computer-vision/neural-style.html)
   - Use pre-trained networks to: 
     - Extract content and style from reference images
       - In general, 

@@ -2,9 +2,9 @@
 
 | File | Contents |
 |---|---|
-| [training.md](training.md) | Single-device efficiency: bounds, memory reduction, batch size, speed checklist |
+| [basics.md](basics.md) | Single-device efficiency: bounds, memory reduction, batch size, speed checklist |
 | [parallelism.md](parallelism.md) | DP/FSDP, pipeline, tensor, 3D parallelism; TP-intra-node vs PP-inter-node placement |
-| [inference.md](inference.md) | Prefill/decode, batching, speculative decoding, chunked prefill, vLLM internals |
+| [inference.md](inference.md) | Serving engines, speculative decoding, chunked prefill, vLLM internals (prefill/decode cost model → basics.md) |
 | [gpus.md](gpus.md) | SMs, warps, memory hierarchy, occupancy limits |
 | [tpus.md](tpus.md) | Rooflines (arithmetic intensity), TPU organization, ICI/DCN vs GPU networking |
 | [python_concurrency.md](python_concurrency.md) | OS basics, threading vs multiprocessing vs asyncio |

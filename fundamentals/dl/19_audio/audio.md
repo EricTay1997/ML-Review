@@ -47,7 +47,7 @@
 - TTS
   - SpeechT5 (encoder-decoder), Bark, Massive Multilingual Speech (MMS) (VAEs + NF), Vall-E (decoder)
   - SpeechT5
-    - ![speecht5.png](speecht5.png)[Source](https://arxiv.org/pdf/2110.07205)
+    - ![speecht5.png](images/speecht5.png)[Source](https://arxiv.org/pdf/2110.07205)
     - Pre-train with unlabelled audio data
     - Post-train for each individual task
   - Bark
@@ -57,6 +57,6 @@
     - `BarkFineModel` iteratively predicts the last codebooks based on the sum of the previous codebooks embeddings
   - MMS
     - Conditional VAE with flow-based decoder on latent space (AE)
-    - ![mms.png](mms.png)[Source](https://arxiv.org/pdf/2106.06103)
+    - ![mms.png](images/mms.png)[Source](https://arxiv.org/pdf/2106.06103)
   - Vall-E
-    - ![vall_e.png](vall_e.png)[Source](https://arxiv.org/pdf/2301.02111)
+    - ![vall_e.png](images/vall_e.png)[Source](https://arxiv.org/pdf/2301.02111)

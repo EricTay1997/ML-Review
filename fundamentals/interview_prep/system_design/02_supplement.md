@@ -52,7 +52,7 @@
   - A master generally only supports writes and a slave gets copies from the master and only supports reads.
   - One may have more masters for reliability, but trade off some consistency.
 - Database Indexing
-  - ![indexing.png](indexing.png)[Source](https://www.hellointerview.com/learn/system-design/deep-dives/db-indexing)
+  - ![indexing.png](images/indexing.png)[Source](https://www.hellointerview.com/learn/system-design/deep-dives/db-indexing)
   - B-Tree Indexes
     - Balanced tree that maintains sorted data
   - Hash Indexes
@@ -70,7 +70,7 @@
 - MapReduce
   - A programming model for batch processing of large stored datasets: a `map` function turns records into key-value pairs, the framework shuffles/partitions by key, and a `reduce` function aggregates per key — parallelized across machines.
 - Communication protocols for real-time client updates:
-  - ![client_updates.png](client_updates.png)[Source](https://www.hellointerview.com/learn/system-design/deep-dives/realtime-updates)
+  - ![client_updates.png](images/client_updates.png)[Source](https://www.hellointerview.com/learn/system-design/deep-dives/realtime-updates)
   - Simple polling: Client makes request at regular intervals
   - Long polling: Server holds request open until it has new data. Client makes request again the moment it receives a response. 
   - Server Sent Events (SSE): Allows the server to push updates to the client, via a single, long-lived HTTP connection. Not supporting client-to-server message makes SSE simpler to implement and integrate into existing HTTP infrastructure, such as load balancers and firewalls, without the need for special handling.
@@ -143,7 +143,7 @@
   - You should specify your partition key
   - Open-Source
 - Good to know
-  - ![kafka.png](kafka.png)[Source](https://www.hellointerview.com/learn/system-design/deep-dives/kafka#a-motivating-example)
+  - ![kafka.png](images/kafka.png)[Source](https://www.hellointerview.com/learn/system-design/deep-dives/kafka#a-motivating-example)
   - A Kafka cluster is made up of multiple **brokers**. These are just individual servers.
   - Each broker has a number of **partitions**. Each partition is an ordered, immutable sequence of messages that is continually appended to.
   - A **topic** is just a logical grouping of partitions. Topics are the way you publish and subscribe to data in Kafka. When you publish a message, you publish it to a (partition in a) topic, and when you consume a message, you consume it from a topic.

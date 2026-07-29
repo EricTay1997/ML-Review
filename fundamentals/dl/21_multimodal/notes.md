@@ -8,7 +8,7 @@
 ## Multimodal Input to Multimodal Output
 - Today, many LMMs support multimodal input to multimodal output processes. 
 - Case Study: NExT-GPT 
-  - ![next_gpt.png](next_gpt.png)[Source](https://arxiv.org/pdf/2309.05519)
+  - ![next_gpt.png](images/next_gpt.png)[Source](https://arxiv.org/pdf/2309.05519)
   - Provides a hint as to how LMMs support any-to-any processes. 
     - Rough architecture
       - Encoder: Encodes multimodal inputs into the same embedding space

@@ -20,7 +20,7 @@
 - We typically use [Batch Normalization](../01_basics/notes.md) to help training.
 
 ## Pre-Inception
-- ![pre_inception.png](pre_inception.png)[Source](http://d2l.ai/chapter_convolutional-modern/nin.html)
+- ![pre_inception.png](images/pre_inception.png)[Source](http://d2l.ai/chapter_convolutional-modern/nin.html)
   - AlexNet: More layers!
   - VGG: More layers (blocks)!
   - NiN: 
@@ -28,20 +28,20 @@
     - Use cheaper 1x1 convolutions to add local nonlinearities across the channel activations
 
 ## Inception 
-- ![inception.png](inception.png)[Source](http://d2l.ai/chapter_convolutional-modern/googlenet.html)
+- ![inception.png](images/inception.png)[Source](http://d2l.ai/chapter_convolutional-modern/googlenet.html)
 - The Inception block is used in GoogleNet and consists of multiple convolution blocks concatenated together. 
   - Different sized kernels capture different effects.
   - Of course, we can also replace the smaller kernels with bigger kernels, but this is both computationally costly, and may put a lot more burden on the model. 
 - We also use $1 \times 1$ convolutions to reduce the dimensionality of our inputs prior to the more computationally costly $3 \times 3$ and $5 \times 5$ convolutions.
 
 ## ResNet
-- ResNet Block: ![resnet.png](resnet.png)[Source](https://arxiv.org/pdf/1603.05027)
+- ResNet Block: ![resnet.png](images/resnet.png)[Source](https://arxiv.org/pdf/1603.05027)
 - Intuition:
   - Residuals: Instead of modeling $x_{l+1}=F(x_{l})$, we model $x_{l+1}=x_{l}+F(x_{l})$ where $F$ is a non-linear mapping. In so doing, each successive layer models the "residual" error (like Boosting!)
   - Reusing earlier features allows us to use both abstract features in deep layers and low-level features in early layers for prediction. 
   - Regularization/Stability: $\frac{\partial x_{l+1}}{\partial x_{l}} = \mathbf{I} + \frac{\partial F(x_{l})}{\partial x_{l}}$: This makes the gradients more stable. 
   - Loss Function: Skip connections do seem to smooth out the loss function
-    - ![resnet_loss.png](resnet_loss.png)[Source](https://arxiv.org/pdf/1712.09913)
+    - ![resnet_loss.png](images/resnet_loss.png)[Source](https://arxiv.org/pdf/1712.09913)
       - To generate this plot, authors randomly sampled 2 directions to perturb the weights in. 
       - The key innovation of this paper is to normalize these directions according to the norm of the original weights in each filter. 
       - While it is not super satisfying that 2 random directions were chosen, 
@@ -61,7 +61,7 @@
   - We can use 1x1 convolutions to downsample into multiple groups of a few channels, and then upsample and add
 
 ## DenseNet
-- ![densenet.png](densenet.png)[Source](https://arxiv.org/pdf/1608.06993)
+- ![densenet.png](images/densenet.png)[Source](https://arxiv.org/pdf/1608.06993)
 - To me, this is very similar to pre-activation ResNet. A few ways that DenseNet is different is that 
   - It concatenates rather than adds. I view this as allowing more flexible weights to be applied. ResNet probably has the ability to learn the same formulation, but it might be harder to learn.
   - It is more parameter efficient. Empirically, it achieves similar performance to ResNet with fewer parameters. 
@@ -71,9 +71,9 @@
 
 ## AnyNet
 - AnyNet is used to design network design spaces
-  - ![any_net.png](any_net.png)
+  - ![any_net.png](images/any_net.png)
 - RegNet uses the AnyNet general architecture and applies constraints to restrict the search space
 
 ## U-Net
-- ![u_net.png](u_net.png)[Source](https://arxiv.org/pdf/1505.04597v1)
+- ![u_net.png](images/u_net.png)[Source](https://arxiv.org/pdf/1505.04597v1)
 - U-Nets also use the concept of skip connections as it downsamples and then upsamples data. 

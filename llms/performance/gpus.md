@@ -1,6 +1,6 @@
 # GPUs
 
-> Draft — seeded from reading notes, to expand. Primary source: [Aleksa Gordić's matmul deep-dive](https://www.aleksagordic.com/blog/matmul).
+Primary source: [Aleksa Gordić's matmul deep-dive](https://www.aleksagordic.com/blog/matmul).
 
 ## CPU vs GPU
 

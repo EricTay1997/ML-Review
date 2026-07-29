@@ -10,7 +10,7 @@
 ## Data Engineering
 - Data Formats
   - Data Serialization: Converting a data structure or object state into a form that can be stored or transmitted and reconstructed later.
-  - ![data_formats.png](data_formats.png)
+  - ![data_formats.png](images/data_formats.png)
   - CSV is row-major, Parquet is column-major. NumPy is row-major, Pandas is column-major. 
 - Data Storage
   - Structured/unstructed data is stored in data warehouses/lakes. Companies need to decide whether to transform extracted data before or after storage. 
@@ -20,7 +20,7 @@
   - Stream: Processing data in real-time transports, e.g. checking which drivers are available
     - Yields dynamic features
 - Data Types
-  - ![data_types.png](data_types.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/introduction-and-overview)
+  - ![data_types.png](images/data_types.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/introduction-and-overview)
 
 ## Data Cleaning
 - Sampling
@@ -30,7 +30,7 @@
   - Importance
     - Sample from $`p(y)`$, then weight each sample by $`p(x)/p(y)`$.
   - Lack of labels
-    - ![lack_labels.png](lack_labels.png)
+    - ![lack_labels.png](images/lack_labels.png)
     - ML is useful for weak supervision when labeling function (LF) doesn't cover all samples
     - Semi-supervision
       - Self-training, iteratively add data points with highest confidence and retrain.
@@ -62,10 +62,10 @@
 ## Model Deployment and Prediction Service
 - Prediction
   - Online/synchronous prediction: Google Translate
-    - ![online.png](online.png)
+    - ![online.png](images/online.png)
     - Optimized for low latency (each request needs a fast answer)
   - Batch/asynchronous prediction: Generating movie recommendations for users
-    - ![batch.png](batch.png)
+    - ![batch.png](images/batch.png)
     - Optimized for high throughput (many predictions processed together)
 - Model Compression
   - Mobile Nets instead of a standard convolution $(K \times K \times C)$, it uses a depth-wise convolution $(K \times K \times 1)$ followed by a point-wise convolution $(1 \times 1 \times C)$
@@ -73,7 +73,7 @@
   - Pruning: Removing nodes, or setting weights to 0. We can also retrain the sparse network.
   - Quantization, which also improves computation speed
 - Cloud / Edge / Browsers
-  - ![cloud_edge.png](cloud_edge.png)
+  - ![cloud_edge.png](images/cloud_edge.png)
   - WASM is an open standard that allows you to run executable programs in browsers. However, it is slow.
 
 ## Data Distribution Shifts and Monitoring

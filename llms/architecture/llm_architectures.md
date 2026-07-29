@@ -28,6 +28,8 @@
   - Kimi Delta Attention (KDA): channel-wise gating for memory decay rate
 - OLMo 3
   - YaRN
+- Qwen 3.5
+  - Native tool-calling format is XML (the Qwen3-Coder style: `<function=name><parameter=key>value</parameter></function>` inside `<tool_call>` tags), not JSON — parameter values are raw text, so code / multi-line arguments need no JSON string-escaping; harnesses that assume Hermes-style JSON break until the parser targets the XML format
 
 ## mHC (manifold-constrained Hyper-Connections)
 

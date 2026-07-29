@@ -17,7 +17,7 @@ In particular, I believe that modern pop music is a good alternative to textual 
 
 - Tokenization
   - One form of tokenization is to encode an audio file as a spectrogram, with frequency on the y-axis and time on the x-axis.
-    - ![spectrogram.png](spectrogram.png)
+    - ![spectrogram.png](images/spectrogram.png)
       - [Image Source](https://medium.com/analytics-vidhya/understanding-the-mel-spectrogram-fca2afa2ce53)
   - For reasons we explain in the next subsection, suppose our y-axis is on a log scale for now. 
 - Frequency properties of common 12-tone music

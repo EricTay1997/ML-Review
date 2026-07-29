@@ -4,7 +4,7 @@
 - This "differentiation" is expressed by learning how to embed data points. 
 - Such embeddings are useful for downstream tasks like classification. 
 - SimCLR
-  - ![simclr.png](simclr.png)[Source](https://simclr.github.io)
+  - ![simclr.png](images/simclr.png)[Source](https://simclr.github.io)
   - Loss:
     - Info-NCE:
       ```math

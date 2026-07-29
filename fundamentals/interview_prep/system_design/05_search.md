@@ -9,7 +9,7 @@
   - We can view search as adding additional query context to a recommendation problem, in which case I may vote for using a recommendation framework.
   - It is important to check with the interviewer regarding whether personalization is desired. 
   - For the latter, we focus on the query -> item prediction problem, which is the focus on this document.
-- ![search.png](search.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/youtube-video-search)
+- ![search.png](images/search.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/youtube-video-search)
   - For the item encoder, we should encode all the items we talked about in [Recommendation systems](./04_recommendation_system.md)
 - Training
   - Contrastive learning is useful, where we mark items not selected as negative samples.

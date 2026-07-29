@@ -5,7 +5,7 @@
 
 ## Details
 - ETA is complicated and we have to think of multiple parties
-  - ![eta.png](eta.png)[Source](https://www.amazon.com/Machine-Learning-Design-Interview-System/dp/B09YQWX59Z)
+  - ![eta.png](images/eta.png)[Source](https://www.amazon.com/Machine-Learning-Design-Interview-System/dp/B09YQWX59Z)
 - Loss
   - Asymmetric RMSE
   - Quantile regression where you specify a percentage of predictions within interval

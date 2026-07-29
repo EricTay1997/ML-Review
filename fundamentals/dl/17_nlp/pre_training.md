@@ -81,7 +81,7 @@
   - Uses attention (encoder-only)
   - Task agnostic: The _same_ model can be finetuned for various tasks (need to process inputs appropriately)
   - Inputs
-    - ![bert_input.png](bert_input.png)
+    - ![bert_input.png](images/bert_input.png)
     - \<cls\> token prepended to input (helpful for classification tasks)
     - \<sep\> token and segment embeddings allow for paired inputs (helpful for natural language inference / question answering tasks)
   - Training
@@ -150,5 +150,5 @@
   - Beam Search
     - When outputting text sequentially, the most probable next _sequence_ may not start with the most probable next _token_. 
     - Beam search trades off accuracy and computational cost by maintaining a fixed number of "beams", until the decoder predicts the "<END>" token.
-      - ![beam_search.png](beam_search.png)[Source](https://towardsdatascience.com/foundations-of-nlp-explained-visually-beam-search-how-it-works-1586b9849a24)
+      - ![beam_search.png](images/beam_search.png)[Source](https://towardsdatascience.com/foundations-of-nlp-explained-visually-beam-search-how-it-works-1586b9849a24)
   - Top-p, Top-k and temperature

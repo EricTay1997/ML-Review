@@ -8,7 +8,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 ## Encoders and Decoders
 
 - The [transformer paper](https://arxiv.org/pdf/1706.03762) was released with an encoder-decoder architecture. 
-  - ![architecture.png](architecture.png) (Encoder is left, Decoder is right)
+  - ![architecture.png](images/architecture.png) (Encoder is left, Decoder is right)
 - Traditionally, "the main difference is that encoders are designed to learn embeddings that can be used for various predictive modeling tasks such as classification. In contrast, decoders are designed to generate new texts, for example, answering user queries." [Source](https://magazine.sebastianraschka.com/p/understanding-encoder-and-decoder)
 - I've found this to be confusing especially since:
   - Encoder-only models like BERT also "decode" embeddings into output tokens or text during training.
@@ -120,7 +120,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
   - We typically use [Layer Normalization](../01_basics/notes.md) to stabilize the network and reduces the training time
   - We don't use batch normalization here because batches tend to be small for language tasks, which could induce high variance in batch statistics.
   - Pre-LN Transformer
-    - ![pre_ln.png](pre_ln.png)[Source](https://proceedings.mlr.press/v119/xiong20b/xiong20b.pdf)
+    - ![pre_ln.png](images/pre_ln.png)[Source](https://proceedings.mlr.press/v119/xiong20b/xiong20b.pdf)
     - In the original (Post-LN) Transformer, gradients in certain layers can be very large.
     - The Pre-LN Transformer normalizes these and eliminate the need for warm up.
 - Initialization
@@ -153,7 +153,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
       - Reduce the number of key and value heads and have multiple query heads attend to one key head.
   - Parallel architectures 
     - [Parallel architectures](https://arxiv.org/pdf/2211.05953) are sometimes used in big models, trading off expressiveness for efficiency
-      - ![parallel_architecture.png](parallel_architecture.png)
+      - ![parallel_architecture.png](images/parallel_architecture.png)
 - Positional Embeddings
   - While the original paper used absolute positional embeddings, later models like BERT and GPT-2 used learned positional embeddings. 
   - Relative position embeddings simplifies this and only encodes relative positions in attention weights. 
@@ -194,7 +194,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
               - $`\left[ \mathbf{K}_1 ; \mathbf{K}_2\right] \odot \left[ \mathbf{C}_{cos}; \mathbf{C}_{cos}\right] + \left[ -\mathbf{K}_2; \mathbf{K}_1\right] \odot \left[ \mathbf{C}_{sin}; \mathbf{C}_{sin}\right]`$, for $`\left(\mathbf{C}_{g}\right)_{ij} = g(i\theta_j)`$, i.e. $`\left(\mathbf{C}_{cos}\right)_{ij} = \cos(i\theta_j)`$ and $`\left(\mathbf{C}_{sin}\right)_{ij} = \sin(i\theta_j)`$
             - Note that we do the same transformations for $`\mathbf{Q}`$. 
 - [A Survey of Techniques to Extend the Context Length in Large Language Models](https://arxiv.org/pdf/2402.02244)
-  - ![large_context_lengths.png](large_context_lengths.png)[Source](https://arxiv.org/pdf/2402.02244)
+  - ![large_context_lengths.png](images/large_context_lengths.png)[Source](https://arxiv.org/pdf/2402.02244)
   - ToDo: Read up on this
 - [Titans: Learning to Memorize at Test Time](https://arxiv.org/pdf/2501.00663)
   - With costs being quadratic in $L$, memorization is an issue. 

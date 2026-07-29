@@ -4,7 +4,7 @@
 
 ## Model Optimization
 
-- See [Computational Performance](../performance/training.md)
+- See [Computational Performance](../performance/basics.md)
 
 ## Guidance
 
@@ -28,15 +28,15 @@
     - LoRA does not increase inference latency because weights can be merged with the base model. 
 - See examples in [Diffusion](../../fundamentals/dl/10_diffusion/notes.md), [NLP](../../fundamentals/dl/17_nlp/post_training.md), and [CV](../../fundamentals/dl/16_computer_vision/notes.md).
 
+## Hallucinations
+
+- [Does Fine-Tuning LLMs on New Knowledge Encourage Hallucinations? (arXiv 2405.05904)](https://arxiv.org/pdf/2405.05904) — what happens when SFT examples introduce knowledge the model didn't acquire in pretraining:
+  - (1) LLMs learn fine-tuning examples with new knowledge _slower_ than examples consistent with the model's pre-existing knowledge
+  - (2) Once the examples with new knowledge are eventually learned, they _increase the model's tendency to hallucinate_
+  - Implication: SFT is better at eliciting knowledge/behavior the model already has than at injecting new facts — and since new-knowledge examples are learned late, early stopping mitigates the hallucination cost
+
 ## Distillation
 
-- There are [many ways](https://arxiv.org/pdf/2402.13116) to distill information from a larger model to a smaller one. 
-  - One common way to do so for LLMs is SFT, or "Pseudo-Labelling"
-    - $`\mathcal{L}_{\mathrm{SFT}}=\mathbb{E}_{x \sim \mathcal{X}, y \sim p_T(y \mid x)}\left[-\log p_S(y \mid x)\right]`$
-  - Another way is to use $`KL(P_t \| P_s)`$
-    - The *direction* of this KL matters a lot (mode-covering vs mode-seeking) — see [KL Divergence](../rl/kl_divergence.md) for how the order plays out in distillation, RLHF and SFT.
-  - Or a combination of both ([Distil-Whisper](https://arxiv.org/pdf/2311.00430))
-  - On-policy distillation (OPD/OPSD): sample from the *student* and have the teacher provide per-token supervision on those samples — ToDo: expand (sits between distillation and RL; cross-ref [KL Divergence](../rl/kl_divergence.md)).
 - For smaller models, DeepSeek R1's paper indicated that distillation was more effective than RL.
   - To me, this feels like the important piece of the puzzle is _high quality data_.
 
@@ -56,7 +56,7 @@
       - Can be any model
       - Why do we need this? Ideally in the next step, we can ask a human to generate a reward/rank for any $`y \mid x`$, but that's prohibitively expensive.
   - Fine-tuning the LM with reinforcement learning
-    - ![rlhf.png](rlhf.png)[Source](https://huggingface.co/blog/rlhf)
+    - ![rlhf.png](images/rlhf.png)[Source](https://huggingface.co/blog/rlhf)
     - Some parameters of the LM are frozen because fine-tuning an entire 10B or 100B+ parameter model is prohibitively expensive
     - State: $`x`$
     - Action: $`y`$
@@ -71,7 +71,7 @@
 ## Direct Preference Optimization (DPO)
 
 - Similar to RLHF, but we skip generation of the reward model
-  - ![dpo.png](dpo.png)[Source](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch07/04_preference-tuning-with-dpo/dpo-from-scratch.ipynb)
+  - ![dpo.png](images/dpo.png)[Source](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch07/04_preference-tuning-with-dpo/dpo-from-scratch.ipynb)
 - Loss is based on $P(y_1 > y_2 \mid x) = \sigma(\beta(\log\frac{\pi_{PPO}(y_1\mid x)}{\pi_{base}(y_1\mid x)} - \log\frac{\pi_{PPO}(y_2\mid x)}{\pi_{base}(y_2\mid x)}))$
   - $\beta$ is the KL-penalty coefficient inherited from the RLHF objective. Higher $\beta$ tethers the policy more strongly to the reference, so it moves *less* in response to rankings; lower $\beta$ lets preferences dominate (the overfitting direction).
   - Subbing this in, new loss function is then no longer dependent on $r:$ 
@@ -79,15 +79,6 @@
 - The simplicity of not needing to model a reward model comes at the cost of DPO being more prone to overfitting to preferences and ending up generating nonsense.
   - While the loss above does have some flavor of minimizing the divergence between $`\pi_{PPO}`$ and $`\pi_{base}`$, we find that this KL-regularization is actually insignificant when preferences are very strong, which is exacerbated by our finite data regime (Section 4.2 of [$`\Psi`$PO paper](https://arxiv.org/pdf/2310.12036))
     - The paper argues that the reward model is useful as a regularizer because it underfits preferences, preventing this problem. 
-
-## $`\Psi`$PO
-
-- The objective $`\max _\pi \underset{\substack{x \sim \rho \\ y \sim \pi(. \mid x) \\ y^{\prime} \sim \mu(. \mid x)}}{\mathbb{E}}\left[\Psi\left(p^*\left(y \succ y^{\prime} \mid x\right)\right)\right]-\tau D_{\mathrm{KL}}\left(\pi \| \pi_{\mathrm{ref}}\right)`$ generalizes both RLHF's and DPO's objective functions. 
-- DPO corresponds to when $\Psi(q) = \log(\frac{q}{1-q})$, and the unboundedness of this $\Psi$ causes DPO to overfit. 
-- The [paper](https://arxiv.org/pdf/2310.12036) proposes taking $\Psi$ to be the identity, but unlike RLHF and like DPO, proposes an empirical solution for this optimization problem. 
-  - Sampled IPO
-    - We minimize $`\underset{\left(y_1, y_2, x\right) \sim D}{\mathbb{E}}\left(\log\frac{\pi_{PPO}(y_1\mid x)}{\pi_{base}(y_1\mid x)} - \log\frac{\pi_{PPO}(y_2\mid x)}{\pi_{base}(y_2\mid x)}-\frac{\tau^{-1}}{2}\right)^2`$, with the preferred completion first: $`y_1 = y_w`$ (winner), $`y_2 = y_l`$ (loser).
-    - Intuitively, when the weight on the KL-divergence term $`\tau`$ is larger, we penalize deviations from our base model, which prevents overfitting.
 
 ## GRPO
 
@@ -103,7 +94,7 @@
 - RLHF uses human labelers to generate outputs to prompts, used for SFT.
 - [RLCAI](../../fundamentals/dl/23_safety/03_alignment.md) uses AI to refine outputs, used for SFT. 
 - DeepSeek R1 uses AI too, in a more complicated fashion. 
-  - ![deepseek.png](deepseek.png)[Source](https://fireworks.ai/blog/deepseek-r1-deepdive)
+  - ![deepseek.png](images/deepseek.png)[Source](https://fireworks.ai/blog/deepseek-r1-deepdive)
 - Skipping SFT/critique
   - When the objective of SFT is the same as reward modeling, as in RLCAI, some research may skip this step, i.e. create pairs from the helpful-only model and rank.
   - For reasoning tasks, one might think that we need data for SFT. Deepseek-R1 Zero showed that it was possible to train a base model to have reasoning capabilities just with RL (providing a reward for getting the answer and formatting right, rather than predicting next token).
@@ -121,8 +112,50 @@
 - Human ranking provides a poor proxy of the true objective function ([Karpathy](https://x.com/karpathy/status/1821277264996352246?lang=en)). I assume he would have similar thoughts regarding rule-based reward modeling.
 - When the objective of SFT is the same as reward modeling, as in RLCAI, [DPF](https://arxiv.org/pdf/2402.07896) skips reward modeling and uses start and end points of SFT.
 
-## STaR
+## Reward Hacking
 
-- Self-Taught Reasoner asks the LLM to provide both a CoT rationale and final answer.
-- We keep the samples where the model arrived at the correct answer and train the model to predict both the rationale and final answer.
-- Post-rationalization is done for questions examples that a model initially fails to solve, where the correct answer is passed to a model and the model is asked to generate a rationale.  
+- The policy exploits the reward signal instead of improving the capability it proxies. In agentic RL this extends to _environment-level_ exploits: hardcoding expected test outputs, tool-call hacking (satisfying procedural checks without using tool outputs), sandbox edge cases.
+- [GLM-5](https://arxiv.org/pdf/2602.15763) mitigates with a **hybrid reward system** — three signal types with complementary failure modes:
+  - Rule-based rewards: precise and interpretable, but limited to aspects expressible as deterministic rules
+  - Outcome reward models (ORMs): low-variance, training-efficient, but most susceptible to hacking ("the policy exploits superficial patterns rather than genuinely improving core capability")
+  - Generative reward models (GRMs): an LM produces scalar/structured evaluations — more robust to exploitation, but higher variance
+  - Blending the three balances precision, efficiency, and robustness
+- Agentic GRM ([Kimi K3, arXiv 2607.24653](https://arxiv.org/abs/2607.24653)): for non-verifiable general tasks, the judge is itself an agent (can inspect/interact with the product rather than judge text alone), running tournament-style binary comparisons (as in K2.5) under a mandatory protocol: read the outcome/product → generate a rubric → score each candidate against it → record scores in a scorepad
+  - Verbosity is the classic GRM exploit (judges drift toward longer outputs), so K3 adds budget-based verbosity control: exceed $`\sigma \cdot \ell_0`$ (a cold-start-estimated verbosity budget × multiplier) and the candidate automatically loses the comparison
+- Meta-verifiers ([DeepSeekMath-V2](https://arxiv.org/abs/2511.22570)): when the verifier is itself trained (GRPO), it can be hacked too — it can earn full reward predicting correct scores while hallucinating non-existent issues
+  - The meta-verifier scores the verifier's _critiques_ (are the flagged issues real and well-justified?), rewarding faithful self-critique; the verifier is then retrained on meta-verifier-approved signal
+  - Verification compute can be scaled at inference to auto-label hard proofs → more verifier training data
+  - Details in [LLM Evals](../evals/llm_evals.md)
+
+## Inference-time scaling 
+
+Motivation: a transformer's depth per forward pass is fixed, so a single pass caps how many sequential steps a computation can take (formally, fixed-depth transformers are constant-depth circuits — [Merrill & Sabharwal, arXiv 2207.00729](https://arxiv.org/abs/2207.00729)) — generating more tokens extends the serial computation graph, since each thinking token is another forward pass whose intermediate result gets cached and becomes attendable. CoT provably lifts this cap: [Li et al., "CoT Empowers Transformers to Solve Inherently Serial Problems" (arXiv 2402.12875)](https://arxiv.org/abs/2402.12875), [Merrill & Sabharwal (arXiv 2310.07923)](https://arxiv.org/abs/2310.07923). Looped/latent-reasoning architectures buy the same serial depth through weight reuse instead of token generation — see [LLM Architectures](../architecture/llm_architectures.md).
+
+3 methods. Source: [Raschka — The State of LLM Reasoning Model Inference-Time Scaling](https://magazine.sebastianraschka.com/p/state-of-llm-reasoning-and-inference-scaling)
+
+- Explain step by step (chain-of-thought prompting)
+- Majority voting (self-consistency)
+- Verification and sequential revision
+  - In the revision setup, a logprob scorer can be used just to determine whether the revised answer is better
+- ![raschka_inference_scaling_3methods.png](images/raschka_inference_scaling_3methods.png)[Source](https://github.com/rasbt/reasoning-from-scratch/blob/main/ch04/01_main-chapter-code/ch04_main.ipynb)
+
+- The same survey (14 post-R1 papers) splits methods along a **sequential vs parallel** axis:
+  - Sequential — one completion, made longer/better: CoT, "wait" tokens (s1), thought-switching penalty (discourage premature path changes), self-backtracking, latent reasoning (recurrent hidden iterations instead of visible tokens)
+  - Parallel — many completions, aggregated: majority voting, beam-search variants, test-time preference optimization (reward model critiques/compares responses)
+- Takeaways: no single technique wins across tasks; a small model + heavy inference scaling can match a bigger model (whether that's cheaper depends on query volume); provider "thinking on demand" toggles are likely dialed-back inference scaling, not different models
+
+## Controlling reasoning effort
+
+Source: [Raschka — Controlling Reasoning Effort in LLMs](https://magazine.sebastianraschka.com/p/controlling-reasoning-effort-in-llms)
+
+- Three levels of control:
+  - Prompt-level: effort labels in the system prompt ("Reasoning effort: low/medium/high") — gpt-oss, GPT-5.x
+  - Train-time: SFT on effort-conditioned examples; RL with per-effort length penalties; multi-teacher distillation of effort specialists
+  - Inference-time: hard/soft token budgets on the reasoning trace; empty `<think></think>` to toggle thinking off
+- Named recipes:
+  - DeepSeek V4: train separate effort specialists (non-think / think-high / think-max, each with its own context window and length penalty), then distill into one model
+  - Nemotron 3 Ultra: learned modes + inference-time hard budgets — trains on randomly truncated traces so truncation is in-distribution
+  - Kimi K2.5: alternate budgeted and unconstrained RL phases (~25–30% token reduction)
+  - Qwen3: "Thinking Mode Fusion" — an SFT stage mixing thinking and non-thinking examples
+  - Inkling: continuous effort conditioning (0.0–1.0) adjusting token penalties during RL
+- Trade-off: effort ≈ tokens ≈ cost, with diminishing returns at the top settings; small-model-high-effort can match big-model-low-effort. Automatic effort selection is the open problem — manual control via system prompt remains standard  

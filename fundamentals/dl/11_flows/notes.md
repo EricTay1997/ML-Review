@@ -10,7 +10,7 @@
 ## Normalizing Flow
 
 - We start with $\mathbf{z}_0 \sim p_0(\mathbf{z}_0),$ which can be easily sampled from, and transform it into $\mathbf{x}$ with invertible functions $f_i$
-  - ![nf.png](nf.png)[Source](https://lilianweng.github.io/posts/2018-10-13-flow-models/)
+  - ![nf.png](images/nf.png)[Source](https://lilianweng.github.io/posts/2018-10-13-flow-models/)
   - $`\log p(\mathbf{x}) = \log \pi_K(\mathbf{z}_K) = \log \pi_0(\mathbf{z}_0) - \sum_{i=1}^K\log\vert \mathrm{det} \frac{df_i}{d\mathbf{z}_{i-1}}\vert`$ [Details](https://lilianweng.github.io/posts/2018-10-13-flow-models/)
   - This surfaces two requirements for our $f_i$:
     - They are invertible
@@ -18,10 +18,10 @@
 - Lower Triangular Jacobians
   - Lower Triangular Jacobians are desirable because their determinant is simply the product of terms on the diagonal. 
   - RealNVP is an example of this ([Source](https://www.youtube.com/watch?v=DDq_pIfHqLs)) 
-    - ![RealNVP.png](RealNVP.png)
+    - ![RealNVP.png](images/RealNVP.png)
     - GLOW extends this idea of permutation by using invertible $`1 \times 1`$ convolutions, but we note that we now need to compute the determinant of the weight matrices. 
   - Autoregressive flows are another example of this ([Source](https://www.youtube.com/watch?v=DDq_pIfHqLs)) 
-    - ![autoregressive.png](autoregressive.png)
+    - ![autoregressive.png](images/autoregressive.png)
 - Residual Flows
   - Residual flows permit more expressive Jacobians.
   - $`\mathbf{z}_i = \mathbf{z}_{i-1}+u(\mathbf{z}_{i-1})`$, where $`u`$ is a neural network
@@ -51,20 +51,20 @@
 - Now we simply train our neural network $v_t\left(\mathbf{x}_{\mathrm{t}}, \theta\right)$ to match this conditional vector field. 
   - $`\mathbb{E}_{t, q(\mathbf{z}), p_t\left(\mathbf{x}_t \mid \mathbf{z}\right)}\left[\left\|v_t\left(\mathbf{x}_{\mathrm{t}}, \theta\right)-u_t\left(\mathbf{x}_{\mathrm{t}} \mid \mathbf{z}\right)\right\|_2^2\right]`$
 - It is interesting to note that Flow Matching therefore generalizes Diffusion, where Diffusion specifies the reverse diffusion process as the chosen conditional probability path.
-  - ![vs_diffusion.png](vs_diffusion.png)[Source](https://www.youtube.com/watch?v=DDq_pIfHqLs)
+  - ![vs_diffusion.png](images/vs_diffusion.png)[Source](https://www.youtube.com/watch?v=DDq_pIfHqLs)
 
 ## Additional Details
 - Dequantization. 
-  - ![deq.png](deq.png)[Source](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial11/NF_image_modeling.ipynb)
+  - ![deq.png](images/deq.png)[Source](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial11/NF_image_modeling.ipynb)
   - We usually have to dequantize discrete data to prevent degenerate solutions concentrated around discrete values.
-    - ![no_deq.png](no_deq.png)[Source](https://mtskw.com/posts/variational-dequantizer/)
+    - ![no_deq.png](images/no_deq.png)[Source](https://mtskw.com/posts/variational-dequantizer/)
   - Question: Why is this _more_ pertinent to flows than other algorithms?
   - One common option here is to use uniform noise, however this approach introduces flat step-wise regions into the data distribution, which makes fitting difficult. 
-    - ![unif_deq.png](unif_deq.png)[Source](https://mtskw.com/posts/variational-dequantizer/)
+    - ![unif_deq.png](images/unif_deq.png)[Source](https://mtskw.com/posts/variational-dequantizer/)
     - Instead, we can use variational dequantization, where we use flows to model the noise to add (based on the pixel value)
-      - ![var_deq.png](var_deq.png)[Source](https://mtskw.com/posts/variational-dequantizer/)
+      - ![var_deq.png](images/var_deq.png)[Source](https://mtskw.com/posts/variational-dequantizer/)
 - Multi-Scale architecture (Squeeze and split)
-  - ![multi_scale.png](multi_scale.png)[Source](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial11/NF_image_modeling.ipynb)
+  - ![multi_scale.png](images/multi_scale.png)[Source](https://github.com/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial11/NF_image_modeling.ipynb)
   - Squeeze: Rearranges data spatially: relevant since we use a 2d Conv layer
     - Remember to change the hidden dimensions of these 2d Conv layers!
   - Split: Many pixels contain less information, so we split off half of the latent dimensions and directly evlauate them on the prior

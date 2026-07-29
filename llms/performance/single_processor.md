@@ -1,8 +1,8 @@
-# Training Performance
+# Single Processor 
 
-As models and data scale in size, optimizing for more efficient processes becomes more and more imperative. This file covers single-device efficiency: what bounds us, memory reduction, and the practical speed checklist. It draws heavily from [Lippe's notes](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/overview.html). See also [Parallelism](parallelism.md), [Inference](inference.md), [GPUs](gpus.md), and [TPUs & Rooflines](tpus.md).
+As models and data scale in size, optimizing for more efficient processes becomes more and more imperative. This draws heavily from [Lippe's notes](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/overview.html). See also [Parallelism](parallelism.md), [Inference](inference.md), [GPUs](gpus.md), and [TPUs & Rooflines](tpus.md).
 
-![overview.png](overview.png)(Adapted from [Lippe](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/overview.html))
+![overview.png](images/overview.png)(Adapted from [Lippe](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/overview.html))
 
 ## Single Processor
 
@@ -42,63 +42,11 @@ As models and data scale in size, optimizing for more efficient processes become
       - Allows for vectorization of functions not written in "vectorized forms".
       - It also allows us to support additional batch dimensions.
     - A note: JAX is designed to be functional. 
-      - Writing code with side effects is dangerous because an error will _not_ be thrown and JAX will just ignore such instructions.
-- What are we bounded by?
-  - [He's article](https://horace.io/brrr_intro.html)
-  - Memory
-    - Size of DRAM
-      - Solution: See below
-  - Bandwidth
-    - Time spent transferring tensors within a GPU
-      - Solution: Operator fusion
-  - Compute (on SRAM)
-    - Time spent on your GPU computing actual floating point operations (FLOPS)
-      - Solution: More tensor cores
-  - Overhead
-    - Everything else
-      - Solution: Asynchronous computation
-- Memory reduction
-  - Memory vs compute
-    - We discuss methods to reduce this memory constraints (sometimes at the cost of increased computational cost)
-  - Mixed Precision Training
-    - Use 32-bit floating-point numbers for weight updates and final loss computation
-    - Use 16-bit floating-point numbers for most computations
-      - Loss scaling may be needed because `float16` may induce underflow/overflow issues
-      - `bfloat16` has a larger range but lower precision, and is an alternative to avoid loss scaling
-    - This reduces both memory and compute costs
-  - Quantization
-    - We represent the weights and activations with lower-precision data types
-    - Quantization-aware Training (QAT) is a way of training that simulates quantization whilst training
-    - Double quantization is when we quantize the scaling factors from the first quantization.
-      - QLoRA combines double quantization with [LoRA](../post_training/notes.md).
-  - Gradient Checkpointing / Activation Recomputation
-    - Trade compute for memory by recomputing activations during the backward pass.  
-  - Gradient Accumulation
-    - We can accumulate gradients over batches and take steps once every few batches.
-    - This to me doesn't feel like it "speeds up" a forward pass. Rather, it just remedies the instability induced by memory limitations that force smaller batch sizes than we would like.
-  - Pruning
-    - Pruning is a technique that removes less important connections, neurons, or structures from a trained model 
-  - Donating buffers (JAX-specific)
-    - Since JAX employs functional programming, we cannot modify variables in place.
-    - If we don't need our input variables, JAX provides a mechanism to donate buffers, which allows us to reuse the memory of the input arguments for the output arguments.
-
-## Batch Size
-
-> Draft — seeded from reading notes, to expand.
-
-- Memory scales roughly linearly with batch size (activations are the main cost; model params and optimizer states are fixed)
-- Compute scales linearly with batch size
-- As batch size increases, GPU utilization improves
-  - Saturates the GPU: more parallel work to fill all compute units
-  - Amortizes fixed costs: kernel launch overhead, memory transfers, optimizer step
-  - Better memory coalescing: larger contiguous memory accesses are more efficient on GPUs
-- Small batch: easier to fit in memory, but worse hardware utilization
-- Larger batch: faster tokens per second, but higher memory demand
-- Rule of thumb: use the largest batch size that fits in memory — the only downside is learning dynamics (compensate by increasing the learning rate; see [Optimization](../optimization/notes.md))
+      - Writing code with side effects is dangerous because an error will _not_ be thrown and JAX will just ignore such instructions
 
 ## Training Speed Checklist
 
-> Draft — seeded from reading notes, to expand.
+Source: https://github.com/rasbt/LLMs-from-scratch/blob/main/ch05/10_llm-training-speed/README.md
 
 - Create the causal mask on the fly (lower memory)
 - Enable tensor cores: one tensor-core instruction computes a small matrix FMA — 64 FMAs/clock on Volta/Turing, ~256 on A100, ~512 on H100 — vs one scalar FMA per CUDA core

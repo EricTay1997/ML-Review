@@ -29,9 +29,9 @@
     - Non-functional Requirements
       - Back of the Envelope calculations
 - Template Design
-  - ![swe_sd.png](swe_sd.png)[Source](https://github.com/donnemartin/system-design-primer?tab=readme-ov-file#push-cdns)
+  - ![swe_sd.png](images/swe_sd.png)[Source](https://github.com/donnemartin/system-design-primer?tab=readme-ov-file#push-cdns)
 - Numbers to Know Cheat Sheet
-  - ![numbers.png](numbers.png)[Source](https://www.hellointerview.com/learn/system-design/deep-dives/numbers-to-know)
+  - ![numbers.png](images/numbers.png)[Source](https://www.hellointerview.com/learn/system-design/deep-dives/numbers-to-know)
 - Components
   - DNS: Resolves domain name. User gets the IP address of the load balancer.
   - Networking: Layer 4 is the transport layer. TCP Handshake and Teardown is carried out before and after data is sent to and from servers.
@@ -133,7 +133,7 @@
 ## Machine Learning SD
 - While ML SD questions may involve the SWE SD topics above, there seems to be a greater focus on modeling. 
 - Template Design (Adapted from [Pham](https://www.amazon.com/Machine-Learning-Design-Interview-System/dp/B09YQWX59Z))
-  - ![ml_sd.png](ml_sd.png)
+  - ![ml_sd.png](images/ml_sd.png)
   - Here, the ML Service can be a few components, e.g. both a Candidate and Ranking service for a recommendation system. 
   - The item and feature store is used as a lookup table for faster inference.
 - Framework

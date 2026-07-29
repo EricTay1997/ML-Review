@@ -31,7 +31,7 @@
   - Iteratively connect the nearest pair of clusters
 - Spectral Clustering
   - We quote an [_excellent_ tutorial on Spectral Clustering](https://people.csail.mit.edu/dsontag/courses/ml14/notes/Luxburg07_tutorial_spectral_clustering.pdf)
-  - ![spectral_clustering.png](spectral_clustering.png)
+  - ![spectral_clustering.png](images/spectral_clustering.png)
   - The linked article elaborates how this is related to the RatioCut problem.
     - $`L = D - W`$, $`D_{ii}`$ is the $`i^{th}`$ row sum of $`W`$  
     - $`\mathrm{cut}\left(A_1, \ldots, A_k\right):=\frac{1}{2} \sum_{i=1}^k W\left(A_i, \bar{A}_i\right)`$, where $`W(A, B):=\sum_{i \in A, j \in B} w_{i j}`$
@@ -66,7 +66,7 @@
         - Suppose we start with $`\pmb\theta_t`$
         - Find $`\pmb\theta_{t+1} = \arg\max_{\pmb\theta} A(\pmb\theta, \pmb\theta_t)`$.
         - Then $`\log \mathrm{likelihood} (\pmb\theta_t) \leq A(\pmb\theta_t, \pmb\theta_t) \leq A(\pmb\theta_{t+1}, \pmb\theta_t) \leq \log \mathrm{likelihood} (\pmb\theta_{t+1})`$
-        - <img src="em.png" width="200">[Source](https://people.duke.edu/~ccc14/sta-663-2016/14_ExpectationMaximization.html)
+        - <img src="images/em.png" width="200">[Source](https://people.duke.edu/~ccc14/sta-663-2016/14_ExpectationMaximization.html)
         - Note that we are not guaranteed to find the global maxima. 
       - E-step: Compute $`\gamma_{ik\pmb\theta_t}`$. 
         - $`P(Z_i = k \mid \mathbf{X}_i = \mathbf{x}_i, \pmb\theta_t) = \frac{P(\mathbf{X}_i = \mathbf{x}_i \mid Z_i = k, \pmb\theta_t) P(Z_i = k \mid \pmb\theta_t)}{P(\mathbf{X}_i = \mathbf{x}_i \mid \pmb\theta_t)} = \frac{w_{kt}\mathcal{N}(\mathbf{x}_i ; \pmb\mu_{kt}, \pmb\Sigma_{kt})}{\sum_{k'}w_{k't}\mathcal{N}(\mathbf{x}_i ; \pmb\mu_{k't}, \pmb\Sigma_{k't})}`$

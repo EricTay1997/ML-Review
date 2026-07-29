@@ -24,5 +24,5 @@
       - Space: Each old 2D convolution layer as in the 2D U-net is extended to be space-only 3D convolution; precisely, 3x3 convolutions become 1x3x3 convolutions.
       - Time: A temporal attention block is added after each spatial attention block. It performs attention over the frame axis and treats spatial axes as the batch dimension. The relative position embedding is used for tracking the order of frames.
   - Here are some popular video models:
-    - ![model_list.png](model_list.png)[Source](https://huggingface.co/blog/video_gen)
+    - ![model_list.png](images/model_list.png)[Source](https://huggingface.co/blog/video_gen)
   - It is relatively straightforward to generate models with Hugging Face ([guide](https://huggingface.co/docs/diffusers/en/using-diffusers/text-img2vid)).

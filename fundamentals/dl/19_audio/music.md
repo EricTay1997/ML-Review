@@ -22,23 +22,23 @@
 
 ## Pre-Training Strategies
 
-- ![pre_training.png](pre_training.png)[Source](https://arxiv.org/pdf/2408.14340)
+- ![pre_training.png](images/pre_training.png)[Source](https://arxiv.org/pdf/2408.14340)
 - Contrastive Learning
   - Models like CLAP, MusCALL, and MuLan jointly embed audio and text, training the model with a [contrastive learning](../15_contrastive_learning/notes.md) objective. 
   - CLAP slices data to deal with variable length audio
 - Masked Modeling
   - This is also used to enhance our understanding of audio.
   - AudioMAE
-    - ![audio_mae.png](audio_mae.png)
+    - ![audio_mae.png](images/audio_mae.png)
   - MERT
 - Generative Models
-  - ![gen_models.png](gen_models.png)[Source](https://arxiv.org/pdf/2408.14340)
+  - ![gen_models.png](images/gen_models.png)[Source](https://arxiv.org/pdf/2408.14340)
   - Autoencoders
     - Neural audio codecs use [VQ-VAEs](../09_autoencoders/notes.md) to learn a codebook of discrete audio tokens that can efficiently represent audio signals
     - EnCodec, SoundStream, Descript Audio Codec
   - Diffusion
     - AudioLDM
-      - ![audio_ldm.png](audio_ldm.png)
+      - ![audio_ldm.png](images/audio_ldm.png)
       - Outside of the audio-specific STFT/MelFB/Vocoder components, this is very similar to conditional LDMs 
       - Note, however, that an important difference is that instead of using a text conditioner, we use an audio encoding $`E^{\mathbf{x}}`$, which is used to compensate for the lack of captioned audio data (versus that of images).
     - MusicLDM
@@ -56,7 +56,7 @@
           - During the noise removal process, we condition the U-Net on the noise level and the compressed latent, which can have access to a reduced version of the non-noisy audio.
         - Also uses an efficient and enriched 1D U-Net
     - AudioLDM2
-      - ![audioldm2.png](audio_ldm2.png)
+      - ![audioldm2.png](images/audio_ldm2.png)
       - In training, we replace the CLAP audio encodings $`E^{\mathbf{x}}`$ in AudioLDM with AudioMAE Features
         - These capture semantic information, unlike the acoustic tokens in the VAE. 
       - Text
@@ -67,7 +67,7 @@
         - This shared sequential conditioning space is dubbed the ”Language of Audio”, which again we can think of as semantic audio tokens.
     - Stable Audio
       - Diffusion models are usually trained to generate a fixed-size output
-      - ![stability_audio.png](stability_audio.png)[Source](https://stability.ai/research/stable-audio-efficient-timing-latent-diffusion)
+      - ![stability_audio.png](images/stability_audio.png)[Source](https://stability.ai/research/stable-audio-efficient-timing-latent-diffusion)
       - This is similar to AudioLDM but instead of using audio encoding $`E^{\mathbf{x}}`$ they use text encodings. Per MusicLDM this should be worse, but this may be dependent on model/data. 
       - Conditions on music start time and duration
     - Stable Audio 2
@@ -83,7 +83,7 @@
         - First predict semantic tokens, then coarse acoustic tokens, then finegrained tokens (See MusicLM for diagram)
       - In inference, we pass in semantic tokens which can either be sampled unconditionally or extracted from a test sample. 
     - MusicLM
-      - ![music_lm.png](music_lm.png)[Source](https://arxiv.org/pdf/2301.11325)
+      - ![music_lm.png](images/music_lm.png)[Source](https://arxiv.org/pdf/2301.11325)
       - Similar to AudioLM, but with possible text/melody conditioning using MuLan
       - Melody conditioning is done by training an additional melody embedding model that concatenates melody embeddings with those from the MuLan encoder
         - This is trained with a contrastive objective using a dataset of paired audio datapoints, derived from musical covers
@@ -93,14 +93,14 @@
       - Trains 3 VQ-VAE models separately on 3 temporal resolutions of music
       - Three autoregressive transformers are used to model these sequences, each conditioned on tokens from the one-level-coarser transformer model.
     - MusicGen 
-      - ![musicgen.png](music_gen.png)[Source](https://hackernoon.com/musicgen-from-meta-ai-understanding-model-architecture-vector-quantization-and-model-conditioning)
+      - ![musicgen.png](images/music_gen.png)[Source](https://hackernoon.com/musicgen-from-meta-ai-understanding-model-architecture-vector-quantization-and-model-conditioning)
         - I believe this diagram to be slightly wrong. Melody should be entering the same way as text.
       - Trained to model sequences of Encodec tokens 
       - Conditioning
         - Text: Experimented with T5 encoder, FLAN-T5, and CLAP.
         - Melody: Took audio, decomposed into drums, bass, vocals, and other, removed drums and bass, quantized to chromagram, and took dominant time-frequency bin in each time step (to prevent overfitting).
       - Token interleaving patterns to alleviate the computational costs of generating multiple codebook streams.
-        - ![music_gen_codebook.png](music_gen_codebook.png)[Source](https://arxiv.org/pdf/2306.05284)
+        - ![music_gen_codebook.png](images/music_gen_codebook.png)[Source](https://arxiv.org/pdf/2306.05284)
         - Codebooks allow us to encode more information for a fixed number of code books.
         - However, for each codebook, we now need to predict its contribution at multiple timesteps. 
         - Typically, we would do this sequentially (flattening), but we could trade off accuracy for efficiency by predicting these in parallel. 
@@ -158,7 +158,7 @@
   - We can break a song into subsections and model those hierarchically ([idea](../26_personal_projects/music_hierarchical_subsections/notes.md)).
 
 ## Datasets
-![music_data.png](music_data.png)[Source](https://arxiv.org/pdf/2408.14340)
+![music_data.png](images/music_data.png)[Source](https://arxiv.org/pdf/2408.14340)
 
 ## Evaluations
 - Audio-domain, quality-focused metrics
@@ -183,7 +183,7 @@
     - Rhythm: Beat F1 score
     - Intensity: Dynamics correlation  smoothed frame-wise loudness in decibels, and then calculates the Pearson’s correlation between the frame-wise values from reference and generation.
 
-![data_evals.png](data_evals.png)
+![data_evals.png](images/data_evals.png)
 - MusicCaps also seems to be a very popular evals dataset. 
 
 ## Research Ideas

@@ -15,7 +15,7 @@
   - One classifier per class, no shared layers - training models separately is expensive
   - Multi-label classifier - lacks specialization 
   - Multi-task classifier
-    - ![harmful.png](harmful.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/harmful-content-detection)
+    - ![harmful.png](images/harmful.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/harmful-content-detection)
 - Metrics
   - Prevalence = $\frac{NumUnpreventedHarmfulPosts}{TotalPosts}$
   - Harmful impressions

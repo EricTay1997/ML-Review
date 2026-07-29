@@ -1,13 +1,13 @@
 # Diffusion
 
 - Much like VAEs, Diffusion models are another type of generative model. 
-- ![diffusion.png](diffusion.png)[Source](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/)
+- ![diffusion.png](images/diffusion.png)[Source](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/)
 - There are a few ways that diffusion is different from VAEs
   - $\mathbf{z}$ has same dimension as $\mathbf{x}_0$
   - The forward process (encoding) is done not by a neural network, but by simply adding Gaussian noise. 
   - The backward process (decoding) is still achieved by a neural network, but instead of predicting the image $\mathbf{x}_0$, we predict the noise $`\pmb\epsilon`$ that was mixed in to produce $`\mathbf{x}_t`$ (note $`\pmb\epsilon = (\mathbf{x}_t - \sqrt{\bar{\alpha}_t}\mathbf{x}_0)/\sqrt{1-\bar{\alpha}_t}`$, not simply $`\mathbf{x}_t - \mathbf{x}_0`$ — both terms are rescaled). 
 - Theoretical Details:
-  - ![diffusion_algo.png](diffusion_algo.png)[Source](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/)
+  - ![diffusion_algo.png](images/diffusion_algo.png)[Source](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/)
   - Data points are assumed to come from a real data distribution $\mathbf{x}_0 \sim q(\mathbf{x})$
   - We define a forward diffusion process in which we add small amount of Gaussian noise to the sample in $`T`$ steps, producing a sequence of noisy samples $`\mathbf{x}_1, \ldots, \mathbf{x}_T`$. The step sizes are controlled by a variance schedule $`\{\beta_t \in (0,1)\}_{t=1}^T`$. 
     - $`q\left(\mathbf{x}_t \mid \mathbf{x}_{t-1}\right) \sim \mathcal{N}\left(\mathbf{x}_t ; \sqrt{1-\beta_t} \mathbf{x}_{t-1}, \beta_t \mathbf{I}\right)`$ 
@@ -49,7 +49,7 @@
   - Timesteps $t$ are sampled from a uniform distribution from 1 to $T$. 
   - $\beta_t$ is scaled linearly from $\beta_1 = 10^{-4}$ to $\beta_T = 0.02$
     - Other variance schedules have also been suggested since:
-      - ![cosine.png](cosine.png)[Nichol and Dhariwal](https://arxiv.org/pdf/2102.09672) argue that the training steps with large $`t`$ is irrelevant for linear. 
+      - ![cosine.png](images/cosine.png)[Nichol and Dhariwal](https://arxiv.org/pdf/2102.09672) argue that the training steps with large $`t`$ is irrelevant for linear. 
       - "The choice of the scheduling function can be arbitrary, as long as it provides a near-linear drop in the middle of the training process and subtle changes around $`t=0`$ and $`t=T`$" [Source](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/) (ToDo: To understand)
   - $`\mathbf{\Sigma}_\theta(\mathbf{x}_t, t) = \sigma^2_t\mathbf{I},`$ where both $`\sigma^2_t = \beta_t`$ and $`\sigma^2_t = \frac{1-\bar{\alpha}_{t-1}}{1-\bar{\alpha}_t}\beta_t`$ were tried
   - We model $L_0$ using a separate discrete decoder ([Section 3.3](https://arxiv.org/pdf/2006.11239))
@@ -59,7 +59,7 @@
     - Embedding and concatenation, e.g. passing in an additional channel 
     - Embedding and adding, similar to how timestep conditioning is handled 
     - Adding cross-attention layers that can ‘attend’ to a (text) sequence passed in as conditioning
-      - ![cross_attention.png](cross_attention.png)[Source](https://wandb.ai/johnowhitaker/midu-guidance/reports/Mid-U-Guidance-Fast-Classifier-Guidance-for-Latent-Diffusion-Models--VmlldzozMjg0NzA1)
+      - ![cross_attention.png](images/cross_attention.png)[Source](https://wandb.ai/johnowhitaker/midu-guidance/reports/Mid-U-Guidance-Fast-Classifier-Guidance-for-Latent-Diffusion-Models--VmlldzozMjg0NzA1)
   - Classifier-free Guidance
     - Here, we create two predictions at inference time: One with conditioning and one without. 
     - We then use the two to push even further in the direction indicated by the text-conditioned prediction.
@@ -71,11 +71,11 @@
         - Compute loss in embeddings space
         - Update noise that we start generation process with
   - Image + Text conditioning
-    - ![image_conditioning.png](image_conditioning.png)[Source](https://arxiv.org/pdf/2208.01618)
+    - ![image_conditioning.png](images/image_conditioning.png)[Source](https://arxiv.org/pdf/2208.01618)
     - Requires Training
       - Textual inversion
         - Learn a textual representation of input image.
-        - ![textual_inversion.png](textual_inversion.png)[Source](https://arxiv.org/pdf/2208.01618)
+        - ![textual_inversion.png](images/textual_inversion.png)[Source](https://arxiv.org/pdf/2208.01618)
       - [DreamBooth](https://arxiv.org/pdf/2208.12242)
         - Leverages semantic prior
         - Authors label all input images of the subject "a [identifer][class]"
@@ -96,7 +96,7 @@
 - Latent Diffusion
   - Since attention grows quadratically with input size, large images are expensive to generate.
   - Latent Diffusion uses a VAE to compress images, and we run diffusion in the latent space.
-  - ![latent.png](latent.png)[Source](https://arxiv.org/pdf/2112.10752)
+  - ![latent.png](images/latent.png)[Source](https://arxiv.org/pdf/2112.10752)
 - Faster Sampling
   - We could use a [strided sampling schedule](https://arxiv.org/pdf/2102.09672) to reduce the number of steps we take.  
   - [DDIM](https://arxiv.org/pdf/2010.02502) combines the idea of an accelerated trajectory with $\sigma_t = 0$ (deterministic)

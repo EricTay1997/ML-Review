@@ -1,11 +1,11 @@
 # Testing and Metrics
 
 * Metrics
-  * ![offline.png](offline.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/introduction-and-overview)
-  * ![online.png](online.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/introduction-and-overview)
+  * ![offline.png](images/offline.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/introduction-and-overview)
+  * ![online.png](images/online.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/introduction-and-overview)
   * Details
     * Classification
-      * ![Classification Statistics](classification_statistics.png)[Source](https://www.researchgate.net/publication/381097743_ECG_Classification_System_based_on_time_Domain_Features_with_Least_Square_Support_Vector_Machine_LS-SVM)
+      * ![Classification Statistics](images/classification_statistics.png)[Source](https://www.researchgate.net/publication/381097743_ECG_Classification_System_based_on_time_Domain_Features_with_Least_Square_Support_Vector_Machine_LS-SVM)
       * Additionally, we have the following definitions:
         * Recall = TPR = Sensitivity
         * FPR = 1 - Specificity 

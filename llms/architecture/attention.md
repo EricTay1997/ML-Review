@@ -31,6 +31,8 @@
 
 ## Positional-encoding variants
 
+- M-RoPE / interleaved M-RoPE (Qwen-VL family) — written up in [Multimodal LLMs](multimodal_llms.md) (2D RoPE in the ViT, (t, h, w) triplets in the decoder, chunked→interleaved frequency allocation)
+
 - Partial RoPE (MiniMax-M2)
   - Prevents "too much" rotation for long sequences, particularly those longer than the longest documents in the training dataset
   - I.e., the rationale could be that *no* rotation is better than a "bad" or "too extreme" rotation the model hasn't seen in training

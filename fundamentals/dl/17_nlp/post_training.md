@@ -5,13 +5,13 @@
 ## Encoder-Only
 - BERT
   - Single Text Classification
-    - ![bert_single_classification.png](bert_single_classification.png)[Source](http://d2l.ai/chapter_natural-language-processing-applications/finetuning-bert.html)
+    - ![bert_single_classification.png](images/bert_single_classification.png)[Source](http://d2l.ai/chapter_natural-language-processing-applications/finetuning-bert.html)
   - Text Pair Classification or Regression
-    - ![bert_pair_classification.png](bert_pair_classification.png)[Source](http://d2l.ai/chapter_natural-language-processing-applications/finetuning-bert.html)
+    - ![bert_pair_classification.png](images/bert_pair_classification.png)[Source](http://d2l.ai/chapter_natural-language-processing-applications/finetuning-bert.html)
   - Text Tagging
-    - ![bert_text_tagging.png](bert_text_tagging.png)[Source](http://d2l.ai/chapter_natural-language-processing-applications/finetuning-bert.html)
+    - ![bert_text_tagging.png](images/bert_text_tagging.png)[Source](http://d2l.ai/chapter_natural-language-processing-applications/finetuning-bert.html)
   - Question Answering
-    - ![bert_qna.png](bert_qna.png)[Source](http://d2l.ai/chapter_natural-language-processing-applications/finetuning-bert.html)
+    - ![bert_qna.png](images/bert_qna.png)[Source](http://d2l.ai/chapter_natural-language-processing-applications/finetuning-bert.html)
     - For the Stanford Question Answering Dataset, the answer to every question is a text span from the input passage.
     - The goal is to predict the start and end of the text span.
 

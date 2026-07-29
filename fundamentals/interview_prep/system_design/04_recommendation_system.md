@@ -71,7 +71,7 @@
         - Optimization is usually done via Weighted Alternating Least Squares (alternating between fixing $`U`$ and $`V`$), or SGD. WALS is usually converges faster and is parallelizable.
     - Two Tower: 
       - In CG, rather than using all item features, we usually just embed item ID. 
-      - ![youtube_cg.png](youtube_cg.png)[Source](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf)
+      - ![youtube_cg.png](images/youtube_cg.png)[Source](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf)
   - Ranking
     - There are multiple Learning To Rank (LTR) algorithms: Pointwise, Pairwise (RankNet, LambdaRank, LambdaMART) and Listwise (SoftRank, ListNet, AdaRank). We focus on the pointwise method for now. 
     - Linear Regression is a good baseline, but
@@ -87,7 +87,7 @@
       - Joint Modeling
         - We do something more complicated than embedding similarity
         - Deep network
-          - ![youtube_ranking.png](youtube_ranking.png)[Source](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf)
+          - ![youtube_ranking.png](images/youtube_ranking.png)[Source](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf)
         - Can extend to Wide+Deep, and Deep FM (see below) if appropriate.  
   - Re-Ranking
     - Region-restricted videos
@@ -136,7 +136,7 @@
         - A more "modern" approach would probably be something that incorporates attention.
   - Embed items into the same space
     - Use session data to group items in the same session / within a certain radius of each other together
-      - ![word2vec.png](word2vec.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/similar-listings-on-vacation-rental-platforms)
+      - ![word2vec.png](images/word2vec.png)[Source](https://bytebytego.com/courses/machine-learning-system-design-interview/similar-listings-on-vacation-rental-platforms)
         - Skip-gram negative-sampling objective (maximized; the Airbnb listing-embedding loss — note this is SGNS, not InfoNCE, which is a softmax over one positive vs a set of negatives) = $`\sum_{(c, p) \in D_p} \log \frac{1}{1+e^{-E_c \cdot E_p}}+\sum_{(c, n) \in D_n} \log \frac{1}{1+e^{E_c \cdot E_n}}+\sum_{(c, b) \in D_{\text {booked }}} \log \frac{1}{1+e^{-E_c \cdot E_b}}+\sum_{(c, n) \in D_{\text {hard }}} \log \frac{1}{1+e^{E_c \cdot E_n}}`$
     - Use session + sequential data: self-attention.
     - AutoRec
@@ -151,7 +151,7 @@
   - [A Tour of the Recommender System Model Zoo](https://mlfrontiers.substack.com/p/a-tour-of-the-recommender-system) covers popular architectures. 
   - NeuMF
     - We use 2 user embedding matrices and 2 item embedding matrices
-      - ![neu_mf.png](neu_mf.png)[Source](http://d2l.ai/chapter_recommender-systems/neumf.html)
+      - ![neu_mf.png](images/neu_mf.png)[Source](http://d2l.ai/chapter_recommender-systems/neumf.html)
       - We do generic MF on the left, and add a deep network on the right. 
   - Wide and Deep
     - Use "wide" features made from crossing features
@@ -165,7 +165,7 @@
   - Deep FM
     - Similar to the DCN, except that we replace the Cross network with an FM. 
   - DLRM (Deep Learning Recommendation Model)
-    - ![dlrm.png](dlrm.png)
+    - ![dlrm.png](images/dlrm.png)
     - Drops the parallel deep tower over concatenated embeddings (it still has a bottom MLP for dense features and a top MLP after the dot-product interaction layer)
   - DHEN (Deep Hierarchical Ensemble Network)
     - Increased the complexity of interactions (dot product, self-attention, convolution, linear, cross module), and the degree of interaction (3)

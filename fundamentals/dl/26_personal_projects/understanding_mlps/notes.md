@@ -25,7 +25,7 @@
 | 1                       | 2                                | Tanh                | 100                |
 | 10                      | 3                                | Identity            | 50                 |
 
-![training_stats.png](training_stats.png)
+![training_stats.png](images/training_stats.png)
 
 These results indicate that:
 * Nonlinear activation functions are required to separate the XOR dataset, as Goodfellow indicates.
@@ -37,14 +37,14 @@ The remainder of this document will discuss why this is the case.
 - For input $x \in \mathbb{R}^2$, we let the output of our MLP model be $f(x)$. Since we use a sigmoid activation layer for our binary classification task, we are classifying $x$ to be in class 1 if $f(x) > 0$, and class 0 if $f(x) \leq 0$.
 - 0 hidden layers: $f(x) = W_0x + b_0, W_0 \in \mathbb{R}^{1 \times 2}, b_0 \in \mathbb{R}$
 
-![0_hidden.png](0_hidden.png)
+![0_hidden.png](images/0_hidden.png)
 - 1 hidden layer with $p$ hidden units: $f(x) = W_0g_1(W_1x + b_1) + b_0,$ where $g_1$ is our activation function, $W_0 \in \mathbb{R}^{1 \times p}, b_0 \in \mathbb{R}, W_1 \in \mathbb{R}^{p \times 2}, b_1 \in \mathbb{R^p}$.
     - Here, we plot with $`p = 3`$.
 
-![1_hidden.png](1_hidden.png)
+![1_hidden.png](images/1_hidden.png)
 - 2 hidden layers: $f(x) = W_0g_1(W_1g_2(W_2x + b_2) + b_1) + b_0$
 
-![2_hidden.png](2_hidden.png)
+![2_hidden.png](images/2_hidden.png)
 
 Figure credit: https://alexlenail.me/NN-SVG/index.html
 
@@ -75,17 +75,17 @@ Figure credit: https://alexlenail.me/NN-SVG/index.html
 - $Wx$
     - Conducting the matrix multiplication, we see that the $`i^{th}`$ standard basis vector is mapped to the $`i^{th}`$ column of $`W`$!
     - For more geometric intuition, when $`W`$ is square, we can envision it as "rotating" space 
-    - ![matmul.gif](matmul.gif)
+    - ![matmul.gif](images/matmul.gif)
       - Note how $`[1,0]^\top`$ and $`[0,1]^\top`$ gets mapped to $`[2,3]^\top`$ and $`[-1,2]^\top`$ respectively.
     - If a reader needs more clarification, I like [Khan's video](https://www.youtube.com/watch?v=kYB8IZa5AuE) about this topic.
 - $+ b$ "translates" each point by vector $b$
 - $g$ "stretches and squishes space" in a way that "never cuts, breaks, or folds it" (if it is a homeomorphism) ([Olah](https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/))
-    - ![relu.gif](relu.gif) ![tanh.gif](tanh.gif) 
+    - ![relu.gif](images/relu.gif) ![tanh.gif](images/tanh.gif) 
 - We plot the combination of these effects in the next section. 
 
 ## Putting It All Together
 - Why can we separate the XOR dataset with 1 hidden layer, 2 hidden units, and nonlinearities?
-    - ![model_relu.gif](model_relu.gif) ![model_tanh.gif](model_tanh.gif) 
+    - ![model_relu.gif](images/model_relu.gif) ![model_tanh.gif](images/model_tanh.gif) 
     - We plot the transformation of datapoints for the final weights of the models that were able to separate the XOR dataset. 
     - Let's now discuss why all the other model architectures were unable to separate the data. 
 - Why can't we separate the XOR dataset with 0 hidden layers?

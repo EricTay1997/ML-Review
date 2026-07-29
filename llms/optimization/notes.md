@@ -5,7 +5,7 @@
 ## Batch size and learning dynamics
 
 - Use the largest batch size that fits in memory — the only downside is learning dynamics; compensate by increasing the learning rate
-- Hardware side of batch size (utilization, memory scaling): see [Performance / Training](../performance/training.md#batch-size)
+- Hardware side of batch size (utilization, memory scaling): see [Performance / Training](../performance/basics.md#batch-size)
 
 ## To write up
 
