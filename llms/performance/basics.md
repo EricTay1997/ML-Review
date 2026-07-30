@@ -4,9 +4,9 @@
 - $`N`$ — total parameter count; $`D`$ — number of training tokens
 - Bytes: bf16/fp16 = 2, fp32 = 4. Any stored activation tensor of shape $`(b, s, h)`$ costs $`2sbh`$ bytes in bf16 — most per-layer memory terms below are multiples of this
 
-## GPUs (more in [GPUS](./gpus.md))
+## Basics
 
-- Where things live during training
+- Where things live during training (GPUs)
   - HBM (GPU) — model parameters, optimizer states, activations, gradients
   - CPU (RAM) — dataset / dataloader
   - Disk — full dataset, checkpoints
@@ -15,15 +15,30 @@
   - Memory
     - Size of DRAM
       - Solution: See below
-  - Bandwidth
-    - Time spent transferring tensors within a GPU
+  - (HBM) Bandwidth
+    - Time spent transferring tensors within a GPU (from GPU memory - HBM, to compute cores)
       - Solution: Operator fusion
+  - Inter-chip Communication
+    - PCIe, NVLink / NVSwitch (ICI), InfiniBand / RoCE (DCN)
   - Compute (on SRAM)
     - Time spent on your GPU computing actual floating point operations (FLOPS)
       - Solution: More tensor cores
   - Overhead
     - Everything else
       - Solution: Asynchronous computation
+- Which bound am I hitting? **Arithmetic intensity** (source: [scaling book — roofline](https://jax-ml.github.io/scaling-book/roofline/))
+  - $`\text{Arithmetic Intensity} = \dfrac{\text{Computation FLOPs}}{\text{Communication Bytes}}`$
+  - Compare against the accelerator's **ridge point** = peak FLOPs/s ÷ bandwidth. Above it → compute-bound; below → bandwidth-bound
+  - Worked example — matmul $`X[B, D] \times Y[D, F] \to Z[B, F]`$, all bf16 (local notation: $`B`$ is the per-replica batch in _tokens_, $`D, F`$ are model dims)
+    - Load $`2BD + 2DF`$ bytes, perform $`2BDF`$ FLOPs, write $`2BF`$ bytes back:
+    - $`\text{Intensity(matmul)} = \dfrac{2BDF}{2BD + 2DF + 2BF} = \dfrac{BDF}{BD + DF + BF}`$
+    - Assuming $`B \ll D, F`$: $`\dfrac{BDF}{BD + DF + BF} \approx \dfrac{BDF}{DF} = B`$ — intensity _is_ the token batch size
+    - So compute-bound requires $`B > \text{Intensity(accelerator)} = \dfrac{1.97 \times 10^{14}}{8.20 \times 10^{11}} = 240`$ tokens
+      - Those numbers are a **TPU v5e MXU** (197 bf16 TFLOP/s, 820 GB/s HBM); for an H100 the ridge is ~295 FLOPs/byte
+    - Reasonable for transformer matmuls: per-replica $`B < 1024`$ tokens (_not_ sequences) while $`D, F > 8000`$
+  - Caveats
+    - The $`B \ll D, F`$ assumption fails when $`D, F`$ are small — the $`BD`$ / $`BF`$ terms stop being negligible, intensity falls below $`B`$, and the critical batch size needed to become compute-bound rises
+    - Dtype-specific: int8 halves the bytes (intensity $`\approx 2B`$) but also raises peak FLOPs/s (v5e: 394 TOP/s vs 197 TFLOP/s), so the ridge moves too — on v5e the two cancel to the same ~240-token threshold, at 2× the throughput
 
 ## Training vs Inference
 
@@ -51,6 +66,10 @@
 
 How memory/bandwidth/compute scale with $`b`$ is covered in [Training vs Inference](#training-vs-inference); this section is about _choosing_ $`b`$.
 
+- High Level
+  - As $`b`$ increases, compute scales linearly but bandwidth scales sublinearly, because weight reads are amortized across the batch
+  - We want to increase batch size until we're compute-bound, because throughput plateaus at this ridge
+  - This $`B_{sat}`$ is much lower for training because the model weight read is amortized over all training tokens, whilst for inference this needs to happen for every decode token.
 - Training
   - Bigger batch → better GPU utilization
     - Saturates the GPU: more parallel work to fill all compute units
@@ -58,7 +77,6 @@ How memory/bandwidth/compute scale with $`b`$ is covered in [Training vs Inferen
     - Better memory coalescing: larger contiguous memory accesses are more efficient on GPUs
   - Batch just needs to be **big enough**: kernels saturate early (at $`s{=}4k`$ even $`b{=}1`$ streams thousands of tokens per weight read) and per-step fixed costs (optimizer step, DP all-reduce) amortize past a few thousand tokens/step — beyond that gains are marginal, and the _global_ batch is set by learning dynamics (critical batch size, with LR scaled to match; see [Optimization](../optimization/notes.md))
 - Inference
-  - As $`b`$ increases, compute scales linearly but bandwidth scales sublinearly, because weight reads are amortized across the batch
   - Bigger batch → higher **total** throughput: decode moves up the roofline toward compute-bound
     - Below a saturation batch $`B_{sat}`$, step time is dominated by streaming the weights layer-by-layer from HBM, so it's nearly flat — computing 1 vs 10 tokens can take a similar time; beyond $`B_{sat}`$ the kernels become compute-bound and step time grows roughly with $`b`$ ([Gordić's vLLM deep-dive](https://www.aleksagordic.com/blog/vllm))
     - Throughput = $`b / T(b)`$, so: below $`B_{sat}`$ ($`T`$ ≈ constant) throughput grows ~linearly with $`b`$; above it ($`T \propto b`$) throughput **plateaus** at the compute roofline — zero marginal throughput, linearly worse latency. $`B_{sat}`$ is the operating point, not just a landmark
@@ -73,29 +91,89 @@ How memory/bandwidth/compute scale with $`b`$ is covered in [Training vs Inferen
 
 The parameter matmuls are covered above; this is the scores/values part — the only cost that _grows with context_. Mechanism details live in [Attention Variants](../architecture/attention.md); this section is just the cost model.
 
-- **Naive attention**
-  - Training: compute $`4s^2h`$/layer (the $`s/8h`$ share above); the $`s \times s`$ matrix is _materialized to HBM_ → the $`5as^2b`$ activation-memory term, and the same matrix is written/re-read around the softmax — few FLOPs per byte, so long-context attention goes **bandwidth-bound** even in training
-  - Inference: KV cache grows $`4 \cdot n_{kv} \cdot d_{head}`$ bytes/token/layer (the 320 KiB/token above); decode reads the whole cache every token — the $`O(s)`$ bandwidth term
-- **Flash attention** ([Dao et al., arXiv 2205.14135](https://arxiv.org/abs/2205.14135)) — same math, different schedule
-  - Tiles Q, K, V through SRAM with an online (running-max) softmax; the $`s \times s`$ matrix never touches HBM
-  - Training: kills the $`5as^2b`$ memory term (→ activations linear in $`s`$) and the matrix traffic (→ compute-bound again); FLOPs _unchanged_ — still $`O(s^2)`$, slightly more in backward (tiles are recomputed rather than stored)
-  - Inference: same win for prefill; decode unchanged — the KV read is irreducible (flash-decoding parallelizes it, doesn't shrink it)
-- **Sliding-window attention (SWA)** — each query sees only the last $`w`$ tokens (Mistral, Gemma 3, gpt-oss)
-  - Training: compute $`4s^2h \to 4swh`$ — linear in $`s`$
-  - Inference: KV cache capped at $`w`$ tokens — memory, per-token reads, and per-token FLOPs all **constant** in context
-  - Cost: no direct access past $`w`$ (receptive field grows ~$`wL`$ across depth, but recall degrades); shipped interleaved with full-attention layers (Gemma 3 at 5:1, gpt-oss alternating)
-- **Linear attention / gated DeltaNet** (Qwen3-Next; analyzing just the SSM part) — replace softmax-over-history with a **fixed-size recurrent state** $`S`$ ($`d_k \times d_v`$ per head): each step decays $`S`$, writes $`k_t v_t^\top`$, reads $`o_t = S_t^\top q_t`$ (delta rule + gating refine the write/decay; see [Attention Variants](../architecture/attention.md))
-  - Training: no $`s^2`$ anywhere — the attention part is linear in $`s`$ (~$`6ad^2`$ FLOPs/token, small next to QKVO); chunked-scan formulations keep it matmul-shaped for tensor cores
-  - Inference: **no KV cache** — the state is ~2 MiB/layer ($`a{=}64, d{=}128`$), equivalent to a KV cache of only ~512 tokens/layer; beyond that it's pure win, and per-token reads/FLOPs are constant in context
-  - Cost: the state is a _lossy compression_ of the entire history — exact long-range recall (needle-style retrieval) degrades; hence hybrids (Qwen3-Next interleaves 3 GDN : 1 full-attention layer)
-- Summary (per layer, one sequence):
+Summary (per layer, one sequence; all in $`s`$ — see the GDN caveat for the $`s \to d`$ trade). Prefill tracks the training-compute column:
 
-| | Train compute | Train act. memory | Decode cache/state | Decode reads+FLOPs per token | Recall |
-|---|---|---|---|---|---|
-| Naive | $`O(s^2)`$ | $`O(s^2)`$ | $`O(s)`$ | $`O(s)`$ | exact |
-| Flash | $`O(s^2)`$ | $`O(s)`$ | $`O(s)`$ | $`O(s)`$ | exact |
-| SWA | $`O(sw)`$ | $`O(s)`$ | $`O(w)`$ | $`O(w)`$ | window only |
-| Linear/GDN | $`O(s)`$ | $`O(s)`$ | $`O(1)`$ | $`O(1)`$ | lossy |
+**Training**
+
+| | Compute | Bandwidth | Act. memory |
+|---|---|---|---|
+| Naive | $`O(s^2)`$ | $`O(s^2)`$ | $`O(s^2)`$ |
+| Flash | $`O(s^2)`$ | $`O(s^2d^2/M)`$ | $`O(s)`$ |
+| SWA | $`O(sw)`$ | $`O(sw)`$ | $`O(sw)`$ |
+| Linear/GDN | $`O(s)`$ | $`O(s)`$ | $`O(s)`$ |
+
+**Decode (per token)**
+
+| | Compute | Bandwidth | Cache/state | Recall |
+|---|---|---|---|---|
+| Naive | $`O(s)`$ | $`O(s)`$ | $`O(s)`$ | exact |
+| Flash | $`O(s)`$ | $`O(s)`$ | $`O(s)`$ | exact |
+| SWA | $`O(w)`$ | $`O(w)`$ | $`O(w)`$ | window only |
+| Linear/GDN | $`O(1)`$ | $`O(1)`$ | $`O(1)`$ | lossy |
+
+- Flash is the only row that improves _nothing_ in the compute columns — it's a schedule change, so its win is entirely in bandwidth and training memory, and decode is untouched
+- SWA and GDN improve every column, because they change the algorithm; their difference is the decode floor ($`O(w)`$ truncated-exact vs $`O(1)`$ compressed-lossy)
+
+### Naive attention
+
+- Training
+  - Compute: $`O(s^2)`$: forward $`4s^2h`$/layer — $`2s^2h`$ for the scores $`QK^\top`$ + $`2s^2h`$ for the values $`PV`$ (per head $`4s^2d`$, summed over $`a`$ heads with $`h = a \cdot d_{head}`$)
+  - fwd+bwd = $`12s^2h`$ — **6 matmuls** of $`2s^2d`$ per head: 2 forward + 4 backward, since each forward matmul needs one gradient per operand (both operands are activations here, attention having no weights). From $`O = PV`$: $`dV = P^\top dO`$, $`dP = dO V^\top`$; from $`S = QK^\top`$: $`dQ = dS K`$, $`dK = dS^\top Q`$. Same 3× rule as $`6ND`$
+    - The softmax and its backward are elementwise $`O(s^2)`$ non-matmul work, which runs on the slow vector units rather than tensor cores
+  - Bandwidth: $`O(s^2)`$: the $`s \times s`$ matrix is _materialized to HBM_ and round-trips several times around the softmax (write $`S`$ → read → write $`P`$ → read) — so it moves $`O(s^2)`$ bytes to do $`O(s^2 d)`$ FLOPs, an intensity of only ~$`d`$ vs the ~240–295 ridge
+    - → long-context attention is **bandwidth-bound even in training**, while the parameter matmuls around it are comfortably compute-bound
+  - Memory: $`O(s^2)`$: the $`5as^2b`$ activation term is the dominant term at long context
+
+### Flash attention
+
+[Dao et al., arXiv 2205.14135](https://arxiv.org/abs/2205.14135) — same math, different schedule: tile Q, K, V through SRAM with an online (running-max) softmax so the $`s \times s`$ matrix never touches HBM. **Trades compute for bandwidth** — the winning trade, because attention was bandwidth-bound.
+
+- Primer
+  - By materializing the $`s \times s`$ $`QK^\top`$ matrix we incur $`O(s^2)`$ **bandwidth** (it round-trips HBM around the softmax) and $`O(s^2)`$ **memory** (it's kept for the backward pass)
+  - Flash attention avoids that materialization, hence $`O(s)`$ memory. The matrix is only ever needed to produce the probability scalers that weight each token's linear combination of $`V`$ vectors — and **that linear combination can be accumulated without ever holding the matrix** 
+  - Note: if SRAM were big enough to hold Q, K, V, bandwidth would be $`O(sd)`$ — read each once and done. The problem is that it isn't
+  - Mechanism: hold Q, then stream K, V past it in blocks. Per token, carry three things — the running max $`m`$, the running sum $`\ell`$, and a running linear combination of $`V`$. Each new block rescales that accumulated combination (by $`\exp(m_{old} - m_{new})`$ and adds a new component. After the last block, normalising by $`\ell`$ gives exactly the intended output
+  - So why $`O(s^2d^2/M)`$ bandwidth rather than $`O(sd)`$? Because SRAM can't hold all of Q either. Q must be tiled, and **each Q tile re-streams all of K and V** — so bandwidth = (one pass over K, V) × (number of Q tiles) = $`O(sd) \times O(sd/M) = O(s^2d^2/M)`$
+    - $`sd/M`$ is just "how many SRAM-fuls of Q there are"
+- Training
+  - Compute: $`O(s^2) \to O(s^2)`$ (unchanged; **~+17%** constant): the backward recomputes $`S = QK^\top`$ from tiles instead of reading it, a 7th matmul → $`14s^2h`$ vs $`12s^2h`$. Under causal masking it also skips fully-masked tiles (~2× saving), which can more than pay that back
+  - Bandwidth: $`O(s^2) \to O(s^2d^2/M)`$ ($`M`$ = SRAM capacity, so ~$`M/d^2`$ less traffic — ~6–24× on an A100): the $`s^2`$ round-trips vanish; K, V are re-read once per Q block instead — intensity climbs above the ridge and attention becomes **compute-bound**
+  - Memory: $`O(s^2) \to O(s)`$: kills the $`5as^2b`$ term → activations linear in $`s`$
+- Inference (nothing new here)
+  - Compute: prefill $`O(s^2)`$, decode $`O(s)`$/token: prefill like training-forward ($`4s^2h`$/layer); decode $`4sh`$/token/layer (one query vs $`s`$ cached keys) — the $`s/8h`$ share above
+  - Bandwidth: $`O(s)`$/token: decode reads the whole KV cache every token — intensity ~1 (each cached K element feeds one multiply-add for the score, each V element one for the sum), lifted only to $`a/n_{kv}`$ by GQA (~8 for 70B) — still far under the ridge
+  - Memory: $`O(s)`$: KV cache grows $`4 \cdot n_{kv} \cdot d_{head}`$ bytes/token/layer (the 320 KiB/token above)
+
+### Sliding-window attention (SWA)
+
+Each query sees only the last $`w`$ tokens (Mistral, Gemma 3, gpt-oss).
+
+- Training
+  - Compute: $`O(s^2) \to O(sw)`$: $`4s^2h \to 4swh`$ forward ($`12swh`$ fwd+bwd)
+  - Bandwidth: $`O(s^2) \to O(sw)`$
+  - Memory: $`O(s^2) \to O(sw)`$: $`5as^2b \to 5aswb`$
+- Inference
+  - Compute: prefill $`O(s^2) \to O(sw)`$, decode $`O(s) \to O(w)`$/token: $`4swh`$/layer prefill, $`4wh`$/token/layer decode — constant in context
+    - Prefill is where the win is largest for long prompts: at $`s{=}32k, w{=}4k`$ that's 8× fewer attention FLOPs, dropping attention from ~50% of prefill FLOPs ($`s/8h`$) to ~6%
+  - Bandwidth: prefill $`O(s^2) \to O(sw)`$, decode $`O(s) \to O(w)`$: reads only $`w`$ tokens of KV per step
+  - Memory: $`O(s) \to O(w)`$: KV cache capped at $`w`$ tokens/layer
+- Cost: no direct access past $`w`$ (receptive field grows ~$`wL`$ across depth, but recall degrades); shipped interleaved with full-attention layers (Gemma 3 at 5:1, gpt-oss alternating)
+
+### Linear attention / gated DeltaNet
+
+Qwen3-Next; analyzing just the SSM part — replace softmax-over-history with a **fixed-size recurrent state** $`S`$ ($`d_k \times d_v`$ per head): each step decays $`S`$, writes $`k_t v_t^\top`$, reads $`o_t = S_t^\top q_t`$ (delta rule + gating refine the write/decay; see [Attention Variants](../architecture/attention.md)).
+
+- Training (over $`s`$ tokens)
+  - Compute: $`O(s^2) \to O(s)`$: ~$`6ad^2`$ FLOPs/token (state decay + outer-product write + read), small next to QKVO; chunked-scan formulations keep it matmul-shaped for tensor cores
+  - Bandwidth: $`O(s^2) \to O(s)`$: no $`s^2`$ traffic; within a chunk the state stays in SRAM/registers
+  - Memory: $`O(s^2) \to O(s)`$: activations are the per-chunk states
+- Inference (per token)
+  - Compute: $`O(s) \to O(1)`$: ~$`6ad^2`$, independent of context
+  - Bandwidth: $`O(s) \to O(1)`$: read/write the fixed state per step
+  - Memory: $`O(s) \to O(1)`$: **no KV cache** — the state is ~2 MiB/layer ($`a{=}64, d{=}128`$), equivalent to a KV cache of only ~512 tokens/layer; past that it's pure win
+- Caveat — **the real trade**: $`s`$ for $`d`$. The complexities above are all in $`s`$, but per token per layer attention compute costs $`4sh`$ while GDN costs about $`6hd`$ — the sequence-length dependence becomes a state-dimension dependence, so GDN is only cheaper once $`s >> d`$
+  - Per head that reads as $`4sd \to 6d^2`$ — quadratic in $`d`$ because the state is a _matrix_ (a key→value linear map), and touching a $`d \times d`$ matrix costs $`d^2`$, whereas attention only manipulates vectors ($`O(d)`$ each) but must touch $`s`$ of them
+- Cost: the state is a _lossy compression_ of the entire history — exact long-range recall (needle-style retrieval) degrades; hence hybrids (Qwen3-Next interleaves 3 GDN : 1 full-attention layer)
 
 ## Optimization Methods
 

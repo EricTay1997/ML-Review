@@ -8,7 +8,6 @@ Things already read that still need to be written up as notes in `llms/`, ordere
 - [ ] [Recent Developments in LLM Architectures: KV Sharing, mHC, and Compressed Attention (Raschka)](https://magazine.sebastianraschka.com/p/recent-developments-in-llm-architectures) — Gemma 4, DeepSeek V4, cross-layer KV sharing, compressed attention → [llm_architectures.md](architecture/llm_architectures.md); also covers the mHC item below
 - [ ] [A Visual Guide to Attention Variants in Modern LLMs (Raschka)](https://magazine.sebastianraschka.com/p/visual-attention-variants) — MHA → GQA/MLA, sparse attention, hybrid linear-attention stacks → [attention.md](architecture/attention.md)
 - [ ] Gated DeltaNet deep-dive (Qwen3-Next) → expand the linear-attention section of [attention.md](architecture/attention.md)
-- [x] Qwen3 M-RoPE (multimodal RoPE; source: [Qwen3-VL report, arXiv 2511.21631](https://arxiv.org/abs/2511.21631)) → [attention.md](architecture/attention.md) + [multimodal_llms.md](architecture/multimodal_llms.md) (landed in multimodal_llms.md 2026-07-28 with figures; attention.md cross-refs)
 - [ ] [Scaling Latent Reasoning via Looped Language Models (Ouro, arXiv 2510.25741)](https://arxiv.org/pdf/2510.25741) — looped transformers / latent recurrence → [llm_architectures.md](architecture/llm_architectures.md)
 - [ ] [Qwen3 from scratch (Raschka)](https://magazine.sebastianraschka.com/p/qwen3-from-scratch) → [llm_architectures.md](architecture/llm_architectures.md)
 - [ ] [The technical DeepSeek deep-dive (Raschka)](https://magazine.sebastianraschka.com/p/technical-deepseek) → MLA/sparse-attention detail in [attention.md](architecture/attention.md)
@@ -78,7 +77,7 @@ Things already read that still need to be written up as notes in `llms/`, ordere
 ## evals/
 
 - [ ] [LLM evaluation: 4 approaches (Raschka)](https://magazine.sebastianraschka.com/p/llm-evaluation-4-approaches) → expand [llm_evals.md](evals/llm_evals.md)
-- [x] DeepSeekMath V2 meta-verifiers, from the evals angle → [llm_evals.md](evals/llm_evals.md) (section moved from rl/reasoning.md 2026-07-28)
+- [ ] DeepSeekMath V2 meta-verifiers, from the evals angle → [llm_evals.md](evals/llm_evals.md) (section moved from rl/reasoning.md 2026-07-28)
 - [ ] Model-report eval sections: Kimi K3 report, Cursor Composer 2, GLM 5.2 → [llm_evals.md](evals/llm_evals.md)
 
 ## computer_use/

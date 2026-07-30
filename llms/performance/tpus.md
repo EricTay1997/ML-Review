@@ -1,29 +1,20 @@
-# TPUs & Rooflines
+# TPUs 
 
-> Draft — seeded from reading notes, to expand. Primary source: [How To Scale Your Model (JAX scaling book)](https://jax-ml.github.io/scaling-book/index).
-
-## Chapter 1: Rooflines
-
-- $`T_{math}`$ = Computation FLOPs / Accelerator FLOPs/s
-- $`T_{comms}`$ = Communication Bytes / Network or Memory Bandwidth Bytes/s
-- Arithmetic Intensity = Computation FLOPs / Communication Bytes
-- Compute bound: $`T_{math} > T_{comms}`$ iff Intensity(Computation) > Intensity(Accelerator)
-- Typically, we start being compute bound when the **per-chip token batch size** exceeds ~240 (TPU v5e, bf16: $`1.97\text{e}14 / 8.2\text{e}11 \approx 240`$; ~295 on H100). This coincides with sequence length only for a single-sequence prefill — in decode it is the number of concurrent sequences
-- There are different FLOPs/s for int8, and half the memory
-- Typically, $`B < 1024`$ and $`D, F > 8000`$, so a matmul usually has an intensity of $`B`$. So when $`B`$ is small, it's bandwidth bound, and when $`B`$ is big, it's compute bound
-- $`D = F = 1024`$ almost doubles the critical batch size
-
-*[figure from source — re-add]*
+Primary source: [How To Scale Your Model (JAX scaling book)](https://jax-ml.github.io/scaling-book/index).
 
 ## Chapter 2: TPUs
 
-*[figure from source — re-add]*
-
 - Communication is limited by our various network bandwidths in order of speed:
   - HBM bandwidth: between a TensorCore and its associated HBM
+    - <img src="images/tpu_core.png" width="520">[Source](https://jax-ml.github.io/scaling-book/tpus/)
   - ICI bandwidth: between a TPU chip and its nearest 4 or 6 neighbors
+    - <img src="images/tpu_ici_torus.png" width="360">[Source](https://jax-ml.github.io/scaling-book/tpus/) — the wraparound links are what make it a torus (shaded chips = one 2×2 subslice)
   - PCIe bandwidth: between a CPU host and its associated tray(s) of chips
+    - <img src="images/tpu_tray_pcie.png" width="440">[Source](https://jax-ml.github.io/scaling-book/tpus/)
   - DCN bandwidth: between multiple CPU hosts, typically hosts not connected by ICI
+- A TPU **core** (TensorCore): scalar unit dispatches instructions, VPU does elementwise work, MXU does the matmuls (so it sets chip FLOP/s); Vmem/Smem are the on-chip scratchpads, HBM holds weights/activations/optimiser states
+- A TPU **chip** (often) consists of two TPU cores sharing HBM
+  - <img src="images/tpu_chip_two_cores.png" width="360">[Source](https://jax-ml.github.io/scaling-book/tpus/)
 - The MXU multiplies chunks of 8×128 and 128×128
   - The TPU MXU is a 128×128 systolic array. When fully saturated, it can perform one [8,128] @ [128,128] multiplication per 8 clock cycles.
   - Weights are passed down from above (RHS) while inputs are passed in from the left (LHS).
