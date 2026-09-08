@@ -62,7 +62,7 @@
 - Here, we typically rely on the encoder-decoder architecture:
   - ![seq2seq.png](images/seq2seq.png)[Source](http://d2l.ai/chapter_recurrent-modern/seq2seq.html)
   - The RNN encoder encodes the input sequence into a context vector, which is then decoded by the RNN decoder
-    - The limited size of the context vector forms a bottleneck, which we address with [attention](../08_attention_transformers/notes.md). 
+    - The limited size of the context vector forms a bottleneck, which we address with [attention](../../../llms/architecture/attention_transformers/notes.md). 
 - The decoder allows our output to be a different length from our input. 
   - In training, we specify the length of the output we want, and predict our desired output. 
     - Note the shifting in the image above.

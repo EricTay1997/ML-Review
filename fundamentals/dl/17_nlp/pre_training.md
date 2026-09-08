@@ -113,7 +113,7 @@
     - Target sequence is “<X>”, “love”, “<Y>”, “red”, “car”, “<Z>”
 - Decoder Only
   - GPT-2
-    - Pre-Layer Normalization (See [Transformer Notes](../08_attention_transformers/notes.md))
+    - Pre-Layer Normalization (See [Transformer Notes](../../../llms/architecture/attention_transformers/notes.md))
     - Initialization
       - Scale the init std of the final linear layers of MHA and MLP by $`\frac{1}{\sqrt{2N}}`$ (equivalently, the variance by $`\frac{1}{2N}`$), where $`N`$ is the number of transformer blocks — the paper says $`1/\sqrt{N_{res}}`$ with $`N_{res} = 2N`$ residual layers.
         - $`\frac{1}{N}`$ ensures that variance added is invariant to number of transformer blocks.
@@ -123,23 +123,23 @@
     - Rounded figures, smaller vocab size, 5x parameters, 4x context length (4k), 3x embed dim (4k), 32 heads, 32 layers, 11k hidden dim.
     - LayerNorm to RMSNorm ($`y_i = \frac{x_i}{\sqrt{\frac{1}{n}\sum_i x_i^2 + \epsilon}}\gamma_i`$)
     - GELU to SwiGLU
-    - [RoPE](../08_attention_transformers/notes.md)
+    - [RoPE](../../../llms/architecture/attention_transformers/notes.md)
     - Remove dropout and QKV bias
     - Uses Google's SentencePiece tokenizer (but Llama 3 goes back to OpenAI's tokenizer)
   - Llama 2 to Mistral 7B
     - Sliding Window Attention 
       - Rolling Buffer Cache for keys and values (only need values for the size of sliding window)
       - Pre-Fill and Chunking - can parallelize the pre-fill process
-    - [Grouped-query attention](../08_attention_transformers/notes.md)
+    - [Grouped-query attention](../../../llms/architecture/attention_transformers/notes.md)
   - Mistral 7B to Mistral 8x7B
     - [Mixture of Experts](https://huggingface.co/blog/moe#what-is-a-mixture-of-experts-moe) layer
   - Llama 2 to Llama 3
     - Larger vocab size (128k), 2x context length (8k), larger FFN hidden dim (11008 → 14336; embedding dim stays 4096), q to k ratio of 4
-    - Modified [RoPE](../08_attention_transformers/notes.md): New baseline wavelength of 500k (prev 10k)
-    - [Grouped-query attention](../08_attention_transformers/notes.md)
+    - Modified [RoPE](../../../llms/architecture/attention_transformers/notes.md): New baseline wavelength of 500k (prev 10k)
+    - [Grouped-query attention](../../../llms/architecture/attention_transformers/notes.md)
   - Llama 3 to Llama 3.1
     - Much larger context length of 131k
-    - Increased context window with modified [RoPE](../08_attention_transformers/notes.md)
+    - Increased context window with modified [RoPE](../../../llms/architecture/attention_transformers/notes.md)
   - Llama 3.1 to Llama 3.2
     - 8B to 1B parameters
     - Half embed dim (2k), half layers (16), almost half hidden dim (8k), weight_tying, rope freq rescaling factor of 32. 

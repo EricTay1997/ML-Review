@@ -17,7 +17,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
   - For encoders, output token length is the same as input token length. 
   - For decoders, training is done in an autoregressive fashion. 
 - Today, many tasks that were originally achieved with encoder-decoder models can be achieved with decoder-only models. 
-- More details in [Pretraining (NLP)](../17_nlp/pre_training.md).
+- More details in [Pretraining (NLP)](../../../fundamentals/dl/17_nlp/pre_training.md).
 
 ## Attention
 
@@ -58,9 +58,9 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
     - I'm not sure if there's a compelling reason for it to be lower dimensional outside of computational cost. 
   - $A = \mathrm{softmax}(\frac{\mathbf{Q}^i\mathbf{K}^{i\top}}{\sqrt{d_k}})$ is a matrix where $A_{ab}$ represents how similar $\mathbf{k}_b^i$ is to $\mathbf{q}_a^i$, relative to the other keys. 
   - What attention head $i$ does to the $a^{th}$ row of $\mathbf{X}$, is to _add_ additional context to its embedding, given by $\sum_b (A_{ab}\mathbf{v}_b^{i\top}\mathbf{W}^{o,i})$
-  - Here, we see that every input token can now absorb context from any other input token in the same sequence (limited by $L$). This addresses a major weakness in [RNNs](../07_rnns/notes.md), which faced the context vector bottleneck issue.
+  - Here, we see that every input token can now absorb context from any other input token in the same sequence (limited by $L$). This addresses a major weakness in [RNNs](../../../fundamentals/dl/07_rnns/notes.md), which faced the context vector bottleneck issue.
   - Why do we need matrices to convert $\mathbf{X}$ into these $\mathbf{q}_j^i, \mathbf{k}_j^i$ and $\mathbf{v}_j^i$ vectors?
-    - This allows us to more flexibly query and match queries. One such example is to find the following word for the last time we encountered the current word. (See [Q and K Composition](../23_safety/02_mech_interp.md))
+    - This allows us to more flexibly query and match queries. One such example is to find the following word for the last time we encountered the current word. (See [Q and K Composition](../../../fundamentals/dl/23_safety/02_mech_interp.md))
   - Why do we model $\mathbf{v}_b^i$ and $\mathbf{W}^{o,i}$ separately?
     - My intuition is that it's computational. 
 - Softmax and Temperature
@@ -105,7 +105,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 - For the encoder, we use padding/truncation to ensure that input sequences are of the same length
   - We use masking to ensure that we do not attend to padding tokens.
 - For the decoder, we use masking to ensure that we do not attend to a token ahead of the token being predicted.
-  - As per [seq2seq](../07_rnns/notes.md), we also use shift our input so that we don't pass in our output by accident. 
+  - As per [seq2seq](../../../fundamentals/dl/07_rnns/notes.md), we also use shift our input so that we don't pass in our output by accident. 
 
 ## Additional details
 - Residual connections
@@ -117,7 +117,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
     - Adam uses the bias correction factors which however can lead to a higher variance in the adaptive learning rate during the first iterations. Improved optimizers like RAdam have been shown to overcome this issue.
     - The iteratively applied Layer Normalization across layers can lead to very high gradients during the first iterations, which can be solved by using Pre-Layer Normalization.
 - Layer Normalization
-  - We typically use [Layer Normalization](../01_basics/notes.md) to stabilize the network and reduces the training time
+  - We typically use [Layer Normalization](../../../fundamentals/dl/01_basics/notes.md) to stabilize the network and reduces the training time
   - We don't use batch normalization here because batches tend to be small for language tasks, which could induce high variance in batch statistics.
   - Pre-LN Transformer
     - ![pre_ln.png](images/pre_ln.png)[Source](https://proceedings.mlr.press/v119/xiong20b/xiong20b.pdf)
@@ -128,14 +128,14 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
   - GPT2 also scales weights of residual layers by $1/\sqrt{N}$, to account for the accumulation on the residual path.
 - Cross attention
   - Cross-attention is relevant when dealing with an encoder-decoder architecture.
-  - Cross-attention is also useful for [conditional generation](../10_diffusion/notes.md). 
+  - Cross-attention is also useful for [conditional generation](../../../fundamentals/dl/10_diffusion/notes.md). 
     - Typically, keys and values come from encoder, queries come from decoder.
     - Suppose we're conditioning image generation (decoder) on text (encoder). Think of this as adding the relevant text embeddings to the image embeddings. 
 
 ## Extensions
 
 - A key bottleneck is in the computation of the $\mathbf{Q}^i\mathbf{K}^{i\top}$ matrix, which is $O(L^2d)$.
-  - This is why larger context lengths are a big deal! (But also note that they allow for [increased vulnerabilities](../23_safety/03_alignment.md))
+  - This is why larger context lengths are a big deal! (But also note that they allow for [increased vulnerabilities](../../../fundamentals/dl/23_safety/03_alignment.md))
   - Reducing compute: algorithmic extensions [(The Transformer Family Version 2.0)](https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/#combination-of-local-and-global-context)
     - Memory methods to "cache" information
     - Methods to selectively incorporate _some_ global context (sparse attention, etc.)

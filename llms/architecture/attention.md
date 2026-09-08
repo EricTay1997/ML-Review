@@ -1,6 +1,6 @@
 # Attention Variants
 
-> Draft — seeded from reading notes, to expand. Mechanism foundations (attention math, RoPE, GQA, flash attention, KV cache) live in [Attention & Transformers](../../fundamentals/dl/08_attention_transformers/notes.md); this file tracks the modern variants models actually ship.
+> Draft — seeded from reading notes, to expand. Mechanism foundations (attention math, RoPE, GQA, flash attention, KV cache) live in [Attention & Transformers](attention_transformers/notes.md); this file tracks the modern variants models actually ship.
 
 ## Combined QKV projection
 
@@ -37,7 +37,7 @@
   - Prevents "too much" rotation for long sequences, particularly those longer than the longest documents in the training dataset
   - I.e., the rationale could be that *no* rotation is better than a "bad" or "too extreme" rotation the model hasn't seen in training
 - YaRN (OLMo 3) — context extension via frequency rescaling
-- The RoPE wavelength/context-length analysis lives in [Attention & Transformers](../../fundamentals/dl/08_attention_transformers/notes.md)
+- The RoPE wavelength/context-length analysis lives in [Attention & Transformers](attention_transformers/notes.md)
 
 ## Attention bias and attention sinks
 

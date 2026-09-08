@@ -90,10 +90,7 @@ Things already read that still need to be written up as notes in `llms/`, ordere
 
 ## performance/
 
-- [ ] [How To Scale Your Model (JAX scaling book)](https://jax-ml.github.io/scaling-book/index) — remaining chapters (ch. 1–2 seeded in [tpus.md](performance/tpus.md))
-- [ ] [vLLM deep-dive (Gordić)](https://www.aleksagordic.com/blog/vllm) → expand vLLM internals in [inference.md](performance/inference.md), re-add benchmark figure
-- [ ] [matmul deep-dive (Gordić)](https://www.aleksagordic.com/blog/matmul) → expand [gpus.md](performance/gpus.md)
-- [ ] Write a tensor-parallelism notebook (the old empty one was removed)
+- [ ] [How To Scale Your Model (JAX scaling book)](https://jax-ml.github.io/scaling-book/index) — Ch 7-12
 - [ ] *(to read)* [The Ultra-Scale Playbook (HuggingFace)](https://huggingface.co/spaces/nanotron/ultrascale-playbook) — GPU/PyTorch complement to the JAX scaling book; covers Megatron-style parallelism (subsumes the earlier "Megatron notes" item) → [parallelism.md](performance/parallelism.md) + [basics.md](performance/basics.md)
 - [ ] *(to read)* [ZeRO (arXiv 1910.02054)](https://arxiv.org/abs/1910.02054) — FSDP's ancestor, currently uncited in [parallelism.md](performance/parallelism.md)
 - [ ] *(to read)* [Ring Attention (arXiv 2310.01889)](https://arxiv.org/abs/2310.01889) — sequence/context parallelism, an entirely missing parallelism axis

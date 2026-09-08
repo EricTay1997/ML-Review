@@ -15,7 +15,7 @@ Current, actively-growing notes on the modern LLM stack. The write-up backlog (r
 | [performance/](performance/) | Training perf, parallelism, inference/serving (vLLM), GPUs, TPUs & rooflines |
 | [misc/](misc/) | To be categorized |
 
-Foundations (transformers, attention mechanics, tokenization, BERT/GPT-2-era NLP) live in [../fundamentals/](../fundamentals/) — in particular [dl/08_attention_transformers](../fundamentals/dl/08_attention_transformers/notes.md) and [dl/17_nlp](../fundamentals/dl/17_nlp/).
+Transformer/attention mechanism foundations now live here, in [architecture/attention_transformers/](architecture/attention_transformers/notes.md) (moved out of `fundamentals/dl/`). Remaining foundations (tokenization, BERT/GPT-2-era NLP) are in [../fundamentals/](../fundamentals/) — in particular [dl/17_nlp](../fundamentals/dl/17_nlp/).
 
 ## Boundaries: optimization vs post_training vs rl
 

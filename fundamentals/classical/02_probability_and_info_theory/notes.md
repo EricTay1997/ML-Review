@@ -64,7 +64,7 @@
           * For real data, it is likely that $`\mathbf{X}`$ is rank $`p`$. This implies that $`\mathbf{S}`$ is often positive-definite.
             * Proof: Suppose that $`\mathbf{v^{\top}Sv} = 0`$.
             * $`||\mathbf{v}^{\top}(\mathbf{x}_i-\bar{\mathbf{x}})||^2 = 0`$ $`\forall`$ $`i`$.
-            * Let $`\mathbf{y}_i = \mathbf{x}_i-\bar{\mathbf{x}}`$. Now given that $`\mathbf{y}_i`$s span $`\mathbb{R}^p`$, let $`\mathbf{v} = \sum_i \alpha_i \mathbf{y}_i`$.
+            * Let $`\mathbf{y}_i = \mathbf{x}_i-\bar{\mathbf{x}}`$. Now given that $`\mathbf{y}_i`$ s span $`\mathbb{R}^p`$, let $`\mathbf{v} = \sum_i \alpha_i \mathbf{y}_i`$.
             * We now have that $`\mathbf{v}^{\top}\mathbf{v}=0`$ since $`\mathbf{v}^{\top}\mathbf{y}_i = 0`$ $`\forall`$ $`i`$, which is a contradiction. 
 * CLT
   * The CLT states that for $X_i$ with mean $\mu$ and variance $\sigma^2$, $\bar{X}_n=\frac{X_1+\ldots+X_n}{n} \rightarrow \sim N\left(\mu, \frac{\sigma^2}{n}\right)$ and hence $\frac{\bar{X}_n-\mu}{\sigma / \sqrt{n}} \sim N(0,1)$

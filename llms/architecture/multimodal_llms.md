@@ -30,7 +30,7 @@ Sources: [Qwen2-VL paper](https://arxiv.org/pdf/2409.12191), [Qwen3-VL technical
 
 ### 2D RoPE, M-RoPE, interleaved M-RoPE
 
-- 1D RoPE mechanics (rotation pairs, frequency ladder $`\theta_i`$, relative-position property, wavelength/context analysis) live in [Attention & Transformers](../../fundamentals/dl/08_attention_transformers/notes.md)
+- 1D RoPE mechanics (rotation pairs, frequency ladder $`\theta_i`$, relative-position property, wavelength/context analysis) live in [Attention & Transformers](attention_transformers/notes.md)
 - **2D RoPE** (inside the ViT): a patch's position is (row, col); split the planes into two halves — the first half rotates by $`\text{row}\cdot\theta`$, the second by $`\text{col}\cdot\theta`$, each half with its own copy of the frequency ladder
   - ![qwen_2d_rope_plane_assignment.png](images/qwen_2d_rope_plane_assignment.png)
   - Dot products then depend on $`(\Delta \text{row}, \Delta \text{col})`$: attention can key on relative 2D displacement ("3 columns left, 1 row up")

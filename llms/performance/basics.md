@@ -6,6 +6,13 @@
 
 ## Basics
 
+- FLOPs
+  - General rule ([scaling book](https://jax-ml.github.io/scaling-book/transformers/)): for two higher-dimensional arrays with some dimensions **contracting** and some **batching** (e.g. $`A[I,J,K]\cdot B[I,J,L] \to C[I,J,K,L]`$ contracting over $`J`$, batching over $`I`$), the FLOPs cost is 2 × the product of all $`A`$ and $`B`$ dimensions, where the batch and contraction dimensions are only counted once (e.g. $`2IJKL`$)
+  - Forward: a dot product of length $`P`$ is $`P`$ multiplies + $`P`$ adds = $`2P`$ FLOPs, so a matmul $`[T, P] \times [P, M]`$ costs $`2TPM`$ — **2 FLOPs per parameter per token**, since each token "touches" each weight exactly once in a multiply-add
+  - Backward, worked out for $`C = AB`$ with $`A[N,P], B[P,M]`$:
+    - $`\dfrac{\partial L}{\partial B} = \dfrac{\partial L}{\partial C}\dfrac{\partial C}{\partial B} = A^\top\left(\dfrac{\partial L}{\partial C}\right)`$ — shape $`[P,N]\times[N,M] \to [P,M]`$, i.e. $`2NPM`$ FLOPs
+    - $`\dfrac{\partial L}{\partial A} = \dfrac{\partial L}{\partial C}\dfrac{\partial C}{\partial A} = \left(\dfrac{\partial L}{\partial C}\right)B^\top`$ — shape $`[N,M]\times[M,P] \to [N,P]`$, again $`2NPM`$ FLOPs
+    - So training is forward ($`2NPM`$) + backward ($`2 \times 2NPM`$) = $`6NPM`$ FLOPs — **not** $`6 \cdot \text{num\_tokens} \cdot \text{params}`$ directly; $`6ND`$ only falls out once $`N`$ (params) and $`P`$ (tokens) are identified with the specific $`A, B`$ shapes of each weight matmul in the model, summed over layers
 - Where things live during training (GPUs)
   - HBM (GPU) — model parameters, optimizer states, activations, gradients
   - CPU (RAM) — dataset / dataloader
@@ -49,8 +56,7 @@
     - Activations (every intermediate tensor the backward pass needs): per layer ≈ $`sbh(34 + 5as/h)`$ bytes ([Korthikanti et al., arXiv 2205.05198](https://arxiv.org/abs/2205.05198)); the $`5as^2b`$ term is the materialized $`s \times s`$ attention matrices, which flash attention (later) eliminates — leaving $`34sbh`$/layer ≈ 18 GB at $`b{=}1, s{=}4096`$ for 7B (the $`s^2`$ term would have added ~34 GB) — this is what flash attention and gradient checkpointing attack
       - Unlike the 16 bytes/param (fixed), activations scale with **batch size** (and sequence length) — at large $`b`$ they dominate training memory, which is why batch size is the memory knob (see [Batch Size](#batch-size))
   - Bandwidth: per step ~O(params) traffic several times over (forward read, backward read, optimizer read/write of all 16 bytes/param) plus activation traffic $`O(b \cdot s \cdot h)`$ (flash attention exists precisely to fix the one bandwidth-bound exception: the $`s^2`$ attention traffic)
-  - Compute: ≈ $`6ND(1 + s/8h) \approx 6ND`$ FLOPs total ($`N`$ params, $`D`$ tokens): $`2N`$ per token forward + $`4N`$ backward — e.g. Llama 3 70B × 15T tokens ≈ $`6.3 \times 10^{24}`$ FLOPs
-    - Derivation ([scaling book](https://jax-ml.github.io/scaling-book/transformers/)): a dot product of length $`P`$ is $`P`$ multiplies + $`P`$ adds = $`2P`$ FLOPs, so a matmul $`[T, P] \times [P, M]`$ costs $`2TPM`$ — **2 FLOPs per parameter per token** in the forward pass, since each token "touches" each weight exactly once in a multiply-add
+  - Compute: ≈ $`6ND(1 + s/8h) \approx 6ND`$ FLOPs total ($`N`$ params, $`D`$ tokens): $`2N`$ per token forward + $`4N`$ backward — e.g. Llama 3 70B × 15T tokens ≈ $`6.3 \times 10^{24}`$ FLOPs (derivation: see [FLOPs](#basics) above)
     - The backward pass does two matmuls of the same shape per weight matrix — $`\partial L/\partial W = x^\top (\partial L/\partial y)`$ (weight grads) and $`\partial L/\partial x = (\partial L/\partial y) W^\top`$ (activation grads, to keep backpropagating) — so backward = $`2\times`$ forward = $`4N`$/token, total $`6N`$/token
     - The $`(1 + s/8h)`$ factor is the attention scores/values FLOPs, which the parameter count misses: ≈ $`4sh`$/token/layer (2 for $`qK^\top`$, 2 for the value sum). Assuming a gated (SwiGLU-style) MLP with $`F{=}4h`$, per-layer params = $`4h^2`$ (QKVO) + $`12h^2`$ (3 MLP matrices) = $`16h^2`$, so the attention share = $`4sh / (2 \cdot 16h^2) = s/8h`$ — ~12.5% at $`s{=}8k, h{=}8k`$, dominant past $`s > 8h`$ (the constant shifts with MLP width/gating; causal-aware kernels halve the attention side)
     - Where it goes: MLP dominates (~¾ of per-layer params/FLOPs under the $`F{=}4h`$ gated MLP; attention projections ~¼) — and the scores/values share above grows linearly with context

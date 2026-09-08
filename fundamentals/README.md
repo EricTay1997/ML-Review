@@ -29,7 +29,7 @@ Knowledge accumulated in the past (originally for interview prep) — good refer
 [Coding Practices](dl/05_coding_practices/notes.md) ·
 [CNNs](dl/06_cnns/notes.md) ·
 [RNNs](dl/07_rnns/notes.md) ·
-[Attention & Transformers](dl/08_attention_transformers/notes.md) ·
+[Attention & Transformers](../llms/architecture/attention_transformers/notes.md) (→ `llms/`) ·
 [Autoencoders](dl/09_autoencoders/notes.md) ·
 [Diffusion](dl/10_diffusion/notes.md) ·
 [Flows](dl/11_flows/notes.md) ·
