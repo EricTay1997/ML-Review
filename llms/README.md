@@ -5,7 +5,7 @@ Current, actively-growing notes on the modern LLM stack. The write-up backlog (r
 | Section | What's inside |
 |---|---|
 | [architecture/](architecture/) | Attention variants (MLA, sparse, linear/DeltaNet), model-by-model comparison (DeepSeek, Qwen, Gemma, OLMo, GPT-OSS...), multimodal LLMs |
-| [optimization/](optimization/) | Batch size vs learning dynamics; Muon, muP (queued) |
+| [optimization/](optimization/) | Batch size vs learning dynamics; kernels & RKHS primers, NTK (lazy / kernel regime), μP & μTransfer; Muon (queued) |
 | [data/](data/) | Pretraining data curation, mixtures, dedup (queued — currently empty) |
 | [post_training/](post_training/) | SFT, PEFT/LoRA, distillation, DPO/ΨPO, reward modeling, STaR |
 | [rl/](rl/) | Policy gradients (Spinning Up), KL divergence in practice, RLHF-with-PPO implementation details, GRPO + variants, verification & test-time compute |

@@ -22,11 +22,8 @@ Things already read that still need to be written up as notes in `llms/`, ordere
 *Scope: what happens in weight space — optimizers, training dynamics, forgetting, scaling laws.*
 
 - [ ] Muon optimizer: [Keller Jordan's post](https://kellerjordan.github.io/posts/muon/), [willccbb thread](https://x.com/willccbb/status/2050038277454143918?lang=en) → [notes.md](optimization/notes.md)
-- [ ] [Can Muon Fine-tune Adam-Pretrained Models? (arXiv 2605.10468)](https://arxiv.org/pdf/2605.10468) — optimizer-mismatch problem
-- [ ] [Optimizer-Model Consistency: full finetuning with the pretraining optimizer forgets less (arXiv 2605.06654)](https://arxiv.org/pdf/2605.06654)
 - [ ] [RL's Razor: Why Online RL Forgets Less (arXiv 2509.04259)](https://arxiv.org/pdf/2509.04259) — RL implicitly favors KL-minimal solutions (bridges to rl/ and post_training/)
 - [ ] [Scaling Laws, Carefully (Lilian Weng, 2026-06)](https://lilianweng.github.io/posts/2026-06-24-scaling-laws/) — pretraining compute/data power laws *(you listed this under post-training; it's classic scaling laws, filed here)*
-- [ ] NTK (neural tangent kernel) → [notes.md](optimization/notes.md)
 - [ ] muP / hyperparameter transfer → [notes.md](optimization/notes.md)
 
 ## data/

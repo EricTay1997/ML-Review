@@ -5,6 +5,9 @@
 - For general notes about parameter regularization, refer to [Statistical Learning Theory](../../classical/03_statistical_learning_theory/notes.md)
 - [Goodfellow](https://www.deeplearningbook.org/contents/regularization.html) defines regularization as “any modification we make to a learning algorithm that is intended to reduce its generalization error but not its training error.”
 - This section shall have a larger focus on regularization for deep learning, which is pertinent because neural network's expressiveness leave them vulnerable to overfitting.
+- Now, in LLMs, an argument against regularization could be that we have a _lot_ of data, and we often train with much fewer epochs than in the past. As a result, dropout has been more "optional" in more recent models, and weight decay may instead serve a different role. 
+  - Interestingly, [Andriushchenko et al](https://arxiv.org/pdf/2310.04415) observe that increasing weight decay didn't affect overfitting (124M and 774M GPT-2 models, ~1 epoch).
+  - Instead, they hypothesize that it has an interesting role in stabilizing the learning rate, stemming from an assumption that $`\eta_{\mathrm{eff},t} \approx \dfrac{\eta_t}{\|w_t\|}`$
 - Parameter regularization 
   - This is often referred to with the `weight_decay` parameter in PyTorch. 
   - Usually, we leave the basis terms unregularized, since each bias controls only a single variable. This means that we do not induce too much variance by leaving the biases unregularized.
@@ -71,8 +74,8 @@ associated with the different tasks, some are shared across two or more tasks.
     - If we don't want to decrease the learning rate too much at the beginning, we can consider a consine scheduler
     - Warmup schedulers are also appropriate when optimization is more unstable.
 - Condition number
-  - When the condition number of the Hessian is high (pathological curves), gradient descent performs poorly. 
-  - Intuitively, gradient descent is unaware of the difference in second derivatives, so it does not know to explore in the direction where the derivative remains negative for longer.
+  - When the condition number of the Hessian is high (pathological curves), gradient descent performs poorly.
+    - Large $\lambda_i$ = bottom left to top right (walls), small $\lambda_i$ = top left to bottom right (valleys).
     - ![canyon.png](images/canyon.png)[Source](https://www.deeplearningbook.org/contents/numerical.html)
 
 ## Second-Order Methods
@@ -83,7 +86,9 @@ associated with the different tasks, some are shared across two or more tasks.
     - $`f\left(\mathbf{x}_k+\Delta \mathbf{x}\right) \approx f\left(\mathbf{x}_k\right)+\nabla f\left(\mathbf{x}_k\right)^{\mathrm{T}} \Delta \mathbf{x}+\frac{1}{2} \Delta \mathbf{x}^{\mathrm{T}} H \Delta \mathbf{x}`$
     - $`\nabla f\left(\mathbf{x}_k+\Delta \mathbf{x}\right) \approx \nabla f\left(\mathbf{x}_k\right)+H \Delta \mathbf{x}`$
     - Setting the gradient to be zero gives our update function.
+      - I.e. if we assume that $f$ is quadratic, this update gets us to a stationary point (in one step)
     - We can also "step" slightly less in that direction, $`-\eta H\left(\mathbf{x}_k\right)^{-1} \nabla f\left(\mathbf{x}_k\right)`$, $`0 < \eta < 1`$.
+  - Some intuition: Coming back to the 2D "valley", we take smaller steps along the walls ($\lambda_i$ large), and larger steps along the valley floor ($\lambda_i$ small). 
   - Nature of stationary point
     - While in gradient descent, we can ensure that we're moving toward a minima, Newton's method is attracted to all stationary points.
     - Therefore, when the loss function is nonconvex, this method could instead get us to local **maxima**
@@ -94,9 +99,9 @@ associated with the different tasks, some are shared across two or more tasks.
   - Quasi-Newton methods avoid computing the inverse of the Hessian by _estimating it through iteration_. Concretely, it uses the following update step:
   - $`B_{k+1}\left[\mathbf{x}_{k+1}-\mathbf{x}_k\right]=\nabla f\left(\mathbf{x}_{k+1}\right)-\nabla f\left(\mathbf{x}_k\right)`$
     - The intuition here is that we don't want to compute the inverse,  so we iterate on the equation before that.
-- Preconditioning
+- Diagonal preconditioning
   - Now, instead of $`\mathbf{x}_{k+1}=\mathbf{x}_k-\eta H\left(\mathbf{x}_k\right)^{-1} \nabla f\left(\mathbf{x}_k\right),`$ what if we did $`\mathbf{x}_{k+1}=\mathbf{x}_k-\eta \mathrm{diag}(H\left(\mathbf{x}_k\right))^{-1} \nabla f\left(\mathbf{x}_k\right)?`$
-    - This is a huge simplification, but intuitively this addresses the pathological curve issues we saw above, scaling the learning rate per dimension roughly according to the curvature along those directions.
+  - Diagonal preconditioning is one instance of a more general idea: *steepest descent under a non-Euclidean norm* — see [Norms and Steepest Descent](../../../llms/optimization/norms.md).
 
 ## Going Back to First-Order Methods
 
@@ -110,11 +115,13 @@ associated with the different tasks, some are shared across two or more tasks.
     - We may also view the errors in the eigenvector space
     - Now the range of step sizes that allow for convergence are $`0 < \eta < \frac{2 + 2\beta}{\lambda_i}`$, so momentum allows us to increase the step size.
     - Optimal $`\eta = \left( \frac{2}{\sqrt{\lambda_{min}} + \sqrt{\lambda_{max}}} \right)^2, \beta = \left( \frac{\sqrt{\lambda_{min}} - \sqrt{\lambda_{max}}}{\sqrt{\lambda_{min}} + \sqrt{\lambda_{max}}} \right)^2`$
-    - Optimal rate $`= \frac{\sqrt{\lambda_{max}/\lambda_{min}}-1}{\sqrt{\lambda_{max}/\lambda_{min}}+1}`$: We can converge faster provided we know the eigenvalues. 
+    - Optimal convergence rate $`= \frac{\sqrt{\lambda_{max}/\lambda_{min}}-1}{\sqrt{\lambda_{max}/\lambda_{min}}+1}`$: We can converge faster provided we know the eigenvalues. 
+    - Intuition (2D valley):
+      - In GD, if our $\eta$ is too large, we may step too much into the wall and diverge. 
+      - With momentum, this cancels out and allows us up to a 2x increase in LR that still converges
+      - More importantly, the momentum along the valley accumulates, which speeds up convergence. 
 - Adagrad
-  - Intuition: Remember the idea from preconditioning: 
-    - Instead of doing $`\mathbf{x}_{k+1}=\mathbf{x}_k-\eta H\left(\mathbf{x}_k\right)^{-1} \nabla f\left(\mathbf{x}_k\right),`$ what if we did $`\mathbf{x}_{k+1}=\mathbf{x}_k-\eta \mathrm{diag}(H\left(\mathbf{x}_k\right))^{-1} \nabla f\left(\mathbf{x}_k\right)?`$
-    - Instead of scaling the $`i^{th}`$ coordinate by $`\frac{1}{H_{ii}}`$, let's estimate it by the SD of the gradients. 
+  - Equalizes the scale of the update across coordinates, so coordinates with persistently small gradients still move. 
   - Algorithm
     - $`v^{(t)} = v^{(t-1)} + \left(g^{(t)}\right)^2`$
     - $`w^{(t)} = w^{(t-1)} - \frac{\eta}{\sqrt{v^{(t)} + \epsilon} }\circ g^{(t)}`$
@@ -146,8 +153,11 @@ associated with the different tasks, some are shared across two or more tasks.
     - With initializations of $`m^{(0)} = v^{(0)} = 0`$, and high $`\beta_1, \beta_2`$, there's a significant bias especially at the start. 
     - Now note that $`(1-\beta_1)\sum_{i=0}^n(\beta_1)^i = 1-(\beta_1)^{n+1}`$, which motivates our de-biasing term.
     - Our de-biasing term increases $`m^{(t)}, v^{(t)}`$, especially when $`t`$ is low, and converging to a ratio of 1 when $`t`$ increases.
-  - To understand
-    - Adaptive learning rate. ToDo: Understand more about this. 
+  - Sign Descent
+    - Set $`\beta_1=\beta_2=0`$ and $`\epsilon\to0`$ and Adam **is exactly sign descent**: $`w^{(t)} = w^{(t-1)} - \eta\,\mathrm{sign}(g^{(t)})`$. The EMAs and debiasing are refinements layered on that core.
+    - So per coordinate $`|\Delta w_i| \approx \eta`$ more or less regardless of how big $`g_i`$ is — i.e. $`\lVert\Delta w\rVert_\infty \approx \eta`$. **Adam is a fixed-radius $`\ell_\infty`$ trust region.** The most it is second-order-wise is $`1/\sqrt{H_{ii}}`$ — square-root Newton, not Newton. Only the *sign* of $`g_i`$ survives the normalization.
+    - See more in [Norms and Steepest Descent](../../../llms/optimization/norms.md).
+  - Still to understand
     - Note that implementation only increments $`t`$ whenever update_param is called. Curious to know how this interacts with say, dropout. Is this how PyTorch implements Adam?
   - Vs other algorithms:
     - Adam is the most commonly used optimizer in Deep Learning as it usually performs better than other optimizers, especially for deep networks.
@@ -155,7 +165,7 @@ associated with the different tasks, some are shared across two or more tasks.
     - Steep optima:
       - SGD: Touches steep gradient and then overshoots 
       - SGDM: Momentum overshoots 
-      - Adam: Adaptive learning rate allows it to stay in minimum, probably because of some consideration of curvature
+      - Adam: the per-coordinate normalization caps the step at $`\approx\eta`$, so a steep gradient cannot produce a huge step. Not curvature-awareness — just a bounded $`\ell_\infty`$ step.
     - But there are scenarios that SGD (with momentum) may generalize better as Adam tends to overfit.
       - Adam can get stuck in local optima while SGD finds the wider minima that tend to generalize better.
       - ![adam_overfit.png](images/adam_overfit.png)[Source](https://arxiv.org/pdf/1609.04836)
