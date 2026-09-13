@@ -9,7 +9,7 @@
   - MoE
 - DeepSeek V3.2
   - Sparse attention: lightning indexer + token selector
-  - Post-training: rule-based outcome reward, length penalty, language-consistency reward (see [RL](../rl/grpo.md) and [Reasoning](../rl/reasoning.md))
+  - Post-training: rule-based outcome reward, length penalty, language-consistency reward (see [RL notes](../rl/notes.md) and [Reasoning](../rl/reasoning.md))
 - OLMo 2
   - Pre-LN, QK-Norm *(verify — Raschka describes OLMo 2's norm placement as a Post-Norm variant with QK-Norm)*
 - Gemma 3

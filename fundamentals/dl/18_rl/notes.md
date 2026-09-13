@@ -1,6 +1,6 @@
 # RL Fundamentals
 
-Classic RL: MDPs, value functions, Q-learning, DQN. For policy-gradient methods (REINFORCE, VPG, TRPO, PPO) see [Policy Gradients](../../../llms/rl/policy_gradients.md); for LLM applications see [RLHF with PPO](../../../llms/rl/rlhf_ppo.md) and [GRPO](../../../llms/rl/grpo.md).
+Classic RL: MDPs, value functions, Q-learning, DQN. For policy-gradient methods (REINFORCE, VPG, TRPO, PPO, GRPO and variants) see [RL notes](../../../llms/rl/notes.md); for the RLHF pipeline see [RLHF with PPO](../../../llms/rl/rlhf_ppo.md).
 
 - Reinforcement learning is a framework for solving control tasks (also called decision problems) by building agents that learn from the environment by interacting with it through trial and error and receiving rewards (positive or negative) as unique feedback.
 - Definitions

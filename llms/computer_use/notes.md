@@ -13,6 +13,11 @@
 - Weave Bench
 - OSWorld
 - OSWorld-V2
+- MyPCBench
+- MacAgentBench
+- WebArena
+- WebArenaInfity
+- WebVoyager
 
 ## External harnesses + action spaces
 

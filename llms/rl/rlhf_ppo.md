@@ -1,6 +1,6 @@
 # RLHF with PPO — Implementation Details
 
-> Draft — seeded from reading notes, to expand. Primary source: [The N Implementation Details of RLHF with PPO](https://huggingface.co/blog/the_n_implementation_details_of_rlhf_with_ppo). For the conceptual RLHF pipeline see [Post-Training](../post_training/notes.md); for PPO itself see [Policy Gradients](policy_gradients.md).
+> Draft — seeded from reading notes, to expand. Primary source: [The N Implementation Details of RLHF with PPO](https://huggingface.co/blog/the_n_implementation_details_of_rlhf_with_ppo). For the conceptual RLHF pipeline see [Post-Training](../post_training/notes.md); for PPO itself see [RL notes](notes.md#ppo).
 
 ## Reward model training
 
@@ -17,7 +17,7 @@
 - Per-token KL penalty
 - Whiten rewards without shifting the mean, then calculate advantage with GAE ($`\lambda = 0.95`$, so 0.05 weight on TD), then whiten advantage
   - Note that in the "reward-to-go" framing, the last-token reward is copied to all past tokens, and the per-token KL penalty is propagated backward in a "triangular" fashion
-  - This triangular shape is exactly what changes when KL is applied at the sequence level instead — see [GRPO](grpo.md)
+  - This triangular shape is exactly what changes when KL is applied at the sequence level instead — see [RL notes](notes.md#grpo)
 - Adaptive KL: the penalty coefficient is adjusted to bring the measured KL within a target range. Hyperparameters include a clip scaled by batch_size / horizon
 
 ## Batch terminology (rollout / minibatch / microbatch)

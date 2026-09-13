@@ -58,17 +58,12 @@ Things already read that still need to be written up as notes in `llms/`, ordere
 *Scope: learning from your own samples — policy-gradient machinery, KL estimation, async/staleness infrastructure, verifiers.*
 
 - [ ] [Predicting and Controlling Staleness in Fully Asynchronous RL (Applied Compute)](https://www.appliedcompute.com/research/staleness-in-fully-async-rl) → new async-RL section
-- [ ] [Is Frontier Asynchronous RL Solved? (Luk Huang)](https://luk-huang.github.io/personal-website/blog/is-frontier-asynchronous-rl-solved.html) → same section
 - [ ] [Single-Rollout Asynchronous Optimization for Agentic RL (arXiv 2607.07508)](https://arxiv.org/abs/2607.07508) *(you listed this under post-training; it's async agentic RL, filed here)*
 - [ ] [CompactionRL: RL with Context Compaction for Long-Horizon Agents (arXiv 2607.05378)](https://arxiv.org/abs/2607.05378) — cross-ref [agents/harnesses.md](agents/harnesses.md) context management
-- [ ] [Spinning Up (OpenAI)](https://spinningup.openai.com/en/latest/) — policy gradient theorem, REINFORCE, VPG, TRPO, PPO → [policy_gradients.md](rl/policy_gradients.md)
-- [ ] [Coding PPO from scratch, parts 1–4 (Medium)](https://medium.com/analytics-vidhya/coding-ppo-from-scratch-with-pytorch-part-1-4-613dfc1b14c8) → [policy_gradients.md](rl/policy_gradients.md) / `code.ipynb`
+- [ ] [Coding PPO from scratch, parts 1–4 (Medium)](https://medium.com/analytics-vidhya/coding-ppo-from-scratch-with-pytorch-part-1-4-613dfc1b14c8) → [notes.md](rl/notes.md) / `code.ipynb`
 - [ ] [The N Implementation Details of RLHF with PPO (HF)](https://huggingface.co/blog/the_n_implementation_details_of_rlhf_with_ppo) — resolve the "(verify against source)" items in [rlhf_ppo.md](rl/rlhf_ppo.md)
-- [ ] [Approximating KL Divergence (Schulman)](http://joschu.net/blog/kl-approx.html) — flesh out estimator derivations in [kl_divergence.md](rl/kl_divergence.md)
 - [ ] *(to read)* [Let's Verify Step by Step (arXiv 2305.20050)](https://arxiv.org/abs/2305.20050) — PRMs, outcome vs process supervision → [reasoning.md](rl/reasoning.md)
 - [ ] *(to read)* RL rollout infrastructure (bridge to performance/): [verl/HybridFlow (arXiv 2409.19256)](https://arxiv.org/abs/2409.19256), [OpenRLHF (arXiv 2405.11143)](https://arxiv.org/abs/2405.11143) — vLLM-in-the-loop, weight sync, train/inference numerical mismatch → new async/infra section
-- [ ] *(to read)* [GAE paper (arXiv 1506.02438)](https://arxiv.org/abs/1506.02438) — the source for the λ notes in [rlhf_ppo.md](rl/rlhf_ppo.md)
-- [ ] *(to read)* [DeepSeekMath (arXiv 2402.03300)](https://arxiv.org/abs/2402.03300) — where GRPO comes from (grpo.md currently cites nothing) + [DeepSeek-R1 (arXiv 2501.12948)](https://arxiv.org/abs/2501.12948)
 - [ ] *(to read)* [Scaling LLM Test-Time Compute Optimally (arXiv 2408.03314)](https://arxiv.org/abs/2408.03314) → [post_training/notes.md](post_training/notes.md) §Inference-time scaling
 
 ## evals/

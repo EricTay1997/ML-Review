@@ -82,7 +82,7 @@
 
 ## GRPO
 
-- Moved to [RL / GRPO](../rl/grpo.md), which covers the objective, its relationship to PPO-based RLHF, and variants (DAPO, Dr. GRPO, TIS, DeepSeek V3.2).
+- Moved to [RL notes](../rl/notes.md#grpo), which covers the objective, its relationship to PPO-based RLHF, and variants (DAPO, Dr. GRPO, TIS / CISPO, DeepSeek V3.2).
 
 ## RLCAI
 
