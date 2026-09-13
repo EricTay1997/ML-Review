@@ -6,10 +6,8 @@
 - SimCLR
   - ![simclr.png](images/simclr.png)[Source](https://simclr.github.io)
   - Loss:
-    - Info-NCE:
-      ```math
-      \ell_{i,j}=-\log \frac{\exp(\text{sim}(z_i,z_j)/\tau)}{\sum_{k=1}^{2N}\mathbb{1}_{[k\neq i]}\exp(\text{sim}(z_i,z_k)/\tau)}
-      ```
+    - Info-NCE: <div align="center">
+      $`\displaystyle \ell_{i,j}=-\log \frac{\exp(\text{sim}(z_i,z_j)/\tau)}{\sum_{k=1}^{2N}\mathbb{1}_{[k\neq i]}\exp(\text{sim}(z_i,z_k)/\tau)}`$ </div>
     - A similarity metric like cosine similarity can be used.
   - Data Augmentation
     - Crop-and-resize, and color distortion are particularly useful especially when used together. 

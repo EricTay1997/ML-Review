@@ -15,10 +15,8 @@ The function-space side of [Kernels](kernels.md): what a Hilbert space is, what 
   - In an RKHS, we get two things:
     - $`|f(x)| \leq \sqrt{k(x, x)}\, \|f\|_{\mathcal{H}}`$: small norm ⇒ small predictions everywhere, so penalising the norm is meaningful. 
     - Every inner product, norm and evaluation is computable from the kernel alone — $`\|\sum_i \alpha_i g_{x_i}\|^2 = \alpha^\top K \alpha`$, $`f(x) = \langle f, g_x \rangle`$ — so you never represent the (often infinite-dimensional) space
-- **RKHSs and kernels are in bijection.** Given an RKHS, its reproducing kernel is unique (Riesz representers are unique). Given a PSD kernel, the RKHS having it as its reproducing kernel is unique (Moore–Aronszajn)
-  ```math
-  \{\text{RKHSs of functions on } \mathcal{X}\} \;\longleftrightarrow\; \{\text{PSD kernels on } \mathcal{X}\}
-  ```
+- **RKHSs and kernels are in bijection.** Given an RKHS, its reproducing kernel is unique (Riesz representers are unique). Given a PSD kernel, the RKHS having it as its reproducing kernel is unique (Moore–Aronszajn) <div align="center">
+  $`\displaystyle \{\text{RKHSs of functions on } \mathcal{X}\} \;\longleftrightarrow\; \{\text{PSD kernels on } \mathcal{X}\}`$ </div>
   - What is *not* unique is the **feature map**: many $`\phi`$ give the same $`k`$.
   - An RKHS is the functions *together with* their inner product. Same functions, inner product scaled by $`c`$ → a different RKHS, with kernel $`k / c`$. Change the norm, change the kernel
 - **A kernel admits three equivalent definitions** — as a function, as a matrix property, and as a reproducing kernel
@@ -102,10 +100,8 @@ Three facts, proved in the last section of this note, are used freely here:
 ### What "small norm" means: cheap according to $`k`$
 
 - The norm is relative to $`k`$. The same function has different norms under different kernels.
-- Disagreeing about similar points is expensive. Suppose $`f(x_1) = +1`$ and $`f(x_2) = -1`$. The no-penalty $`f`$ has $`\alpha = K^{-1} y`$ and
-  ```math
-  \|f\|_{\mathcal{H}}^2 = y^\top K^{-1} y = \frac{2}{1 - k(x_1, x_2)} \qquad \text{(RBF, so } k(x,x) = 1\text{)}
-  ```
+- Disagreeing about similar points is expensive. Suppose $`f(x_1) = +1`$ and $`f(x_2) = -1`$. The no-penalty $`f`$ has $`\alpha = K^{-1} y`$ and <div align="center">
+  $`\displaystyle \|f\|_{\mathcal{H}}^2 = y^\top K^{-1} y = \frac{2}{1 - k(x_1, x_2)} \qquad \text{(RBF, so } k(x,x) = 1\text{)}`$ </div>
   - As $`k(x_1, x_2) \to 1`$ (points move closer, or $`\sigma`$ widens), the cost → ∞. Ridge shrinks this function hard; GD learns it last
 
 ## Proofs: the three definitions are equivalent
@@ -118,10 +114,8 @@ The two sections below prove 3 ⇒ 1 and 2 ⇒ 3; 1 ⇒ 2 is the one-liner in th
 - Let $`\mathcal{H}`$ be such an RKHS. Two facts combine:
   - **Riesz representation theorem**, true in *any* Hilbert space, RK or not: every continuous linear functional $`L`$ is an inner product with one fixed vector, $`L(f) = \langle f, v_L \rangle`$ for a unique $`v_L \in \mathcal{H}`$
   - **The RKHS definition**: $`\delta_x`$ is linear (evaluation is linear) and continuous (by definition)
-- Apply Riesz to $`L = \delta_x`$. Since $`\delta_x(f) = f(x)`$ by definition, for every $`x`$ there is a unique $g_x \in \mathcal{H}$, with
-  ```math
-  f(x) = \langle f, g_x \rangle_{\mathcal{H}} \qquad \text{for every } f \in \mathcal{H}
-  ```
+- Apply Riesz to $`L = \delta_x`$. Since $`\delta_x(f) = f(x)`$ by definition, for every $`x`$ there is a unique $g_x \in \mathcal{H}$, with <div align="center">
+  $`\displaystyle f(x) = \langle f, g_x \rangle_{\mathcal{H}} \qquad \text{for every } f \in \mathcal{H}`$ </div>
   - This is the **reproducing property**: evaluation is an inner product
   - Two quantifiers, in this order. Riesz runs once per $`x`$ and returns one function $`g_x`$; that function then works for every $`f`$
   - $`g_x`$ is a function $`\mathcal{X} \to \mathbb{R}`$, and a different one for each $`x`$
@@ -147,10 +141,8 @@ The two sections below prove 3 ⇒ 1 and 2 ⇒ 3; 1 ⇒ 2 is the one-liner in th
 - **Goal.** Definition 3 says $`k`$ is the reproducing kernel of some RKHS. So, starting from a symmetric PSD $`k`$ (definition 2), build a Hilbert space $`\mathcal{H}`$ of functions $`\mathcal{X} \to \mathbb{R}`$ and check two things against the RKHS definition above: evaluation is continuous on it (so it is an RKHS), and $`\langle f, g_x \rangle = f(x)`$ with $`g_x(x') = k(x', x)`$ (so $`k`$ is its reproducing kernel)
 - **Building blocks.** For each $`x \in \mathcal{X}`$, the section $`g_x : \mathcal{X} \to \mathbb{R}`$, $`g_x(x') = k(x', x)`$. There is one for every point of the input space — for $`\mathcal{X} = \mathbb{R}^d`$, a continuum of them. No data is involved
 - **Step 1: the functions.** $`\mathcal{H}_0 = \mathrm{span}\{g_x : x \in \mathcal{X}\}`$: every function of the form $`f = \sum_{i=1}^m \alpha_i g_{x_i}`$ for some finite $`m`$, some points $`x_1, \ldots, x_m \in \mathcal{X}`$, and some $`\alpha_i \in \mathbb{R}`$
-- **Step 2: the inner product.** For $`f = \sum_i \alpha_i g_{x_i}`$ and $`h = \sum_j \beta_j g_{y_j}`$, define
-  ```math
-  \langle f, h \rangle := \sum_{i,j} \alpha_i \beta_j\, k(x_i, y_j) = \alpha^\top K \beta
-  ```
+- **Step 2: the inner product.** For $`f = \sum_i \alpha_i g_{x_i}`$ and $`h = \sum_j \beta_j g_{y_j}`$, define <div align="center">
+  $`\displaystyle \langle f, h \rangle := \sum_{i,j} \alpha_i \beta_j\, k(x_i, y_j) = \alpha^\top K \beta`$ </div>
   - Symmetric because $`k`$ is. Bilinear by construction. $`\langle f, f \rangle = \alpha^\top K \alpha \geq 0`$ because $`K`$ is PSD — this is where definition 2 is used
 
 - **Step 3: the reproducing property on $`\mathcal{H}_0`$.** $`\langle f, g_x \rangle = f(x)`$

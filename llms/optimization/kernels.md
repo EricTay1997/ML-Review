@@ -17,7 +17,7 @@ The minimum kernel background for [NTK](ntk.md): what a kernel is, why the two d
 - Fix: transform first, then be linear in *that* — $`g(x) = \phi(x)^\top w`$. Nonlinear in $`x`$, still linear in $`w`$. E.g. for $`x = (x_1, x_2)`$:
   - $`\phi(x) = (x_1^2,\ \sqrt2\, x_1 x_2,\ x_2^2)`$, so $`\phi : \mathbb{R}^2 \to \mathbb{R}^3`$, and "linear in $`\phi`$" now covers every ellipse and hyperbola
 - Problem: the richer $`\phi`$, the bigger $`P`$. Degree-3 polynomial features on a 100-dim input → $`P = 171{,}700`$. The Gaussian/RBF feature map has $`P = \infty`$ — you can't write $`\phi(x)`$ down at all
-- The trick: We define a kernel $`k(x, x') = \phi(x)^\top \phi(x')`$ for *some* feature map $`\phi`$, that we can evaluate *without building $`\phi`$*. 
+- The trick: We define a kernel $`k(x, x') = \phi(x)^\top \phi(x')`$ for *some* feature map $`\phi`$, that we can evaluate *without building* $`\phi`$. 
 - $`k(x, x')`$ is "how similar are $`x`$ and $`x'`$, measured in feature space"
 - In doing so, we often can express predictions as a function of the kernel, and convert computational cost into a function of $N$, despite the very expressive $\phi$. 
 
@@ -31,12 +31,8 @@ The minimum kernel background for [NTK](ntk.md): what a kernel is, why the two d
 ## Representer theorem: why every prediction is a weighted sum of similarities
 
 - Fit $`g(x) = \phi(x)^\top w`$ by minimising any loss that depends on $`w`$ only through the training predictions, plus a penalty $`\|w\|^2`$
-- Split $`w = w_\parallel + w_\perp`$, with $`w_\perp`$ orthogonal to every $`\phi(x_i)`$. Then $`\phi(x_i)^\top w = \phi(x_i)^\top w_\parallel`$ for all $`i`$ — the perpendicular part changes no training prediction, so it can't lower the loss, but it does add $`\|w_\perp\|^2`$ to the penalty. So the optimum has $`w_\perp = 0`$:
-  ```math
-  w^\star = \sum_i \alpha_i\, \phi(x_i)
-  \qquad\Rightarrow\qquad
-  g(x) = \phi(x)^\top w^\star = \sum_i \alpha_i\, \phi(x)^\top \phi(x_i) = \sum_i \alpha_i\, k(x, x_i)
-  ```
+- Split $`w = w_\parallel + w_\perp`$, with $`w_\perp`$ orthogonal to every $`\phi(x_i)`$. Then $`\phi(x_i)^\top w = \phi(x_i)^\top w_\parallel`$ for all $`i`$ — the perpendicular part changes no training prediction, so it can't lower the loss, but it does add $`\|w_\perp\|^2`$ to the penalty. So the optimum has $`w_\perp = 0`$: <div align="center">
+  $`\displaystyle w^\star = \sum_i \alpha_i\, \phi(x_i) \qquad\Rightarrow\qquad g(x) = \phi(x)^\top w^\star = \sum_i \alpha_i\, \phi(x)^\top \phi(x_i) = \sum_i \alpha_i\, k(x, x_i)`$ </div>
 - **Every kernel method predicts by a weighted sum of similarities to the training points**: The SVM's $`\hat\lambda_0 + \sum_i \alpha_i y_i k(x_i, x)`$, the GP posterior mean, and the NTK's $`k(x, X) K^{-1} y`$.
 - Note that we fit $`N`$ coefficients instead of $`P`$ weights — cost scales with *dataset size*, not feature dimension - GP's $`O(n^3)`$.
 - Cool property: Penalty-free version. GD from $`w_0 = 0`$ only ever steps along $`\phi(x_i)`$ directions, so it stays in the span with no regulariser (NTK version).
@@ -48,10 +44,8 @@ The minimum kernel background for [NTK](ntk.md): what a kernel is, why the two d
   - In weight space, that is equivalent to $`\|\Phi w - y\|^2 + \lambda \|w\|^2`$. 
   - By the representer theorem $`f = \sum_i \alpha_i k(\cdot, x_i)`$, so $`f(x_i) = (K\alpha)_i`$ and $`\|f\|^2 = \alpha^\top K \alpha`$
   - The objective becomes $`\|K\alpha - y\|^2 + \lambda\, \alpha^\top K \alpha`$
-  - And zero gradient gives $`\alpha = (K + \lambda I)^{-1} y`$:
-  ```math
-  f(x) = k(x, X)\,(K + \lambda I)^{-1}\, y
-  ```
+  - And zero gradient gives $`\alpha = (K + \lambda I)^{-1} y`$: <div align="center">
+  $`\displaystyle f(x) = k(x, X)\,(K + \lambda I)^{-1}\, y`$ </div>
 
 ### What the ridge is actually penalising
 
@@ -62,10 +56,8 @@ The minimum kernel background for [NTK](ntk.md): what a kernel is, why the two d
   - $`y = (1, 1)`$: $`\|f\|^2 = 2/(1 + k) \to 1`$ as $`k \to 1`$
   - Widening $`\sigma`$ pushes $`k \to 1`$ (points are considered more similar). Disagreeing across the two points becomes infinitely expensive; agreeing gets *cheaper*. To disagree is to get more wiggly, which is expensive. Ridge then refuses to pay for the wiggle, and the fit comes out smooth.
 - Why narrow → wiggly: $`k(x_i, x_j) \approx 0`$ for $`i \neq j`$, so $`K \approx I`$, $`\alpha \approx y/(1+\lambda)`$, and $`f(x) \approx \frac{1}{1+\lambda} \sum_i y_i\, k(x, x_i)`$ — one bump of height $`\approx y_i`$ at each training point, decaying to 0 between them.
-- To generalize, **the spectrum of $`K`$ is the price**. For the interpolant, with $`K = U \Lambda U^\top`$:
-  ```math
-  \|f\|^2 = y^\top K^{-1} y = \sum_j \frac{(u_j^\top y)^2}{\lambda_j}
-  ```
+- To generalize, **the spectrum of $`K`$ is the price**. For the interpolant, with $`K = U \Lambda U^\top`$: <div align="center">
+  $`\displaystyle \|f\|^2 = y^\top K^{-1} y = \sum_j \frac{(u_j^\top y)^2}{\lambda_j}`$ </div>
   - Wide kernel: $`K \approx \mathbf{1}\mathbf{1}^\top`$, one large eigenvalue (the constant direction) and the rest tiny → one cheap pattern, everything else expensive. Narrow kernel: $`K \approx I`$, flat spectrum → every pattern costs the same
   - This is [NTK §What "learning an eigenvector" means](ntk.md#what-learning-an-eigenvector-means) read as a bill instead of a clock: the directions GD learns last (small $`\lambda_j`$, slow $`e^{-\lambda_j t}`$) are exactly the ones the norm charges most for.
 

@@ -13,9 +13,8 @@
       - where $`\tilde{A}=A+I`$, $`A`$ being the adjacency matrix, and $`\tilde{D}`$ is a diagonal matrix with $`\tilde{D}_{ii} = \sum_j \tilde{A}_{ij}`$, the degree of node $`i`$ plus one (the added self-loop)
     - GraphConv
       - Addresses potential issue in GCN where the network forgets node-specific information
-      - ```math
-        \mathbf{x}_i^{(l+1)} = \mathbf{W}^{(l + 1)}_1 \mathbf{x}_i^{(l)} + \mathbf{W}^{(\ell + 1)}_2 \sum_{j \in \mathcal{N}_i} \mathbf{x}_j^{(l)}
-        ```
+      - Update rule: <div align="center">
+        $`\displaystyle \mathbf{x}_i^{(l+1)} = \mathbf{W}^{(l + 1)}_1 \mathbf{x}_i^{(l)} + \mathbf{W}^{(\ell + 1)}_2 \sum_{j \in \mathcal{N}_i} \mathbf{x}_j^{(l)}`$ </div>
     - Graph Attention
       - Idea is to not just 'average' across neighbors, but to weight edges with attention.
       - Attention is implemented as a one-layer MLP

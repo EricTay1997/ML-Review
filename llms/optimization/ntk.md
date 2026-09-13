@@ -62,10 +62,8 @@ Source: [Jacot et al.](https://arxiv.org/pdf/1806.07572), Theorems 1 and 2
     - Frozen features ⇒ frozen $`\phi_t`$ ⇒ frozen $`K_t`$
     - Contrast SP, $`f = \sum_i a_i \sigma(w_i^\top x)`$ with $`a_i \sim \mathcal{N}(0, 1/n)`$ — the $`1/\sqrt n`$ is now *inside the value* of $`a_i`$. Same $`f_0 = O(1)`$ by the same CLT, but:
       - $`\partial f/\partial a_i = \sigma(w_i^\top x), \Delta a_i = O(\eta)`$, i.e. $`\sqrt n`$ times larger than $`a_i`$'s own init size
-      - The output change from that step:
-        ```math
-        \Delta f(x) = \sum_i \sigma(w_i^\top x)\, \Delta a_i = -\eta \cdot \frac1N \sum_j r_j \underbrace{\sum_{i=1}^n \sigma(w_i^\top x)\, \sigma(w_i^\top x_j)}_{n \text{ terms, nonzero mean}}
-        ```
+      - The output change from that step: <div align="center">
+        $`\displaystyle \Delta f(x) = \sum_i \sigma(w_i^\top x)\, \Delta a_i = -\eta \cdot \frac1N \sum_j r_j \underbrace{\sum_{i=1}^n \sigma(w_i^\top x)\, \sigma(w_i^\top x_j)}_{n \text{ terms, nonzero mean}}`$ </div>
       - So $`\Delta f = O(\eta n)`$. Stability forces $`\eta = O(1/n)`$, and at that LR $`\Delta w_i = O(\eta\, a_i) = O(n^{-3/2})`$: features even more frozen than under NTKP ([μP §SP](muP.md#standard-parametrization-sp))
       - **Init variance $`1/n`$ and a forward multiplier $`1/\sqrt n`$ give the same function at init but different gradients, because the multiplier is in the formula and the variance isn't.** That is the NTK parametrization's trick: move the $`1/\sqrt n`$ into the forward pass so it shows up in every gradient
   - Why the output still moves by $`O(1)`$: neuron $`i`$'s contribution to $`f`$ changes by $`\frac{1}{\sqrt n} \cdot O(n^{-1/2}) = O(1/n)`$, there are $`n`$ of them, and they're **coherent** (each change reduces the same residuals, so they add rather than cancel): $`n \cdot O(1/n) = O(1)`$
@@ -80,10 +78,8 @@ Source: [Jacot et al.](https://arxiv.org/pdf/1806.07572), Theorems 1 and 2
 ## Squared loss: closed form, eigenvectors, convergence
 
 - $`L = \frac12 \|f(X) - y\|^2`$, so $`\nabla_f L = f - y`$ and $`\dot f_t = -K (f_t - y)`$ with $`K = \Theta_\infty(X, X)`$ constant
-- Constant-coefficient linear ODE → closed form:
-  ```math
-  f_t(X) = y + e^{-Kt}\bigl(f_0(X) - y\bigr)
-  ```
+- Constant-coefficient linear ODE → closed form: <div align="center">
+  $`\displaystyle f_t(X) = y + e^{-Kt}\bigl(f_0(X) - y\bigr)`$ </div>
 - Diagonalize $`K = U \Lambda U^\top`$ and project the residuals onto each eigenvector:
   - $`u_j^\top (f_t - y) = e^{-\lambda_j t}\, u_j^\top (f_0 - y)`$
   - large $`\lambda_j`$ → that residual component decays fast; small $`\lambda_j`$ → slowly (time scale $`1/\lambda_j`$); $`\lambda_j = 0`$ → never (the null space of $`K`$ is unreachable)
@@ -107,10 +103,8 @@ The eigenvectors live in $`\mathbb{R}^N`$ — **sample space**, one coordinate p
 
 ## Off the training set: kernel regression
 
-- Let $`k(x, X) = [K(x, x_1), \ldots, K(x, x_N)] \in \mathbb{R}^{1 \times N}`$. The same ODE holds for $`f_t(x)`$ at any $`x`$ (with $`k(x, X)`$ in place of $`K`$), and integrating to $`t \to \infty`$ with $`K`$ invertible gives
-  ```math
-  f_\infty(x) = f_0(x) + k(x, X)\, K^{-1} \bigl(y - f_0(X)\bigr)
-  ```
+- Let $`k(x, X) = [K(x, x_1), \ldots, K(x, x_N)] \in \mathbb{R}^{1 \times N}`$. The same ODE holds for $`f_t(x)`$ at any $`x`$ (with $`k(x, X)`$ in place of $`K`$), and integrating to $`t \to \infty`$ with $`K`$ invertible gives <div align="center">
+  $`\displaystyle f_\infty(x) = f_0(x) + k(x, X)\, K^{-1} \bigl(y - f_0(X)\bigr)`$ </div>
 - With $`f_0 \equiv 0`$ this is $`f_\infty(x) = k(x, X) K^{-1} y`$ — ridgeless kernel regression, i.e. the GP posterior mean with $`\Theta_\infty`$ as the prior covariance (the same formula as in [Gaussian Process](../../fundamentals/classical/13_gaussian_process/notes.md), with zero noise). 
 - The paper goes a step further: at infinite width $`f_0`$ is itself Gaussian, so the trained $`f_\infty`$ is a Gaussian process whose mean is the kernel-regression solution and whose variance vanishes on the training points
 - So the NTK governs both halves of learning: *how fast* the training data are fitted (the spectrum) and *how* those fitted values extend to unseen inputs (the $`k(x, X) K^{-1}`$ interpolation).

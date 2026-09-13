@@ -57,7 +57,7 @@ Things already read that still need to be written up as notes in `llms/`, ordere
 
 *Scope: learning from your own samples — policy-gradient machinery, KL estimation, async/staleness infrastructure, verifiers.*
 
-- [ ] [Predicting and Controlling Staleness in Fully Asynchronous RL (Applied Compute)](https://www.appliedcompute.com/research/staleness-in-fully-async-rl) → new async-RL section
+- [x] [Predicting and Controlling Staleness in Fully Asynchronous RL (Applied Compute)](https://www.appliedcompute.com/research/staleness-in-fully-async-rl) → [notes.md §Async RL and staleness](rl/notes.md)
 - [ ] [Single-Rollout Asynchronous Optimization for Agentic RL (arXiv 2607.07508)](https://arxiv.org/abs/2607.07508) *(you listed this under post-training; it's async agentic RL, filed here)*
 - [ ] [CompactionRL: RL with Context Compaction for Long-Horizon Agents (arXiv 2607.05378)](https://arxiv.org/abs/2607.05378) — cross-ref [agents/harnesses.md](agents/harnesses.md) context management
 - [ ] [Coding PPO from scratch, parts 1–4 (Medium)](https://medium.com/analytics-vidhya/coding-ppo-from-scratch-with-pytorch-part-1-4-613dfc1b14c8) → [notes.md](rl/notes.md) / `code.ipynb`

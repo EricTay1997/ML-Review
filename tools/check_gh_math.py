@@ -18,7 +18,21 @@ Requires an authenticated `gh` CLI. Exit code 1 if any unrendered math is found.
 
 Known safe patterns (what fixes look like):
     inline:  $`\\mathbb{E}_{x \\sim p}[f(x)]`$        (dollar-backtick, emphasis-immune)
-    display: a ```math fenced block, indented to sit inside its bullet
+    display, top level:   a ```math fenced block (only when NOT inside a list)
+    display, in a bullet: centered via an inline HTML wrapper that opens at the END of the
+                          prose line and closes after the equation (tight list preserved):
+                              - prose text <div align="center">
+                                $`\\displaystyle ...`$ </div>
+                          If the equation is its own paragraph (blank line before), use the
+                          block form: <div align="center"> / blank / equation / blank / </div>
+                          and ALWAYS leave a blank line after </div>, or CommonMark keeps the
+                          following lines inside the raw HTML block (their $`..`$ then renders
+                          with a stray backtick glyph -- flagged below).
+
+GitHub does NOT convert a ```math fence inside a list to math if that list contains
+any inline math anywhere (same item, sibling, nested, before or after) -- it comes
+back as a <pre lang="math"> code box. Found 2026-09-12 (72 of 74 fences in the repo
+were broken). This script reports such fences as failures.
 """
 
 import html
@@ -93,11 +107,30 @@ def candidate_lines(path: Path) -> list[tuple[int, str]]:
     return out
 
 
+def unrendered_fences(out: str) -> list[str]:
+    """```math fences GitHub left as <pre lang="math"> code boxes (fence inside a list with inline math)."""
+    return [
+        "display fence rendered as code box: " + html.unescape(re.sub(r"<[^>]+>", "", m)).strip()[:100]
+        for m in re.findall(r'<pre lang="math"[^>]*>.*?</pre>', out, flags=re.S)
+    ]
+
+
+def stray_backtick_math(out: str) -> list[str]:
+    """Math GitHub picked up from RAW HTML text (an unclosed <div>/<p> block swallowed the line),
+    so the dollar-backtick delimiters stayed inside and render as backtick glyphs."""
+    return [
+        "math with stray backtick (line swallowed by an HTML block; add a blank line after </div>): "
+        + html.unescape(m).strip()[:100]
+        for m in re.findall(r"<math-renderer[^>]*>\$`(.*?)</math-renderer>", out, flags=re.S)
+    ]
+
+
 def check_file_whole(path: Path) -> list[str]:
     text = path.read_text()
-    if "$" not in text:
+    if "$" not in text and "```math" not in text:
         return []
-    return leftover_dollar_lines(render(text))
+    out = render(text)
+    return leftover_dollar_lines(out) + unrendered_fences(out) + stray_backtick_math(out)
 
 
 def check_file_lines(path: Path, batch_size: int = 40) -> list[tuple[int, str]]:

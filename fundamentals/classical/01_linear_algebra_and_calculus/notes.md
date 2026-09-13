@@ -48,10 +48,8 @@
 
 ### Multivariable Calculus
 - Let $y = f(x_1,x_2,\dots,x_n)$, i.e. $f: \mathbb{R}^n \rightarrow \mathbb{R}$.
-- Then
-  ```math
-  \frac{\partial y}{\partial x_i}=\frac{\partial f}{\partial x_i}=\partial_{x_i} f=\partial_i f=f_{x_i}=f_i=D_i f=D_{x_i} f=\lim _{h \rightarrow 0} \frac{f\left(x_1, \ldots, x_{i-1}, x_i+h, x_{i+1}, \ldots, x_n\right)-f\left(x_1, \ldots, x_i, \ldots, x_n\right)}{h}
-  ```
+- Then <div align="center">
+  $`\displaystyle \frac{\partial y}{\partial x_i}=\frac{\partial f}{\partial x_i}=\partial_{x_i} f=\partial_i f=f_{x_i}=f_i=D_i f=D_{x_i} f=\lim _{h \rightarrow 0} \frac{f\left(x_1, \ldots, x_{i-1}, x_i+h, x_{i+1}, \ldots, x_n\right)-f\left(x_1, \ldots, x_i, \ldots, x_n\right)}{h}`$ </div>
 - $\nabla_{\mathbf{x}} f(\mathbf{x})=\left[\partial_{x_1} f(\mathbf{x}), \partial_{x_2} f(\mathbf{x}), \ldots \partial_{x_n} f(\mathbf{x})\right]^{\top}$
 - The **Jacobian**: Extending this, $\nabla_{\mathbf{x}}\mathbf{y} \in \mathbb{R}^{n \times m}$ if $\mathbf{y} \in \mathbb{R}^{m}$, and the (i,j) entry of this matrix encapsulates $\frac{\partial y_j}{\partial x_i}$.
 - For all $\mathbf{A} \in \mathbb{R}^{m \times n}$ we have $\nabla_{\mathbf{x}} \mathbf{A} \mathbf{x}=\mathbf{A}^{\top}$ and $\nabla_{\mathbf{x}} \mathbf{x}^{\top} \mathbf{A}^{\top}=\mathbf{A}^{\top}$.
