@@ -99,10 +99,10 @@ $\nabla_{\mathbf{x}} y=\nabla_{\mathbf{x}}\mathbf{u} \nabla_{\mathbf{u}} y$
   - We now define the generalized Lagrangian $L(\mathbf{x}, \pmb{\lambda}, \pmb{\alpha})=f(\mathbf{x})+\sum_i \lambda_i g^{(i)}(\mathbf{x})+\sum_j \alpha_j h^{(j)}(\mathbf{x})$
     - Then (primal form) $`\hat{\mathbf{x}} = \min _{\mathbf{x}} \max _{\pmb{\lambda}} \max _{\pmb{\alpha}, \pmb{\alpha} \geq 0} L(\mathbf{x}, \pmb{\lambda}, \pmb{\alpha})`$ (If any constraint is violated, you can choose $`\pmb\lambda, \pmb\alpha`$ that makes the lagrangian go to $`\infty`$)
     - Strong duality: If our primal/dual problem satisfies certain constraint qualifications, this is equivalent to finding the solution to our dual form: 
-      - $`(\hat{\pmb{\lambda}}, \hat{\pmb{\alpha}}) = \max _{\pmb{\lambda}} \max _{\pmb{\alpha}, \pmb{\alpha} \geq 0}\min _{\mathbf{x}} L(\mathbf{x}, \pmb{\lambda}, \pmb{\alpha})`$
+      - $`\displaystyle (\hat{\pmb{\lambda}}, \hat{\pmb{\alpha}}) = \max _{\pmb{\lambda}} \max _{\pmb{\alpha}, \pmb{\alpha} \geq 0}\min _{\mathbf{x}} L(\mathbf{x}, \pmb{\lambda}, \pmb{\alpha})`$
   - The KKT conditions are necessary (but not always sufficient) conditions for a point to be optimal.
     - Primal feasibility: $`g^{(i)}(\mathbf{x^*}) = 0`$ and $`h^{(i)}(\mathbf{x^*}) \leq 0`$ $`\forall`$ $`i,j`$
     - Dual feasibility: $`\pmb{\alpha^*} \geq 0`$
-    - Lagrangian stationarity: $`\nabla_{\mathbf{x}} \mathcal{L}\left(\mathbf{x}^*, \pmb{\alpha}^*, \pmb{\beta}^*\right)=\mathbf{0}`$
+    - Lagrangian stationarity: $`\displaystyle \nabla_{\mathbf{x}} \mathcal{L}\left(\mathbf{x}^*, \pmb{\alpha}^*, \pmb{\beta}^*\right)=\mathbf{0}`$
     - Complementary slackness: $`\pmb{\alpha}`$ $`\odot`$ $`\mathbf{h(x^*)} = \mathbf{0}`$
       - This last condition essentially says that when $`h^{(i)}(\mathbf{x^*}) < 0`$ (the constraint is not binding), $`\alpha_i = 0`$ (See [Support Vectors](../08_svms/notes.md)) 

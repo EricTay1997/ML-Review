@@ -46,13 +46,13 @@
   - Predicts surrounding words based on a center word
     - Suppose we have a sequence $`\{w^{(1)}, \ldots, w^{(T)}\}`$
     - The likelihood is $`\prod_{t=1}^T\prod_{j = -r, j\neq0}^{r} P(w^{(t+j)} \mid w^{(t)})`$
-      - $`P(y \mid c) = \frac{\exp(\mathbf{u}_y^\top\mathbf{v}_c)}{\sum_{i \in \mathcal{V}}\exp(\mathbf{u}_i^\top\mathbf{v}_c)}`$
+      - $`\displaystyle P(y \mid c) = \frac{\exp(\mathbf{u}_y^\top\mathbf{v}_c)}{\sum_{i \in \mathcal{V}}\exp(\mathbf{u}_i^\top\mathbf{v}_c)}`$
     - Maximizing the log likelihood (minimizing the negative log likelihood) with gradient descent unfortunately needs us to calculate $`\sum_{i \in \mathcal{V}}\exp(\mathbf{u}_i^\top\mathbf{v}_c)`$ for every center word $`c`$.
     - Uses center word vectors $`\mathbf{v}_c`$ as embeddings. 
 - CBOW
   - Predicts center word based on surrounding words
-    - The likelihood is $`\prod_{t=1}^TP(w^{(t)} \mid w^{(t-r)}, \ldots, w^{(t-1)}, w^{(t+1)}, \ldots, w^{(t+r)})`$
-      - $`P(c \mid c_1, \ldots, c_{2r}) = \frac{\exp(\mathbf{u}_c^\top\mathbf{v}_{c'})}{\sum_{i \in \mathcal{V}}\exp(\mathbf{u}_i^\top\mathbf{v}_{c'})}`$
+    - The likelihood is $`\displaystyle \prod_{t=1}^TP(w^{(t)} \mid w^{(t-r)}, \ldots, w^{(t-1)}, w^{(t+1)}, \ldots, w^{(t+r)})`$
+      - $`\displaystyle P(c \mid c_1, \ldots, c_{2r}) = \frac{\exp(\mathbf{u}_c^\top\mathbf{v}_{c'})}{\sum_{i \in \mathcal{V}}\exp(\mathbf{u}_i^\top\mathbf{v}_{c'})}`$
       - $`\mathbf{v}_{c'} = \frac{1}{2r}\sum_{i=1}^{2r}\mathbf{v}_{c_i}`$
     - Maximizing the log likelihood with gradient descent is also computationally expensive.
     - Uses context word vectors $`\mathbf{v}_c`$ as embeddings. 
@@ -63,7 +63,7 @@
     - $`P(y \mid c) = \sigma(\mathbf{u}_y^\top\mathbf{v}_c)\prod_{k=1}^K(1 - \sigma(\mathbf{u}_{i_k}^\top\mathbf{v}_c))`$, where words $`i_k`$ are drawn from a predefined distribution, excluding words in $`c`$'s context window
 - GloVe
   - Adjusts for frequency of each word
-  - Loss function is $`\sum_{i, j \in \mathcal{V}} \left[h(x_{ij})(\mathbf{u}_j^\top\mathbf{v}_i + b_i + c_j - \log x_{ij})^2\right]`$
+  - Loss function is $`\displaystyle \sum_{i, j \in \mathcal{V}} \left[h(x_{ij})(\mathbf{u}_j^\top\mathbf{v}_i + b_i + c_j - \log x_{ij})^2\right]`$
     - $`x_{ij}`$ is the number of times $`j`$ appears in the context window with $`i`$ at the center. 
     - $`h(x) = \min(1, \left(\frac{x}{c}\right)^{0.75})`$
     - Intuition:

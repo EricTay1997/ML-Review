@@ -17,7 +17,8 @@ The one-line version: **when width changes, init and optimizer have to be rescal
 
 ## Running example: a 2-hidden-layer MLP
 
-- $`h^1 = W^1 x,\ x^1 = \phi(h^1); \quad h^2 = W^2 x^1,\ x^2 = \phi(h^2); \quad f(x) = W^3 x^2`$
+- Forward pass: <div align="center">
+  $`\displaystyle h^1 = W^1 x,\ x^1 = \phi(h^1); \quad h^2 = W^2 x^1,\ x^2 = \phi(h^2); \quad f(x) = W^3 x^2`$ </div>
 - $`W^1 \in \mathbb{R}^{n \times d}`$, $`W^2 \in \mathbb{R}^{n \times n}`$, $`W^3 \in \mathbb{R}^{k \times n}`$, with $`d`$ (input dim) and $`k`$ (output dim) fixed and the hidden width $`n \to \infty`$
 - The three matrices play structurally different roles, and this classification is what everything else hangs on:
 

@@ -34,11 +34,12 @@
     - Everything else
       - Solution: Asynchronous computation
 - Which bound am I hitting? **Arithmetic intensity** (source: [scaling book — roofline](https://jax-ml.github.io/scaling-book/roofline/))
-  - $`\text{Arithmetic Intensity} = \dfrac{\text{Computation FLOPs}}{\text{Communication Bytes}}`$
+  - Definition: <div align="center">
+    $`\displaystyle \text{Arithmetic Intensity} = \dfrac{\text{Computation FLOPs}}{\text{Communication Bytes}}`$ </div>
   - Compare against the accelerator's **ridge point** = peak FLOPs/s ÷ bandwidth. Above it → compute-bound; below → bandwidth-bound
   - Worked example — matmul $`X[B, D] \times Y[D, F] \to Z[B, F]`$, all bf16 (local notation: $`B`$ is the per-replica batch in _tokens_, $`D, F`$ are model dims)
-    - Load $`2BD + 2DF`$ bytes, perform $`2BDF`$ FLOPs, write $`2BF`$ bytes back:
-    - $`\text{Intensity(matmul)} = \dfrac{2BDF}{2BD + 2DF + 2BF} = \dfrac{BDF}{BD + DF + BF}`$
+    - Load $`2BD + 2DF`$ bytes, perform $`2BDF`$ FLOPs, write $`2BF`$ bytes back: <div align="center">
+      $`\displaystyle \text{Intensity(matmul)} = \dfrac{2BDF}{2BD + 2DF + 2BF} = \dfrac{BDF}{BD + DF + BF}`$ </div>
     - Assuming $`B \ll D, F`$: $`\dfrac{BDF}{BD + DF + BF} \approx \dfrac{BDF}{DF} = B`$ — intensity _is_ the token batch size
     - So compute-bound requires $`B > \text{Intensity(accelerator)} = \dfrac{1.97 \times 10^{14}}{8.20 \times 10^{11}} = 240`$ tokens
       - Those numbers are a **TPU v5e MXU** (197 bf16 TFLOP/s, 820 GB/s HBM); for an H100 the ridge is ~295 FLOPs/byte

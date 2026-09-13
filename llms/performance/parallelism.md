@@ -34,7 +34,8 @@ _From [sharding](https://jax-ml.github.io/scaling-book/sharding/). This is the p
 ### The collectives and their costs
 
 - **AllGather** copies the shards spread across devices onto EACH device along that axis. In our notation, it removes the sharding along an axis (drops a subscript)
-  - $`T_{total} = \max\left[\dfrac{T_{min} \cdot \sum_i |X_i|}{2}, \dfrac{V}{W_{ici} \cdot N_{axes}}\right]`$
+  - Cost: <div align="center">
+    $`\displaystyle T_{total} = \max\left[\dfrac{T_{min} \cdot \sum_i |X_i|}{2}, \dfrac{V}{W_{ici} \cdot N_{axes}}\right]`$ </div>
   - The bandwidth term (second) doesn't depend on the number of shards $`|X|`$ — the more shards, the more hops, but the fewer bytes that need to move per hop
   - Or more simply, just $`T_{total} = \dfrac{V}{W_{ici}}`$
 - **ReduceScatter** sums an unreduced/partially summed array, such that each device now has a shard of the fully summed array
@@ -78,12 +79,12 @@ The strategies below all shard this same toy layer — $`\text{In}[B,D] \to \tex
 
 ([scaling book](https://jax-ml.github.io/scaling-book/training/); CP/SP/EP per the [Megatron parallelisms guide](https://docs.nvidia.com/nemo/megatron-bridge/latest/parallelisms.html))
 
-1. **Data parallelism**: _activations sharded along batch, parameters and optimizer state are replicated on each device. Communication only occurs during the backwards pass._
-   $`\text{In}[B_X, D] \cdot_D W_{in}[D, F] \cdot_F W_{out}[F, D] \to \text{Out}[B_X, D]`$
-2. **Fully-sharded data parallelism (FSDP or ZeRO-3)**: _activations sharded along batch (like pure data parallelism), parameters sharded along the same mesh axis and AllGathered just-in-time before use in the forward pass. Optimizer state also sharded along batch. Reduces duplicated memory._
-   $`\text{In}[B_X, D] \cdot_D W_{in}[D_X, F] \cdot_F W_{out}[F, D_X] \to \text{Out}[B_X, D]`$
-3. **Tensor parallelism (also called Megatron sharding or model parallelism)**: _activations sharded along $`D`$ ($`d_{model}`$), parameters sharded along $`F`$ ($`d_{ff}`$). AllGather and ReduceScatter activations before and after each block. Compatible with FSDP._
-   $`\text{In}[B, D_Y] \cdot_D W_{in}[D, F_Y] \cdot_F W_{out}[F_Y, D] \to \text{Out}[B, D_Y]`$
+1. **Data parallelism**: _activations sharded along batch, parameters and optimizer state are replicated on each device. Communication only occurs during the backwards pass._ <div align="center">
+   $`\displaystyle \text{In}[B_X, D] \cdot_D W_{in}[D, F] \cdot_F W_{out}[F, D] \to \text{Out}[B_X, D]`$ </div>
+2. **Fully-sharded data parallelism (FSDP or ZeRO-3)**: _activations sharded along batch (like pure data parallelism), parameters sharded along the same mesh axis and AllGathered just-in-time before use in the forward pass. Optimizer state also sharded along batch. Reduces duplicated memory._ <div align="center">
+   $`\displaystyle \text{In}[B_X, D] \cdot_D W_{in}[D_X, F] \cdot_F W_{out}[F, D_X] \to \text{Out}[B_X, D]`$ </div>
+3. **Tensor parallelism (also called Megatron sharding or model parallelism)**: _activations sharded along $`D`$ ($`d_{model}`$), parameters sharded along $`F`$ ($`d_{ff}`$). AllGather and ReduceScatter activations before and after each block. Compatible with FSDP._ <div align="center">
+   $`\displaystyle \text{In}[B, D_Y] \cdot_D W_{in}[D, F_Y] \cdot_F W_{out}[F_Y, D] \to \text{Out}[B, D_Y]`$ </div>
    - **Important intuition**: FSDP moves **weights**, TP moves **activations**.
 4. **Sequence parallelism (SP)**: _extends tensor parallelism to shard the non-matmul ops (LayerNorm, dropout) along the sequence dimension too — only active when TP is, and covers exactly what plain TP leaves redundantly replicated._
 5. **Context parallelism (CP)**: _shards activations along the sequence dimension across all layers (not just the ops SP covers) — the lever for long-context training, targeting attention's KV memory specifically._
@@ -94,7 +95,8 @@ The strategies below all shard this same toy layer — $`\text{In}[B,D] \to \tex
 
 Source: [scaling book](https://jax-ml.github.io/scaling-book/training/)
 
-- Syntax: $`\text{In}[B_X, D] \cdot_D W_{in}[D, F] \cdot_F W_{out}[F, D] \to \text{Out}[B_X, D]`$
+- Syntax: <div align="center">
+  $`\displaystyle \text{In}[B_X, D] \cdot_D W_{in}[D, F] \cdot_F W_{out}[F, D] \to \text{Out}[B_X, D]`$ </div>
 - Activations sharded along batch dimension, weights fully replicated
 - Forward pass is normal — weights are replicated, so each device just runs the reference layer's forward pass on its own batch shard, no communication needed
 - Backward pass: each device computes a **local, unreduced** gradient from its own batch shard (the $`\{U_X\}`$ tag), then AllReduces it across the batch axis to get the true (summed) gradient
@@ -112,7 +114,8 @@ Source: [scaling book](https://jax-ml.github.io/scaling-book/training/)
 
 ### Fully-sharded data parallelism (FSDP / ZeRO-3)
 
-- Syntax: $`\text{In}[B_X, D] \cdot_D W_{in}[D_X, F] \cdot_F W_{out}[F, D_X] \to \text{Out}[B_X, D]`$
+- Syntax: <div align="center">
+  $`\displaystyle \text{In}[B_X, D] \cdot_D W_{in}[D_X, F] \cdot_F W_{out}[F, D_X] \to \text{Out}[B_X, D]`$ </div>
 - Practically, vanilla DP is rarely useful because our parameters + optimizer state don't fit in a single chip
 - FSDP splits the model params and optimizer states across the data parallel shards and efficiently gathers and scatters them as needed
   - Recall: FSDP moves **weights**! 
@@ -125,7 +128,8 @@ Source: [scaling book](https://jax-ml.github.io/scaling-book/training/)
 
 ### Tensor parallelism
 
-- Syntax: $`\text{In}[B, D_Y] \cdot_D W_{in}[D, F_Y] \cdot_F W_{out}[F_Y, D] \to \text{Out}[B, D_Y]`$
+- Syntax: <div align="center">
+  $`\displaystyle \text{In}[B, D_Y] \cdot_D W_{in}[D, F_Y] \cdot_F W_{out}[F_Y, D] \to \text{Out}[B, D_Y]`$ </div>
 - Let's reconcile something: Most people also say that TP shards model weights, so why are we sharding activations here? 
 - The equivalence is that by sharding weights in the contradicting dimension, we get partial sums post matrix multiplication, and we need to AllReduce = ReduceScatter + AllGather. If we _snapshot_ at the ReduceScatter step, then we get the syntax above.
 - Forward pass. We have to AllGather activations first. Post matrix multiplication, we have a partial sum and have to ReduceScatter. These are both **on the critical path**. 
@@ -145,7 +149,8 @@ Source: [scaling book](https://jax-ml.github.io/scaling-book/training/)
 
 ### Combining FSDP and TP
 
-- Syntax: $`\text{In}[B_X, D_Y] \cdot_D W_{in}[D_X, F_Y] \cdot_F W_{out}[F_Y, D_X] \to \text{Out}[B_X, D_Y]`$
+- Syntax: <div align="center">
+  $`\displaystyle \text{In}[B_X, D_Y] \cdot_D W_{in}[D_X, F_Y] \cdot_F W_{out}[F_Y, D_X] \to \text{Out}[B_X, D_Y]`$ </div>
 - Because FSDP shards activations in the X axis, we reduce the size of activations needed to move in TP. 
   - Tensor parallelism performs $`\textbf{AllGather}_Y([B_X, D_Y])`$ which shrinks as $`X`$ grows
 - Similarly, because TP shards weights in the Y axis, we reduce the size of weights needed to move in FSDP.

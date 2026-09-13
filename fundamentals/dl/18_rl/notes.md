@@ -14,11 +14,11 @@ Classic RL: MDPs, value functions, Q-learning, DQN. For policy-gradient methods 
     - The next state $`s_{t+1}`$ is only a function of $`s_t`$ and $`a_t`$. 
   - The policy $\pi(a \mid s)$ defines the action the AI takes at each state. Given our Markov assumption, the policy need only consider the current state $s$. 
   - The value of a state $s_0$ for a policy $\pi$, $V^{\pi}(s_0)$, is the expected return ($\gamma$-discounted reward) obtained by the AI if it begins at state $s_0$ and takes actions from the policy $\pi$ at each time instant.
-    - $`V^\pi\left(s_0\right)=E_{a_t \sim \pi\left(s_t\right)}\left[\sum_{t=0}^{\infty} \gamma^t r\left(s_t, a_t\right)\right]`$, or defined recursively, 
-    - $`V^\pi\left(s_0\right)= E_{a_0 \sim \pi\left(s_0\right)}\left[ r(s_0, a_0) + \gamma E_{s_1 \sim P\left(s_1 \mid s_0, a_0\right)}\left[ V^{\pi}(s_1)\right]\right]`$ (The Bellman Equation)
+    - $`\displaystyle V^\pi\left(s_0\right)=E_{a_t \sim \pi\left(s_t\right)}\left[\sum_{t=0}^{\infty} \gamma^t r\left(s_t, a_t\right)\right]`$, or defined recursively, 
+    - $`\displaystyle V^\pi\left(s_0\right)= E_{a_0 \sim \pi\left(s_0\right)}\left[ r(s_0, a_0) + \gamma E_{s_1 \sim P\left(s_1 \mid s_0, a_0\right)}\left[ V^{\pi}(s_1)\right]\right]`$ (The Bellman Equation)
   - The action-value function fixes the action taken at $s_0$:
-    - $`Q^\pi\left(s_0, a_0\right)=r(s_0, a_0) + E_{a_t \sim \pi\left(s_t\right)}\left[\sum_{t=1}^{\infty} \gamma^t r\left(s_t, a_t\right)\right]`$
-    - $`Q^\pi\left(s_0, a_0\right)=r(s_0, a_0) + \gamma E_{s_1 \sim P(s_1 \mid s_0, a_0)}\left[ E_{a_1 \sim \pi(a_1 \mid s_1)} \left[Q^\pi\left(s_1, a_1\right)\right] \right]`$
+    - $`\displaystyle Q^\pi\left(s_0, a_0\right)=r(s_0, a_0) + E_{a_t \sim \pi\left(s_t\right)}\left[\sum_{t=1}^{\infty} \gamma^t r\left(s_t, a_t\right)\right]`$
+    - $`\displaystyle Q^\pi\left(s_0, a_0\right)=r(s_0, a_0) + \gamma E_{s_1 \sim P(s_1 \mid s_0, a_0)}\left[ E_{a_1 \sim \pi(a_1 \mid s_1)} \left[Q^\pi\left(s_1, a_1\right)\right] \right]`$
   - Duality of $V^{\pi}$ and $Q^{\pi}$
     - $`V^\pi\left(s\right) = E_{a \sim \pi(s)}\left[Q^\pi\left(s, a\right)\right]`$
     - Both are formulations for describing the expected return of being at state $`s`$ under policy $`\pi`$. 
@@ -46,10 +46,10 @@ Classic RL: MDPs, value functions, Q-learning, DQN. For policy-gradient methods 
     - Monte Carlo
       - Starts episode from $`s_0`$, takes action $`a_0`$ and runs till termination before updating. 
       - Suppose the return at time $`t`$ it got was $`R^{t}(s_0)`$
-      - $`Q^{t+1}(s_0, a_0) \leftarrow Q^t(s_0, a_0) + \alpha[R^{t}(s_0, a_0) - Q^t(s_0, a_0)]`$
+      - $`\displaystyle Q^{t+1}(s_0, a_0) \leftarrow Q^t(s_0, a_0) + \alpha[R^{t}(s_0, a_0) - Q^t(s_0, a_0)]`$
     - TD Learning
       - Updates after one interaction/step
-      - $`Q^{t+1}(s_0, a_0) \leftarrow Q^t(s_0, a_0) + \alpha[r(s_0, a_0) + \gamma \max_a(Q^t(s_1, a)) - Q^t(s_0, a_0)]`$
+      - $`\displaystyle Q^{t+1}(s_0, a_0) \leftarrow Q^t(s_0, a_0) + \alpha[r(s_0, a_0) + \gamma \max_a(Q^t(s_1, a)) - Q^t(s_0, a_0)]`$
     - Both methods assume that after successive iterations, we will converge to the optimal $`Q^*`$ function.
     - Monte Carlo methods are slower, but TD Learning may face convergence issues. 
     - For our discussion below, we focus on TD Learning.

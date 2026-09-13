@@ -83,8 +83,8 @@ associated with the different tasks, some are shared across two or more tasks.
 - Newton's method
   - Suppose we want to minimize $f(\mathbf{x})$.
   - We use the following update rule: $\mathbf{x}_{k+1}=\mathbf{x}_k-H\left(\mathbf{x}_k\right)^{-1} \nabla f\left(\mathbf{x}_k\right)$
-    - $`f\left(\mathbf{x}_k+\Delta \mathbf{x}\right) \approx f\left(\mathbf{x}_k\right)+\nabla f\left(\mathbf{x}_k\right)^{\mathrm{T}} \Delta \mathbf{x}+\frac{1}{2} \Delta \mathbf{x}^{\mathrm{T}} H \Delta \mathbf{x}`$
-    - $`\nabla f\left(\mathbf{x}_k+\Delta \mathbf{x}\right) \approx \nabla f\left(\mathbf{x}_k\right)+H \Delta \mathbf{x}`$
+    - $`\displaystyle f\left(\mathbf{x}_k+\Delta \mathbf{x}\right) \approx f\left(\mathbf{x}_k\right)+\nabla f\left(\mathbf{x}_k\right)^{\mathrm{T}} \Delta \mathbf{x}+\frac{1}{2} \Delta \mathbf{x}^{\mathrm{T}} H \Delta \mathbf{x}`$
+    - $`\displaystyle \nabla f\left(\mathbf{x}_k+\Delta \mathbf{x}\right) \approx \nabla f\left(\mathbf{x}_k\right)+H \Delta \mathbf{x}`$
     - Setting the gradient to be zero gives our update function.
       - I.e. if we assume that $f$ is quadratic, this update gets us to a stationary point (in one step)
     - We can also "step" slightly less in that direction, $`-\eta H\left(\mathbf{x}_k\right)^{-1} \nabla f\left(\mathbf{x}_k\right)`$, $`0 < \eta < 1`$.
@@ -97,7 +97,7 @@ associated with the different tasks, some are shared across two or more tasks.
 - Fisher's scoring replaces the Hessian of the negative log-likelihood with its expectation, the Fisher information matrix $`\mathcal{I}(\theta) = -\mathbb{E}[\nabla^2 \log L]`$. The advantage of doing so is that this is always positive semi-definite and therefore can aid convergence issues.
 - Quasi-Newton methods
   - Quasi-Newton methods avoid computing the inverse of the Hessian by _estimating it through iteration_. Concretely, it uses the following update step:
-  - $`B_{k+1}\left[\mathbf{x}_{k+1}-\mathbf{x}_k\right]=\nabla f\left(\mathbf{x}_{k+1}\right)-\nabla f\left(\mathbf{x}_k\right)`$
+  - $`\displaystyle B_{k+1}\left[\mathbf{x}_{k+1}-\mathbf{x}_k\right]=\nabla f\left(\mathbf{x}_{k+1}\right)-\nabla f\left(\mathbf{x}_k\right)`$
     - The intuition here is that we don't want to compute the inverse,  so we iterate on the equation before that.
 - Diagonal preconditioning
   - Now, instead of $`\mathbf{x}_{k+1}=\mathbf{x}_k-\eta H\left(\mathbf{x}_k\right)^{-1} \nabla f\left(\mathbf{x}_k\right),`$ what if we did $`\mathbf{x}_{k+1}=\mathbf{x}_k-\eta \mathrm{diag}(H\left(\mathbf{x}_k\right))^{-1} \nabla f\left(\mathbf{x}_k\right)?`$
@@ -114,7 +114,7 @@ associated with the different tasks, some are shared across two or more tasks.
   - Per [Goh's article](https://distill.pub/2017/momentum/):
     - We may also view the errors in the eigenvector space
     - Now the range of step sizes that allow for convergence are $`0 < \eta < \frac{2 + 2\beta}{\lambda_i}`$, so momentum allows us to increase the step size.
-    - Optimal $`\eta = \left( \frac{2}{\sqrt{\lambda_{min}} + \sqrt{\lambda_{max}}} \right)^2, \beta = \left( \frac{\sqrt{\lambda_{min}} - \sqrt{\lambda_{max}}}{\sqrt{\lambda_{min}} + \sqrt{\lambda_{max}}} \right)^2`$
+    - Optimal $`\displaystyle \eta = \left( \frac{2}{\sqrt{\lambda_{min}} + \sqrt{\lambda_{max}}} \right)^2, \beta = \left( \frac{\sqrt{\lambda_{min}} - \sqrt{\lambda_{max}}}{\sqrt{\lambda_{min}} + \sqrt{\lambda_{max}}} \right)^2`$
     - Optimal convergence rate $`= \frac{\sqrt{\lambda_{max}/\lambda_{min}}-1}{\sqrt{\lambda_{max}/\lambda_{min}}+1}`$: We can converge faster provided we know the eigenvalues. 
     - Intuition (2D valley):
       - In GD, if our $\eta$ is too large, we may step too much into the wall and diverge. 
@@ -136,9 +136,9 @@ associated with the different tasks, some are shared across two or more tasks.
     - Idea is that if our weight updates are small, then we reduce the learning rate. 
   - Algorithm
     - $`v^{(t)} = \beta_2 v^{(t-1)} + (1-\beta_2)\left(g^{(t)}\right)^2`$
-    - $`w^{(t)} = w^{(t-1)} - \frac{\eta^{(t)}}{\sqrt{v^{(t)} + \epsilon} }\circ g^{(t)}`$, where
+    - $`\displaystyle w^{(t)} = w^{(t-1)} - \frac{\eta^{(t)}}{\sqrt{v^{(t)} + \epsilon} }\circ g^{(t)}`$, where
       - $`\eta^{(t)} = \sqrt{\Delta w^{(t-1)} + \epsilon}`$, 
-      - $`\Delta w^{(t-1)} = \beta_2\Delta w^{(t-2)} + (1-\beta_2)(w^{(t-1)} - w^{(t-2)})^2`$, 
+      - $`\displaystyle \Delta w^{(t-1)} = \beta_2\Delta w^{(t-2)} + (1-\beta_2)(w^{(t-1)} - w^{(t-2)})^2`$, 
 - Adam
   - Intuition
     - Momentum
@@ -147,7 +147,7 @@ associated with the different tasks, some are shared across two or more tasks.
   - Algo
     - $`m^{(t)} = \beta_1 m^{(t-1)} + (1 - \beta_1)\cdot g^{(t)}`$ (momentum)
     - $`v^{(t)} = \beta_2 v^{(t-1)} + (1 - \beta_2)\cdot \left(g^{(t)}\right)^2`$ (pre-conditioning)
-    - $`\hat{m}^{(t)} = \frac{m^{(t)}}{1-(\beta_1)^t}, \hat{v}^{(t)} = \frac{v^{(t)}}{1-(\beta_2)^t}`$ (de-biasing)
+    - $`\displaystyle \hat{m}^{(t)} = \frac{m^{(t)}}{1-(\beta_1)^t}, \hat{v}^{(t)} = \frac{v^{(t)}}{1-(\beta_2)^t}`$ (de-biasing)
     - $`w^{(t)} = w^{(t-1)} - \frac{\eta}{\sqrt{\hat{v}^{(t)}} + \epsilon}\circ \hat{m}^{(t)}`$ (change in $`\epsilon`$ is for empirical reasons)
   - Debiasing:
     - With initializations of $`m^{(0)} = v^{(0)} = 0`$, and high $`\beta_1, \beta_2`$, there's a significant bias especially at the start. 

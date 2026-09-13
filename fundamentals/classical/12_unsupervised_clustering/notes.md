@@ -35,7 +35,7 @@
   - The linked article elaborates how this is related to the RatioCut problem.
     - $`L = D - W`$, $`D_{ii}`$ is the $`i^{th}`$ row sum of $`W`$  
     - $`\mathrm{cut}\left(A_1, \ldots, A_k\right):=\frac{1}{2} \sum_{i=1}^k W\left(A_i, \bar{A}_i\right)`$, where $`W(A, B):=\sum_{i \in A, j \in B} w_{i j}`$
-    - $`\mathrm{RatioCut}\left(A_1, \ldots, A_k\right):=\frac{1}{2} \sum_{i=1}^k \frac{W\left(A_i, \bar{A}_i\right)}{\left|A_i\right|}`$
+    - $`\displaystyle \mathrm{RatioCut}\left(A_1, \ldots, A_k\right):=\frac{1}{2} \sum_{i=1}^k \frac{W\left(A_i, \bar{A}_i\right)}{\left|A_i\right|}`$
     - There exists a construction $`v_i`$ that depends solely on the partitioning $`\{A_i, \bar{A}_i\}`$ such that
       - $`\mathrm{RatioCut}\left(A_1, \ldots, A_k\right) = \sum_{i = 1}^k v_i^\top Lv_i`$
       - The intuition is then that the partition is related to the eigenvectors of $`L`$
@@ -53,11 +53,11 @@
     - $`X_i \mid Z_i = k \sim \mathcal{N}(\pmb\mu_k, \pmb\Sigma_k)`$
   - MLE:
     - Let the collection of $`w_i`$s, $`\pmb\mu_i`$s and $`\pmb\Sigma_i`$s be termed as $`\pmb\theta`$. 
-    - $`\log \mathrm{likelihood} (\pmb\theta) = \sum_i \log \sum_k P(\mathbf{X}_i = \mathbf{x}_i, Z_i = k \mid \pmb \theta) = \sum_i \log \sum_k [\gamma_{ik\pmb\theta_t}\frac{P(\mathbf{X}_i = \mathbf{x}_i, Z_i = k \mid \pmb \theta)}{\gamma_{ik\pmb\theta_t}}]`$
-      - $`\gamma_{ik\pmb\theta_t} := P(Z_i = k \mid \mathbf{X}_i = \mathbf{x}_i, \pmb\theta_t)`$
+    - $`\displaystyle \log \mathrm{likelihood} (\pmb\theta) = \sum_i \log \sum_k P(\mathbf{X}_i = \mathbf{x}_i, Z_i = k \mid \pmb \theta) = \sum_i \log \sum_k [\gamma_{ik\pmb\theta_t}\frac{P(\mathbf{X}_i = \mathbf{x}_i, Z_i = k \mid \pmb \theta)}{\gamma_{ik\pmb\theta_t}}]`$
+      - $`\displaystyle \gamma_{ik\pmb\theta_t} := P(Z_i = k \mid \mathbf{X}_i = \mathbf{x}_i, \pmb\theta_t)`$
     - Auxiliary Function
       - We now specify an Auxiliary Function $`A(\pmb\theta, \pmb\theta_t) \leq \log \mathrm{likelihood} (\pmb\theta)`$
-      - $`A(\pmb\theta, \pmb\theta_t) = \sum_i \sum_k [\gamma_{ik\pmb\theta_t} \log \frac{P(\mathbf{X}_i = \mathbf{x}_i, Z_i = k \mid \pmb \theta)}{\gamma_{ik\pmb\theta_t}}]`$
+      - $`\displaystyle A(\pmb\theta, \pmb\theta_t) = \sum_i \sum_k [\gamma_{ik\pmb\theta_t} \log \frac{P(\mathbf{X}_i = \mathbf{x}_i, Z_i = k \mid \pmb \theta)}{\gamma_{ik\pmb\theta_t}}]`$
         - This is a lower bound due to Jensen's inequality. Intuition: since $`\log`$ is a concave function, $`\log(\sum_i (a_ib_i)) \geq \sum_i (a_i \log b_i)`$ where $`\sum_i a_i = 1`$ (weighted sum).
       - Note too that $`A(\pmb\theta_t, \pmb\theta_t) = \log \mathrm{likelihood} (\pmb\theta_t)`$ ([Proof](https://users.cs.duke.edu/~cynthia/CourseNotes/GMMEMNotes.pdf)).
     - EM
@@ -65,11 +65,11 @@
       - Intuition:
         - Suppose we start with $`\pmb\theta_t`$
         - Find $`\pmb\theta_{t+1} = \arg\max_{\pmb\theta} A(\pmb\theta, \pmb\theta_t)`$.
-        - Then $`\log \mathrm{likelihood} (\pmb\theta_t) \leq A(\pmb\theta_t, \pmb\theta_t) \leq A(\pmb\theta_{t+1}, \pmb\theta_t) \leq \log \mathrm{likelihood} (\pmb\theta_{t+1})`$
+        - Then $`\displaystyle \log \mathrm{likelihood} (\pmb\theta_t) \leq A(\pmb\theta_t, \pmb\theta_t) \leq A(\pmb\theta_{t+1}, \pmb\theta_t) \leq \log \mathrm{likelihood} (\pmb\theta_{t+1})`$
         - <img src="images/em.png" width="200">[Source](https://people.duke.edu/~ccc14/sta-663-2016/14_ExpectationMaximization.html)
         - Note that we are not guaranteed to find the global maxima. 
       - E-step: Compute $`\gamma_{ik\pmb\theta_t}`$. 
-        - $`P(Z_i = k \mid \mathbf{X}_i = \mathbf{x}_i, \pmb\theta_t) = \frac{P(\mathbf{X}_i = \mathbf{x}_i \mid Z_i = k, \pmb\theta_t) P(Z_i = k \mid \pmb\theta_t)}{P(\mathbf{X}_i = \mathbf{x}_i \mid \pmb\theta_t)} = \frac{w_{kt}\mathcal{N}(\mathbf{x}_i ; \pmb\mu_{kt}, \pmb\Sigma_{kt})}{\sum_{k'}w_{k't}\mathcal{N}(\mathbf{x}_i ; \pmb\mu_{k't}, \pmb\Sigma_{k't})}`$
+        - $`\displaystyle P(Z_i = k \mid \mathbf{X}_i = \mathbf{x}_i, \pmb\theta_t) = \frac{P(\mathbf{X}_i = \mathbf{x}_i \mid Z_i = k, \pmb\theta_t) P(Z_i = k \mid \pmb\theta_t)}{P(\mathbf{X}_i = \mathbf{x}_i \mid \pmb\theta_t)} = \frac{w_{kt}\mathcal{N}(\mathbf{x}_i ; \pmb\mu_{kt}, \pmb\Sigma_{kt})}{\sum_{k'}w_{k't}\mathcal{N}(\mathbf{x}_i ; \pmb\mu_{k't}, \pmb\Sigma_{k't})}`$
       - M-step: Find $`\pmb\theta_{t+1}`$ and set $`\pmb\theta_t = \pmb\theta_{t+1}`$. 
         - Permit some abuse of notation where we now set $`\gamma{ikt} := \gamma_{ik\pmb\theta_t}`$
         - Skipping derivation steps where we differentiate $`A(\pmb\theta, \pmb\theta_t)`$ (or the Lagrangian for $`\mathbf{w}_t`$), we get

@@ -9,7 +9,7 @@
   - Going from layer to layer, we can have an MLP for node to node, edge to edge, and master node to master node
   - Node to node MLPs
     - GCN
-      - $`H^{(l+1)} = \sigma\left(\tilde{D}^{-1/2}\tilde{A}\tilde{D}^{-1/2}H^{(l)}W^{(l)}\right)`$,
+      - $`\displaystyle H^{(l+1)} = \sigma\left(\tilde{D}^{-1/2}\tilde{A}\tilde{D}^{-1/2}H^{(l)}W^{(l)}\right)`$,
       - where $`\tilde{A}=A+I`$, $`A`$ being the adjacency matrix, and $`\tilde{D}`$ is a diagonal matrix with $`\tilde{D}_{ii} = \sum_j \tilde{A}_{ij}`$, the degree of node $`i`$ plus one (the added self-loop)
     - GraphConv
       - Addresses potential issue in GCN where the network forgets node-specific information

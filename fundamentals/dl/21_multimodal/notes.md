@@ -25,7 +25,7 @@
         - As done in NExT-GPT, this also allows us to leverage pretrained models for each section.
         - Loss Function:
           - If we're training all components:
-            - $`L(Overall) = L(Encoder) + L(LLM) + L(Decoder) + L(Encoder-LLM) + L(LLM-Decoder) + L(Encoder-Decoder)`$
+            - $`\displaystyle L(Overall) = L(Encoder) + L(LLM) + L(Decoder) + L(Encoder-LLM) + L(LLM-Decoder) + L(Encoder-Decoder)`$
           - If we're freezing parameters for pretrained components:
             - $`L(Overall) = L(Encoder-LLM) + L(LLM-Decoder) + L(Encoder-Decoder)`$
             - We also have to introduce layers to link these components together as per NExT-GPT. 

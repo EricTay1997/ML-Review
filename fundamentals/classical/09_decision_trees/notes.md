@@ -48,6 +48,6 @@
 - CART
   - Essentially, we replace entropy and misclassification error with MSE. 
   - For splitting, we greedily choose feature $j$ and split point $s$ solving
-    - $`\min _{\substack{j, s \\ \text { for each feature } j \text { do } \\ \text { a linesearch over } s}}\left[\min _{C_1} \sum_{x_i \in\left\{\text { leaf } \mid x^{(j)} \leq s\right\}}\left(y_i-C_1\right)^2+\min _{C_2} \sum_{x_i \in\left\{\text { leaf } \mid x^{(j)}>s\right\}}\left(y_i-C_2\right)^2\right]`$
+    - $`\displaystyle \min _{\substack{j, s \\ \text { for each feature } j \text { do } \\ \text { a linesearch over } s}}\left[\min _{C_1} \sum_{x_i \in\left\{\text { leaf } \mid x^{(j)} \leq s\right\}}\left(y_i-C_1\right)^2+\min _{C_2} \sum_{x_i \in\left\{\text { leaf } \mid x^{(j)}>s\right\}}\left(y_i-C_2\right)^2\right]`$
   - For pruning, we do
     - $`\mathrm{cost}=\sum_{\text {leaves } j} \sum_{x_i \in S_j}\left(y_i-\bar{y}_{S_j}\right)^2+C[\#`$ leaves in tree $`]`$

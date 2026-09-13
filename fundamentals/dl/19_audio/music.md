@@ -166,10 +166,10 @@
     - Employs an audio encoder (PANN/VGG) pre-trained on, e.g., multilabel audio classification to map an input audio to a feature vector
     - Then estimate estimates a Gaussian covariance matrix from all feature vectors obtained from generated audios, and likewise for reference audios
     - Compute the Frechét distance between the two estimated Gaussian distributions
-      - $`d^2(F, G)=\min _{X, Y} E|X-Y|^2 = \left|\mu_X-\mu_Y\right|^2+\mathrm{tr}\left[\Sigma_X+\Sigma_Y-2\left(\Sigma_X \Sigma_Y\right)^{1 / 2}\right]`$
+      - $`\displaystyle d^2(F, G)=\min _{X, Y} E|X-Y|^2 = \left|\mu_X-\mu_Y\right|^2+\mathrm{tr}\left[\Sigma_X+\Sigma_Y-2\left(\Sigma_X \Sigma_Y\right)^{1 / 2}\right]`$
   - Inception Score (IS, ↑)
     - Both audio quality and diversity
-    - $`I S\left(p_{\text {gen }}, p_{\text {dis }}\right):=\exp \left(\mathbb{E}_{x \sim p_{g e n}}\left[D_{K L}\left(p_{\text {dis }}(\cdot \mid x) \| \int p_{\text {dis }}(\cdot \mid x) p_{g e n}(x) d x\right)\right]\right)`$
+    - $`\displaystyle I S\left(p_{\text {gen }}, p_{\text {dis }}\right):=\exp \left(\mathbb{E}_{x \sim p_{g e n}}\left[D_{K L}\left(p_{\text {dis }}(\cdot \mid x) \| \int p_{\text {dis }}(\cdot \mid x) p_{g e n}(x) d x\right)\right]\right)`$
   - Structureness indicator: leverages Fitness Scape-plots, then applies a max operation on the scape-plot as the score(·) function. It aims to describe how much the most-repeated ex- cerpt within a specified time granularity (e.g., 10∼20 seconds) is repeated throughout the entire audio.
 - Audio-domain, control-focused metrics
   - CLAP Score (CLAP, type: P-I, ↑)

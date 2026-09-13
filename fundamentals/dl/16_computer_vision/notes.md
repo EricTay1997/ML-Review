@@ -19,7 +19,7 @@
     - This is costly in terms of memory.
     - In addition, the model doesn't know that pixel value $`x`$ is close to $`x-1`$. 
   - In PixelCNN++, we instead assume that the output is a mixture of logistic distributions
-    - $`P(x \mid \pi, \mu, s)=\sum_{i=1}^K \pi_i\left[\sigma\left(\left(x+0.5-\mu_i\right) / s_i\right)-\sigma\left(\left(x-0.5-\mu_i\right) / s_i\right)\right]`$
+    - $`\displaystyle P(x \mid \pi, \mu, s)=\sum_{i=1}^K \pi_i\left[\sigma\left(\left(x+0.5-\mu_i\right) / s_i\right)-\sigma\left(\left(x-0.5-\mu_i\right) / s_i\right)\right]`$
     - The model then tries to learn the mean and scale parameters for each mixture.
 
 ## Vision Transformers 

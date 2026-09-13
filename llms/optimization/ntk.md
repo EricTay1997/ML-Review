@@ -19,8 +19,8 @@ What gradient descent does to a network's *output* rather than its weights, and 
 ## Tangent features and the kernel
 
 - Tangent feature of an input: $`\phi_t(x) = \nabla_\theta f_{\theta_t}(x) \in \mathbb{R}^P`$ — one entry per parameter, "how much would nudging $`\theta_p`$ move the prediction at $`x`$"
-- The (empirical) NTK is just the Gram kernel of these features:
-  - $`K_t(x, x') = \phi_t(x)^\top \phi_t(x') = \sum_{p=1}^P \frac{\partial f_{\theta_t}(x)}{\partial \theta_p} \frac{\partial f_{\theta_t}(x')}{\partial \theta_p}`$
+- The (empirical) NTK is just the Gram kernel of these features: <div align="center">
+  $`\displaystyle K_t(x, x') = \phi_t(x)^\top \phi_t(x') = \sum_{p=1}^P \frac{\partial f_{\theta_t}(x)}{\partial \theta_p} \frac{\partial f_{\theta_t}(x')}{\partial \theta_p}`$ </div>
 - Intuition: $`x`$ and $`x'`$ are "similar" under $`K_t`$ if parameter changes move their predictions in the same direction. It's a similarity in *what-training-does-to-you* space.
 - Being a Gram matrix, it's PSD, and since the features are *gradients*, it's literally the kernel of the linear model $`\theta \mapsto \phi_t(x)^\top \theta`$ — which is where the linearization story below comes from
 

@@ -19,7 +19,7 @@
   * $E_{x \sim p}[x]=\sum_x x P(x) = \int x \, p(x) d x$
   * $E_{x \sim p}[f(x)]=\sum_x f(x) P(x) = \int f(x) p(x) d x$ (Law of the unconscious statistician)
   * $\mathrm{Var}[X]=E\left[(X-E[X])^2\right]=E\left[X^2\right]-E[X]^2$
-  * $`\mathrm{Var}_{x \sim p}[f(x)]=E_{x \sim p}\left[f^2(x)\right]-E_{x \sim p}[f(x)]^2`$
+  * $`\displaystyle \mathrm{Var}_{x \sim p}[f(x)]=E_{x \sim p}\left[f^2(x)\right]-E_{x \sim p}[f(x)]^2`$
   * $\mathrm{Cov}(X, Y) = E[(X-E[X])(Y-E[Y])]$
   * $\mathrm{Cov}(f(X), g(Y)) = E[(f(X)-E[f(X)])(g(Y)-E[g(Y)])]$
   * Random Vector $\mathbf{x} = (X_1, \ldots, X_p)^{\top}$
@@ -40,8 +40,8 @@
           * $`E(X^2) = \mu^2 + \sigma^2`$
           * $`E(\bar{X}^2) = \mu^2 + \frac{\sigma^2}{n}`$
             * Since $`\mathrm{Var}(\bar{X}) = \frac{\sigma^2}{n}`$
-            * $`E(\bar{X}^2) = E(\frac{\sum_i X_i^2}{n^2} + \frac{\sum_i\sum_{j\neq i} X_iX_j}{n^2}) = \frac{n(\mu^2 + \sigma^2) + (n^2 - n)\mu^2}{n^2} = \mu^2 + \frac{\sigma^2}{n}`$
-          * Now $`E((X_i - \bar{X})^2) = E(X_i^2 - 2X_i\bar{X} + \bar{X}^2) = E(\frac{n-2}{n}X_i^2 - 2\frac{n-1}{n}X_iX_j + \bar{X}^2)`$
+            * $`\displaystyle E(\bar{X}^2) = E(\frac{\sum_i X_i^2}{n^2} + \frac{\sum_i\sum_{j\neq i} X_iX_j}{n^2}) = \frac{n(\mu^2 + \sigma^2) + (n^2 - n)\mu^2}{n^2} = \mu^2 + \frac{\sigma^2}{n}`$
+          * Now $`\displaystyle E((X_i - \bar{X})^2) = E(X_i^2 - 2X_i\bar{X} + \bar{X}^2) = E(\frac{n-2}{n}X_i^2 - 2\frac{n-1}{n}X_iX_j + \bar{X}^2)`$
           * Comparing coefficients, we see that the $`\mu^2`$ terms cancel out, so we're left with $`(\frac{n-2+1}{n})\sigma^2`$ as desired.
         * A kinda cool fact is that using [Cochran's theorem](https://en.wikipedia.org/wiki/Cochran%27s_theorem#Sample_mean_and_sample_variance), we have that (for _normally distributed_ $`X_i`$) $`s^2 = \frac{1}{n-1}\sum^n (x_i - \bar{x})^2 \sim \frac{\sigma^2}{n-1}\chi^2_{n-1},`$ 
     * Note that above, we did not specify the _distribution_ of $`X`$, but rather just its mean and variance. Now consider the multivariate linear regression case, where we switch conventions from $`X`$ to $`\mathbf{Y}`$.
@@ -83,12 +83,12 @@
 * Self-information of event $X = x$ is $I(x) = -\log P(x)$
   * Negative: Each event has positive information, and rare events have higher information content.
 * **Shannon entropy**: The uncertainty in an entire probability distribution
-  * $`H(P)=\mathbb{E}_{\mathrm{x} \sim P}[I(x)]=-\mathbb{E}_{\mathrm{x} \sim P}[\log P(x)]`$
+  * $`\displaystyle H(P)=\mathbb{E}_{\mathrm{x} \sim P}[I(x)]=-\mathbb{E}_{\mathrm{x} \sim P}[\log P(x)]`$
   * If $P(x)$ can take on many values, this is high. If not, this is low.  
 * **Information gain**: The reduction in entropy achieved by learning the state of another random variable
   * $IG(P,a) = H(P) - H(P \mid a)$
 * **KL divergence**: The difference between two probability distributions $P(x)$ and $Q(x)$
-  * $`D_{\mathrm{KL}}(P \| Q)=\mathbb{E}_{\mathbf{x} \sim P}\left[\log \frac{P(x)}{Q(x)}\right]=\mathbb{E}_{\mathbf{x} \sim P}[\log P(x)-\log Q(x)]`$
+  * $`\displaystyle D_{\mathrm{KL}}(P \| Q)=\mathbb{E}_{\mathbf{x} \sim P}\left[\log \frac{P(x)}{Q(x)}\right]=\mathbb{E}_{\mathbf{x} \sim P}[\log P(x)-\log Q(x)]`$
   * This is guaranteed to be nonnegative is 0 $\iff$ the distributions are equal. 
   * This is not symmetric and is therefore not a true distance metric. When then should we use $D_{\mathrm{KL}}(P \| Q)$ vs $D_{\mathrm{KL}}(Q \| P)$?
     * $`D_{\mathrm{KL}}(P \| Q):`$ $`P`$ is in numerator. Intuitively, when $`P`$ is large, we want $`Q`$ to be large too.  

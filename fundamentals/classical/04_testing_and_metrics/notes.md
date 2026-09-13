@@ -24,10 +24,10 @@
       * Quantile loss: $`L(\hat{y}, y) = \max(q(y - \hat{y}), (q-1)(y - \hat{y}))`$
         * Intuition is to expect the proportion of over-predictions to be $`q`$.
       * Hinge loss: $`\max(0, 1 - yf(x))`$
-      * Info-NCE loss: $`\ell_{i,j}=-\log \frac{\exp(\text{sim}(z_i,z_j)/\tau)}{\sum_{k=1}^{2N}\mathbb{1}_{[k\neq i]}\exp(\text{sim}(z_i,z_k)/\tau)}`$
+      * Info-NCE loss: $`\displaystyle \ell_{i,j}=-\log \frac{\exp(\text{sim}(z_i,z_j)/\tau)}{\sum_{k=1}^{2N}\mathbb{1}_{[k\neq i]}\exp(\text{sim}(z_i,z_k)/\tau)}`$
     * Forecast problems:
       * Mean Absolute Percentage Error: $`100 \frac{1}{n} \sum_{t=1}^n\left|\frac{A_t-F_t}{A_t}\right|`$
-      * Symmetric MAPE: $`\frac{100}{n} \sum_{t=1}^n \frac{\left|F_t-A_t\right|}{\left(\left|A_t\right|+\left|F_t\right|\right) / 2}`$
+      * Symmetric MAPE: $`\displaystyle \frac{100}{n} \sum_{t=1}^n \frac{\left|F_t-A_t\right|}{\left(\left|A_t\right|+\left|F_t\right|\right) / 2}`$
     * Ranking
       * Mean Reciprocal Rank (MRR): $`\frac{1}{n} \sum_i^n \frac{1}{rank_i}`$ Average of the reciprocal of the first/top relevant item 
       * Mean Average Precision (mAP): per query $`i`$, $`AP_i = \frac{1}{\#\text{relevant}_i}\sum_{k}(P@k) \cdot \mathbb{1}[\text{rank } k \text{ relevant}]`$; then mAP $`= \frac{1}{n}\sum_i AP_i`$ 
@@ -35,8 +35,8 @@
         * DCG: $`\sum_i^n \frac{rel_i}{\log_2(i+1)}`$
         * nDCG: $`\frac{DCG}{Ideal DCG}`$
     * Image generation
-      * FID: $`d_F\left(\mathcal{N}(\mu, \Sigma), \mathcal{N}\left(\mu^{\prime}, \Sigma^{\prime}\right)\right)^2=\left\|\mu-\mu^{\prime}\right\|_2^2+\mathrm{tr}\left(\Sigma+\Sigma^{\prime}-2\left(\Sigma \Sigma^{\prime}\right)^{\frac{1}{2}}\right)`$
-      * Inception score: $`I S\left(p_{\text {gen }}, p_{\text {dis }}\right):=\exp \left(\mathbb{E}_{x \sim p_{g e n}}\left[D_{K L}\left(p_{\text {dis }}(\cdot \mid x) \| \int p_{\text {dis }}(\cdot \mid x) p_{g e n}(x) d x\right)\right]\right)`$
+      * FID: $`\displaystyle d_F\left(\mathcal{N}(\mu, \Sigma), \mathcal{N}\left(\mu^{\prime}, \Sigma^{\prime}\right)\right)^2=\left\|\mu-\mu^{\prime}\right\|_2^2+\mathrm{tr}\left(\Sigma+\Sigma^{\prime}-2\left(\Sigma \Sigma^{\prime}\right)^{\frac{1}{2}}\right)`$
+      * Inception score: $`\displaystyle I S\left(p_{\text {gen }}, p_{\text {dis }}\right):=\exp \left(\mathbb{E}_{x \sim p_{g e n}}\left[D_{K L}\left(p_{\text {dis }}(\cdot \mid x) \| \int p_{\text {dis }}(\cdot \mid x) p_{g e n}(x) d x\right)\right]\right)`$
     * NLP
       * BLEU: $`p_n(\hat{S} ; S):=\frac{\sum_{i=1}^M \sum_{s \in G_n\left(\hat{y}^{(i)}\right)} \min \left(C\left(s, \hat{y}^{(i)}\right), \max _{y \in S_i} C(s, y)\right)}{\sum_{i=1}^M \sum_{s \in G_n\left(\hat{y}^{(i)}\right)} C\left(s, \hat{y}^{(i)}\right)}`$ (comparing translated sentence and reference sentence). Intelligibility/grammatical correctness is not taken into account. 
         * Matches $`n`$-grams between the predicted sequence and the target sequence

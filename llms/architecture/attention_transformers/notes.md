@@ -44,7 +44,8 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
   - Naming
     - Multi-head: Summing over $`i`$ heads
     - Self: Using the same $`\mathbf{X}`$ for $`\mathbf{Q}^i, \mathbf{K}^i`$ and $`\mathbf{V}^i`$ matrices
-    - Attention: $`\mathrm{attn}(\mathbf{Q}^i, \mathbf{K}^i, \mathbf{V}^i) = \mathrm{softmax}(\frac{\mathbf{Q}^i\mathbf{K}^{i\top}}{\sqrt{d_k}})\mathbf{V}^i`$
+    - Attention: <div align="center">
+      $`\displaystyle \mathrm{attn}(\mathbf{Q}^i, \mathbf{K}^i, \mathbf{V}^i) = \mathrm{softmax}(\frac{\mathbf{Q}^i\mathbf{K}^{i\top}}{\sqrt{d_k}})\mathbf{V}^i`$ </div>
   - Confusion
     - Typically, we see the following formula: $`[\mathrm{attn}(\mathbf{Q}^1, \mathbf{K}^1, \mathbf{V}^1); \dots; \mathrm{attn}(\mathbf{Q}^h, \mathbf{K}^h, \mathbf{V}^h)]\mathbf{W}^o`$. This is [mathematically equivalent](https://transformer-circuits.pub/2021/framework/index.html#architecture-attn-independent) to the formula we presented.
   - Multi-head
@@ -140,7 +141,8 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
     - Memory methods to "cache" information
     - Methods to selectively incorporate _some_ global context (sparse attention, etc.)
     - Attention free transformers
-      - $`Y=f(X) ; Y_t=\sigma_q\left(Q_t\right) \odot \frac{\sum_{t^{\prime}=1}^T \exp \left(K_{t^{\prime}}+w_{t, t^{\prime}}\right) \odot V_{t^{\prime}}}{\sum_{t^{\prime}=1}^T \exp \left(K_{t^{\prime}}+w_{t, t^{\prime}}\right)}`$
+      - The layer computes <div align="center">
+        $`\displaystyle Y=f(X) ; Y_t=\sigma_q\left(Q_t\right) \odot \frac{\sum_{t^{\prime}=1}^T \exp \left(K_{t^{\prime}}+w_{t, t^{\prime}}\right) \odot V_{t^{\prime}}}{\sum_{t^{\prime}=1}^T \exp \left(K_{t^{\prime}}+w_{t, t^{\prime}}\right)}`$ </div>
         - I personally wonder how similar this is to normal transformers. To me, the hadamard product would distort values significantly. 
   - KV Cache in Inference
     - For decoder-only models, the causal attention mask means that recomputing the attention matrix for each token is wasteful. 

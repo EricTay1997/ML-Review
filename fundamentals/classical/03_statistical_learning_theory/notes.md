@@ -9,7 +9,7 @@
       * We observe $`n`$ pairs $`{(x_i, y_i)}_{i=1}^n`$ drawn i.i.d. from $`D`$. 
       * Suppose we have functions $`f : \mathcal{X} \rightarrow \mathcal{Y}`$ that predicts $`y`$ from $`x`$. 
       * For simplicity of notation, we shall use classification error.
-    * True risk: $`R^{true}(f) := \mathbb{P}_{(X,Y) \sim D}(f(X) \neq Y) = \mathbb{E}_{(X,Y) \sim D}\mathbf{1}_{[f(X)\neq Y]}`$
+    * True risk: $`\displaystyle R^{true}(f) := \mathbb{P}_{(X,Y) \sim D}(f(X) \neq Y) = \mathbb{E}_{(X,Y) \sim D}\mathbf{1}_{[f(X)\neq Y]}`$
     * $`R^{true}(t) = \inf_fR^{true}(f)`$
       * Our target function $`t`$ is the function that minimizes true risk over all possible measurable functions
     * $`R^{true}(f^*) = \inf_{f \in \mathcal{F}}R^{true}(f)`$
@@ -43,10 +43,10 @@
   * One family of regularization strategies are based on regularizing estimators, which works by trading increased bias for reduced variance. 
   * L2/Ridge/Tikhonov Regularization
     * We modify $`L(\pmb\theta)`$ to $`\tilde{L}(\pmb\theta) = L(\pmb\theta) + \frac{\alpha}{2}\mathbf{\pmb\theta^\top \pmb\theta}`$
-    * Gradient $`\nabla_{\pmb\theta}\tilde{L}(\pmb\theta) = \nabla_{\pmb\theta}L(\pmb\theta) + \alpha\pmb\theta`$
+    * Gradient $`\displaystyle \nabla_{\pmb\theta}\tilde{L}(\pmb\theta) = \nabla_{\pmb\theta}L(\pmb\theta) + \alpha\pmb\theta`$
     * Let $`\pmb\theta^* = \arg\min_{\pmb\theta}L(\pmb\theta)`$
-      * Then $`L(\pmb\theta) \approx L(\pmb\theta^*) + \frac{1}{2}(\pmb\theta - \pmb\theta^*)^\top\mathbf{H}(\pmb\theta - \pmb\theta^*)`$
-      * $`\nabla_{\pmb\theta}\tilde{L}(\pmb\theta) \approx \mathbf{H}(\pmb\theta - \pmb\theta^*) + \alpha\pmb\theta`$
+      * Then $`\displaystyle L(\pmb\theta) \approx L(\pmb\theta^*) + \frac{1}{2}(\pmb\theta - \pmb\theta^*)^\top\mathbf{H}(\pmb\theta - \pmb\theta^*)`$
+      * $`\displaystyle \nabla_{\pmb\theta}\tilde{L}(\pmb\theta) \approx \mathbf{H}(\pmb\theta - \pmb\theta^*) + \alpha\pmb\theta`$
       * $`= 0`$ when $`\pmb\theta = (\mathbf{H}+\alpha\mathbf{I})^{-1}\mathbf{H}\pmb\theta^*`$
       * = $`\mathbf{Q}(\pmb\lambda + \alpha\mathbf{I})^{-1}\pmb\lambda\mathbf{Q}^{\top}\pmb\theta^*`$, using the eigendecomposition of $`\mathbf{H}`$ since it is real and symmetric.
       * The component of $`\theta^*`$ that is aligned with the $`i^{th}`$ eigenvector of $`\mathbf{H}`$ is rescaled by a factor of $`\frac{\lambda_i}{\lambda_i + \alpha}`$
@@ -56,7 +56,7 @@
           * Because the objective function does not express a strong preference along this direction, the regularizer has a strong effect on this axis.
   * L1 Regularization 
     * We modify $`L(\pmb\theta)`$ to $`\tilde{L}(\pmb\theta) = L(\pmb\theta) + \alpha\mathbf{||\pmb\theta||_1}`$
-    * Sub-gradient $`\nabla_{\pmb\theta}\tilde{L}(\pmb\theta) = \nabla_{\pmb\theta}L(\pmb\theta) + \alpha\mathrm{sign}(\pmb\theta)`$
+    * Sub-gradient $`\displaystyle \nabla_{\pmb\theta}\tilde{L}(\pmb\theta) = \nabla_{\pmb\theta}L(\pmb\theta) + \alpha\mathrm{sign}(\pmb\theta)`$
     * If our Hessian is diagonal, (for example if we used PCA to remove the pairwise feature correlation in linear regression), 
       * The minimizer of the 2nd order approximation of $`\tilde{L}(\pmb\theta)`$ is given by:
       * $`\theta_i=\mathrm{sign}\left(\theta_i^*\right) \max \left\{\left|\theta_i^*\right|-\frac{\alpha}{H_{ii}}, 0\right\},`$ which shrinks parameters and encourages sparsity.
@@ -83,7 +83,7 @@
   * Unbiased but not consistent:
     * $`\hat{\mu} = x^{(1)}`$
 * Maximum Likelihood Estimation
-  * $`\pmb{\theta}_{MLE} = \mathrm{argmax}_{\pmb{\theta}}p(\mathbf{x}; \pmb{\theta})=\underset{\pmb{\theta}}{\arg \max } \mathbb{E}_{\mathbf{x} \sim \hat{p}_{\text {data }}} [\log p_{\text {model }}(\mathbf{x} ; \pmb{\theta})]`$
+  * $`\displaystyle \pmb{\theta}_{MLE} = \mathrm{argmax}_{\pmb{\theta}}p(\mathbf{x}; \pmb{\theta})=\underset{\pmb{\theta}}{\arg \max } \mathbb{E}_{\mathbf{x} \sim \hat{p}_{\text {data }}} [\log p_{\text {model }}(\mathbf{x} ; \pmb{\theta})]`$
     * Note that minimizing this is the same as minimizing $`D_{\mathrm{KL}}\left(\hat{p}_{\text {data }} \| p_{\text {model}}\right)=\mathbb{E}_{\mathbf{x} \sim \hat{p}_{\text {data }}}\left[\log \hat{p}_{\text {data }}(\mathbf{x})-\log p_{\text {model }}(\mathbf{x})\right]`$
     * Which is also the same as minimizing the cross-entropy loss $`-\mathbb{E}_{\mathbf{x} \sim \hat{p}_{\text {data }}}\left[\log p_{\text {model }}(\mathbf{x})\right]`$
     * Note that in linear regression, this is the same as minimizing MSE.

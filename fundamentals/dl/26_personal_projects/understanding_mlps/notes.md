@@ -106,7 +106,7 @@ Figure credit: https://alexlenail.me/NN-SVG/index.html
     - If all $`W_i \in \mathbb{R}^{2 \times 2}`$, intuitively, continually rotating and translating space would not allow the points to become linearly separable.
     - Let's now apply more rigor, which applies to higher dimensions:
         - Suppose that separation without nonlinearities was possible.
-        - Label our points $`x^{(1)} = [-1, -1]^\top, x^{(2)} = [1, -1]^\top, x^{(3)} = [-1, 1]^\top, x^{(4)} = [1, 1]^\top`$
+        - Label our points $`\displaystyle x^{(1)} = [-1, -1]^\top, x^{(2)} = [1, -1]^\top, x^{(3)} = [-1, 1]^\top, x^{(4)} = [1, 1]^\top`$
           - $`y^{(1)} = y^{(4)} = 1, y^{(2)} = y^{(3)} = -1`$
         - Note that $`x^{(4)} = x^{(2)} + (x^{(3)} - x^{(1)})`$ (bracketing indicates how we can geometrically think of this as adding two vectors)
         - Due to our discussion of how basis vectors are transformed in affine transformations $`Wx + b`$, we have that $`f(x^{(4)}) = f(x^{(2)}) + f(x^{(3)}) - f(x^{(1)})`$ for affine $`f`$ (affine maps preserve affine combinations, and the coefficients $`1+1-1`$ sum to $`1`$). 
