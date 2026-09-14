@@ -35,6 +35,19 @@ Here's a summary of various optimizers and what they mean:
 | — | spectral ($`S_\infty`$) | $`\ell_2\to\ell_2`$ | — | **cube** | $`UV^{\top}`$ | [Muon](notes.md) w/o momentum, Shampoo w/o accumulation |
 | — | Schatten-$`p`$, $`2<p<\infty`$ | — | — | between $l_2$ ball and cube | $`U\Sigma^{1/(p-1)}V^{\top}`$ | *approximated by* Shampoo **with** accumulation, SOAP |
 
+- **Reading the "—" entries: induced norms are a strict subset of matrix norms, and steepest descent needs only a norm.**
+  - Every $`\lVert\cdot\rVert_{\alpha\to\beta}`$ is a norm on $`\mathbb{R}^{m\times n}`$, hence also on the flat $`\Delta w`$ — the "—" in the flat-vector column means "not a coordinate-wise norm like $`\ell_p`$", not "none exists". The converse fails: Frobenius, nuclear and every Schatten-$`p`$ with $`p<\infty`$ are not induced by *any* $`(\alpha,\beta)`$. Test: an induced norm factorizes on rank-one matrices as $`\lVert uv^{\top}\rVert_{\alpha\to\beta} = \lVert u\rVert_\beta\lVert v\rVert_{\alpha^*}`$, which also recovers $`(\alpha,\beta)`$ up to a joint scale; every $`S_p`$ gives $`\lVert u\rVert_2\lVert v\rVert_2`$, so the only candidate is spectral.
+  - Any norm at all gives a step via [Proposition 1](#sign-descent-adam): direction = the point on the unit ball maximizing $`\langle G,T\rangle`$, step size = the dual norm $`\lVert G\rVert^{\dagger}`$. Induced or not changes nothing mechanically.
+  - What "induced" buys is the *reading*: the unit ball is exactly the set of updates with worst-case $`\alpha\to\beta`$ feature stretch $`\le 1`$, so a step of size $`\eta`$ moves no output by more than $`\eta`$ in $`\beta`$ per unit $`\alpha`$ of input. Frobenius's ball is the set with *average-case* $`\ell_2`$ stretch $`\le1`$ — a different but still meaningful statement. Nuclear's ball has no clean feature reading, and the optimizer still runs.
+
+| Norm on $`\Delta W`$ | Induced? | Direction $`\arg\max_{\lVert T\rVert\le1}\langle G,T\rangle`$ | Step size $`\lVert G\rVert^{\dagger}`$ |
+|---|---|---|---|
+| Frobenius ($`S_2`$) | no | $`G/\lVert G\rVert_F`$ | $`\lVert G\rVert_F`$ |
+| nuclear ($`S_1`$) | no | $`u_1v_1^{\top}`$, top singular pair | $`\sigma_{\max}`$ |
+| spectral ($`S_\infty`$) | yes, $`\ell_2\to\ell_2`$ | $`UV^{\top}`$ | $`\sum_i\sigma_i`$ |
+| max entry | yes, $`\ell_1\to\ell_\infty`$ | $`\mathrm{sign}(G)`$ | $`\sum_{ij}\lvert G_{ij}\rvert`$ |
+| max column $`\ell_2`$ | yes, $`\ell_1\to\ell_2`$ | each column $`g_j/\lVert g_j\rVert_2`$ | $`\sum_j\lVert g_j\rVert_2`$ |
+
 - Adam as a "half-diagonal preconditioner":
   - Jacobi: $`P = \mathrm{diag}(H)`$ — *curvature*. 
   - Adam: $`P = \mathrm{diag}(\sqrt{v})`$ — *gradient magnitude*, not curvature. The two do connect, but only at half power: the Fisher identity gives $`\mathbb{E}[g_i^2]\approx H_{ii}`$, so $`\sqrt{v_i}\approx\sqrt{H_{ii}}`$ and
@@ -70,7 +83,9 @@ Here's a summary of various optimizers and what they mean:
 
   </div>
 
-  - First factor = how far to step, second = which direction. Recall the dual of $`\ell_p`$ is $`\ell_q`$ with $`1/p+1/q=1`$, so $`\ell_2\to\ell_2`$ and $`\ell_\infty\to\ell_1`$.
+  - First factor = how far to step, second = which direction. Recall the dual of $`\ell_p`$ is $`\ell_q`$ with $`1/p+1/q=1`$: $`\ell_2 \leftrightarrow \ell_2`$ and $`\ell_\infty \leftrightarrow \ell_1`$. Deliberately *not* written with $`\to`$ — everywhere else in this note the arrow means an induced operator norm, and the operator norm sign descent corresponds to is $`\ell_1\to\ell_\infty`$, the other way round.
+    - The same rule holds for Schatten norms, since they're just $`\ell_p`$ on singular values: the dual of spectral $`S_\infty`$ is nuclear $`S_1`$, so [Muon](#muon-and-shampoo) steps a distance $`\sum_i\sigma_i`$ in direction $`UV^{\top}`$.
+    - It does **not** hold for operator norms in general: the dual of $`\lVert\cdot\rVert_{\alpha\to\beta}`$ is *not* $`\lVert\cdot\rVert_{\beta^*\to\alpha^*}`$. The dual of max-entry $`\lVert\cdot\rVert_{\ell_1\to\ell_\infty}`$ is the entrywise sum $`\sum_{ij}\lvert G_{ij}\rvert`$; for the $`2\times2`$ matrix with rows $`(1,1)`$ and $`(1,-1)`$ that sum is $`4`$, while $`\lVert G\rVert_{\ell_\infty\to\ell_1} = \max_{\lvert x_i\rvert\le1}\lvert x_1+x_2\rvert+\lvert x_1-x_2\rvert = 2`$. The general dual is the nuclear-type norm $`\inf\sum_k \lVert u_k\rVert_{\beta^*}\lVert v_k\rVert_\alpha`$ over rank-one decompositions $`G=\sum_k u_k v_k^{\top}`$. So $`1/p+1/q=1`$ is safe for $`\ell_p`$ on vectors and $`S_p`$ on singular values, and nowhere else here.
 - Now pick $`\lVert\cdot\rVert = \lVert\cdot\rVert_\infty`$. The dual norm is $`\lVert\mathbf{g}\rVert_1`$, and the maximizer over the unit cube is the sign vector. **Sign descent just falls out:**
 
   <div align="center">

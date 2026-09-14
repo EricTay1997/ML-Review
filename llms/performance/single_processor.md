@@ -66,4 +66,4 @@ Source: https://github.com/rasbt/LLMs-from-scratch/blob/main/ch05/10_llm-trainin
   - Eliminates Python overhead: the forward and backward pass run as compiled code, bypassing Python's interpreter entirely
   - Compilation happens lazily — it traces, compiles, and caches kernels on first execution. After warmup, you're running optimized machine code
 - Vocabulary padding: pad vocab size up to a multiple of the tile size, preventing tensor core hardware from needing to pad up to the tile boundary in registers (padding cost)
-- Largest batch size that fits in memory (see [Batch Size](#batch-size) above)
+- Largest batch size that fits in memory (see [Batch Size](basics.md#batch-size))

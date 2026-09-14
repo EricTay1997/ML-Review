@@ -52,6 +52,23 @@ associated with the different tasks, some are shared across two or more tasks.
 - GD:
   - $\mathbf{x}_{k+1}=\mathbf{x}_k-\eta \nabla f\left(\mathbf{x}_k\right)$
 - Stochastic Gradient Descent (SGD) is mainly done for computational reasons. The expectation of a minibatch is still unbiased.
+- Choosing the batch size ([McCandlish et al., 2018](https://arxiv.org/abs/1812.06162)):
+  - Train near the critical batch size $`B_{\mathrm{crit}}`$ (if you have the compute), estimated by the gradient noise scale $`B_{\mathrm{simple}}`$.
+    - Definitions
+      - $`B_{\mathrm{crit}} := E_{\min} / S_{\min}`$, where $`S_{\min}`$ is the fewest steps to reach a target loss (noise-free, $`B \to \infty`$) and $`E_{\min}`$ the fewest examples ($`B \to 0`$). The batch that overpays both by the same factor (≈2×) — the knee of the time/compute tradeoff.
+      - $`B_{\mathrm{noise}} := \mathrm{tr}(H\Sigma) / (G^\top H G)`$: the batch at which gradient noise equals gradient signal, measured in the curvature metric. $`G`$ true gradient, $`\Sigma`$ per-example gradient covariance, $`H`$ Hessian.
+      - $`B_{\mathrm{simple}} := \mathrm{tr}(\Sigma) / \|G\|^2`$: same with $`H \to I`$. The one you can measure.
+    - Empirically $`B_{\mathrm{crit}} \approx B_{\mathrm{noise}} \approx B_{\mathrm{simple}}`$, each within an $`O(1)`$ factor, MNIST through Dota.
+    - SNR view: $`\mathbb{E}\|G_B\|^2 = \|G\|^2 (1 + B_{\mathrm{noise}} / B)`$, so at $`B = B_{\mathrm{noise}}`$ the minibatch gradient is half signal, half noise.
+  - Below $`B_{\mathrm{crit}}`$, doubling $`B`$ ≈ halves the steps needed (wasting wall-clock). Above, steps stop shrinking (wasting compute).
+  - $`B_{\mathrm{crit}}`$ grows during training ($`\|G\|`$ falls faster than the noise), so ramp the batch size up. Larger for harder tasks: tens for MNIST, millions for Dota.
+  - LR: $`\eta_{\mathrm{opt}}(B) = \eta_{\max} / (1 + B_{\mathrm{noise}} / B)`$ — linear in $`B`$ below $`B_{\mathrm{noise}}`$, saturating above. Linear LR scaling is the small-batch limit, not a law.
+  - Measuring: compare per-worker (batch $`B_{\mathrm{small}}`$) and all-reduced (batch $`B_{\mathrm{big}}`$) gradient norms.
+    - $`\|G\|^2 \approx \frac{B_{\mathrm{big}} \|G_{\mathrm{big}}\|^2 - B_{\mathrm{small}} \|G_{\mathrm{small}}\|^2}{B_{\mathrm{big}} - B_{\mathrm{small}}}`$, $`\mathrm{tr}(\Sigma) \approx \frac{\|G_{\mathrm{small}}\|^2 - \|G_{\mathrm{big}}\|^2}{1/B_{\mathrm{small}} - 1/B_{\mathrm{big}}}`$. Average over steps before taking the ratio.
+  - Derivation
+    - $`\mathbb{E}[\Delta L] = -\eta \|G\|^2 + \tfrac12 \eta^2 \left( G^\top H G + \tfrac{1}{B}\, \mathrm{tr}(H\Sigma) \right)`$ — noise adds a $`1/B`$ variance term to the quadratic expansion in "Size of learning rate" below.
+    - Optimal $`\eta`$ gives $`\Delta L_{\mathrm{opt}}(B) = \Delta L_{\max} / (1 + B_{\mathrm{noise}} / B)`$.
+    - Over training: $`S = S_{\min}(1 + B_{\mathrm{noise}} / B)`$, $`E = BS = E_{\min}(1 + B / B_{\mathrm{noise}})`$, so $`(S/S_{\min} - 1)(E/E_{\min} - 1) = 1`$.
 - Stalling optimization
   - Saddle points
   - Vanishing gradients

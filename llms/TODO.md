@@ -62,9 +62,11 @@ Things already read that still need to be written up as notes in `llms/`, ordere
 - [ ] [CompactionRL: RL with Context Compaction for Long-Horizon Agents (arXiv 2607.05378)](https://arxiv.org/abs/2607.05378) — cross-ref [agents/harnesses.md](agents/harnesses.md) context management
 - [ ] [Coding PPO from scratch, parts 1–4 (Medium)](https://medium.com/analytics-vidhya/coding-ppo-from-scratch-with-pytorch-part-1-4-613dfc1b14c8) → [notes.md](rl/notes.md) / `code.ipynb`
 - [ ] [The N Implementation Details of RLHF with PPO (HF)](https://huggingface.co/blog/the_n_implementation_details_of_rlhf_with_ppo) — resolve the "(verify against source)" items in [rlhf_ppo.md](rl/rlhf_ppo.md)
+- [ ] [ScaleRL](https://arxiv.org/pdf/2510.13786)
 - [ ] *(to read)* [Let's Verify Step by Step (arXiv 2305.20050)](https://arxiv.org/abs/2305.20050) — PRMs, outcome vs process supervision → [reasoning.md](rl/reasoning.md)
 - [ ] *(to read)* RL rollout infrastructure (bridge to performance/): [verl/HybridFlow (arXiv 2409.19256)](https://arxiv.org/abs/2409.19256), [OpenRLHF (arXiv 2405.11143)](https://arxiv.org/abs/2405.11143) — vLLM-in-the-loop, weight sync, train/inference numerical mismatch → new async/infra section
 - [ ] *(to read)* [Scaling LLM Test-Time Compute Optimally (arXiv 2408.03314)](https://arxiv.org/abs/2408.03314) → [post_training/notes.md](post_training/notes.md) §Inference-time scaling
+
 
 ## evals/
 
