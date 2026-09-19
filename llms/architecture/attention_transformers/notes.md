@@ -124,6 +124,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
     - ![pre_ln.png](images/pre_ln.png)[Source](https://proceedings.mlr.press/v119/xiong20b/xiong20b.pdf)
     - In the original (Post-LN) Transformer, gradients in certain layers can be very large.
     - The Pre-LN Transformer normalizes these and eliminate the need for warm up.
+    - Intuition: Keep the residual stream clean!
 - Initialization
   - Xavier initialization should be appropriate, but [BERT and GPT2 initializes weights with a smaller SD of 0.02](https://aclanthology.org/D19-1083.pdf)
   - GPT2 also scales weights of residual layers by $1/\sqrt{N}$, to account for the accumulation on the residual path.
@@ -138,7 +139,7 @@ I've found transformers to be _very confusing_. To that end, these notes aim to 
 - A key bottleneck is in the computation of the $\mathbf{Q}^i\mathbf{K}^{i\top}$ matrix, which is $O(L^2d)$.
   - This is why larger context lengths are a big deal! (But also note that they allow for [increased vulnerabilities](../../../fundamentals/dl/23_safety/03_alignment.md))
   - Reducing compute: algorithmic extensions [(The Transformer Family Version 2.0)](https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/#combination-of-local-and-global-context)
-    - Memory methods to "cache" information
+    - ary methods to "cache" information
     - Methods to selectively incorporate _some_ global context (sparse attention, etc.)
     - Attention free transformers
       - The layer computes <div align="center">

@@ -35,6 +35,7 @@ Sources: [Qwen2-VL paper](https://arxiv.org/pdf/2409.12191), [Qwen3-VL technical
   - ![qwen_2d_rope_plane_assignment.png](images/qwen_2d_rope_plane_assignment.png)
   - Dot products then depend on $`(\Delta \text{row}, \Delta \text{col})`$: attention can key on relative 2D displacement ("3 columns left, 1 row up")
   - Axis-separable — no plane mixes the two axes; diagonal structure is composed from the halves
+  - Each half _restarts_ at $`\theta_0`$, so **both axes span the full fast→slow range** — the ViT is free to do this because nothing ties it to a pretrained 1D RoPE (unlike M-RoPE below)
 - **M-RoPE** (inside the decoder): same trick with three coordinates $`(t, h, w)`$ per token, budgeted across the rotation pairs by `mrope_section`
   - Text token: $`t = h = w`$ = running counter → on pure text all components rotate identically and M-RoPE **degenerates exactly to 1D RoPE** (preserves the base LLM's behavior)
   - Image token: $`t`$ constant (the image's slot), $`h, w`$ = merged-grid row/col; text resumes at max position + 1
