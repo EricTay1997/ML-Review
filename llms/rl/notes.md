@@ -176,6 +176,26 @@ Correcting the action probability with $`\pi_\theta / \mu`$ does **not** correct
   - <img src="images/luk_huang_policy_lag_sweep.png" width="560">[Source](https://luk-huang.github.io/personal-website/blog/is-frontier-asynchronous-rl-solved.html)
   - Takeaway: below a critical batch size, variance dominates and high-bias estimators are competitive. Past it, the bias of token IS becomes the ceiling. Sequence IS scales with compute; token and GeoMean IS cannot be rescued by more of it.
 
+### DPPO
+
+Source: [Rethinking the Trust Region in LLM Reinforcement Learning](https://arxiv.org/abs/2602.04879) (Qi et al., Sea AI Lab / NUS). Token IS is biased, but the bias is second order in how far each per-token ratio is from 1 (their Theorem 3.1), so it stays small inside a trust region around the rollout policy. Below, $`\mu`$ is the rollout policy (the sampler's probabilities), $`\pi_\theta`$ the policy being trained, and $`r_t = \pi_\theta(y_t \mid s_t) / \mu(y_t \mid s_t)`$.
+
+- **PPO's clip is a one-sample estimate of the trust region.** 
+  - As a result, it over-constrains rare tokens (the exploration tokens [clip-higher](#dapo) tries to free) and under-constrains dominant ones. Clip-higher and [CISPO](#reshaping-the-importance-weight-clipping-vs-truncation-vs-masking) treat the symptom by widening or ignoring the clip; DPPO changes what is measured.
+- **Key idea: the vocabulary is finite, so we don't need a single-sample estimate of the trust region. Compute the divergence directly.** The exact sum needs the sampler's full distribution at every position (the same storage problem as in [score centering](#score-centering-an-additive-correction-instead-of-a-reshaped-ratio)), so collapse the vocabulary into a few buckets:
+  - *Binary*: {sampled token, everything else}. $`D^{\mathrm{Bin}}_{TV} = |\mu(y_t \mid s_t) - \pi_\theta(y_t \mid s_t)| = \mu(y_t \mid s_t)\,|r_t - 1|`$, and $`D^{\mathrm{Bin}}_{KL}`$ is the KL between the two Bernoullis. 
+  - *Top-K*: the $`K`$ most likely tokens under $`\mu`$ plus the sampled one, with the rest lumped into "other". 
+  - Merging tokens can only shrink a divergence (triangle inequality for TV, log-sum inequality for KL), so **both are lower bounds on the true divergence**. Top-K doesn't beat Binary in their ablation.
+- **Objective.** Same directional structure as PPO, but gated on a divergence $`D_t`$ (Binary TV or KL) with threshold $`\delta`$: <div align="center">
+  $`\displaystyle \mathcal{J}_{\mathrm{DPPO}}(\theta) = \mathbb{E}_{y \sim \mu}\!\left[\sum_{t=1}^{|y|} M_t\, r_t\, \hat A_t\right], \qquad M_t = \begin{cases} 0, & \hat A_t > 0,\ r_t > 1,\ D_t > \delta \\ 0, & \hat A_t < 0,\ r_t < 1,\ D_t > \delta \\ 1, & \text{otherwise} \end{cases}`$ </div>
+  With $`D_t = |r_t - 1|`$ and $`\delta = \epsilon`$ this is exactly PPO's clip (see [the four cases](#ppo)).
+- **TV form vs KL form.** The constraint can be written with probability differences (TV) or with log probability differences (KL).
+  - TRPO's actual theorem (eqn 8) is in TV: $`\eta(\tilde\pi) \ge L_\pi(\tilde\pi) - C\alpha^2`$ with $`\alpha = D_{TV}^{\max}(\pi, \tilde\pi)`$ and the same $`C`$ as [TRPO](#trpo) step 4. The KL version used there (eqn 9) comes from substituting $`D_{TV}^2 \le D_{KL}`$, which can only raise the penalty. **So TV is the tighter bound (less pessimistic for the same guarantee), and KL is the looser, derived one.**
+- **Practically**:
+  - We can use the biased token IS with the DPPO mask
+  - Sequence IS is unbiased
+  - TIS/MIS reintroduces bias, where some sort of trust region may make sense
+
 ### Async RL and staleness
 
 Source: [Applied Compute](https://www.appliedcompute.com/research/staleness-in-fully-async-rl).

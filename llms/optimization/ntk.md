@@ -40,7 +40,7 @@ Source: [Jacot et al.](https://arxiv.org/pdf/1806.07572), Theorems 1 and 2
 
 - The paper's setup, the "NTK parametrization":
   - Fully connected, depth $`L`$ fixed, hidden widths $`n_1, \ldots, n_{L-1} \to \infty`$ (sequentially)
-  - $`\tilde\alpha^{(\ell+1)} = \frac{1}{\sqrt{n_\ell}} W^{(\ell)} \alpha^{(\ell)} + \beta b^{(\ell)}`$, with $`W^{(\ell)}_{ij}, b^{(\ell)}_j \sim \mathcal{N}(0,1)`$. Note the explicit $`1/\sqrt{n_\ell}`$ *forward multiplier*, rather than a $`1/n_\ell`$ init variance — same function at init, different training dynamics. That is a significant difference vs [μP §1](muP.md#a-parametrization-is-more-than-an-initialization)
+  - $`\tilde\alpha^{(\ell+1)} = \frac{1}{\sqrt{n_\ell}} W^{(\ell)} \alpha^{(\ell)} + \beta b^{(\ell)}`$, with $`W^{(\ell)}_{ij}, b^{(\ell)}_j \sim \mathcal{N}(0,1)`$. Note the explicit $`1/\sqrt{n_\ell}`$ *forward multiplier*, rather than a $`1/n_\ell`$ init variance — same function at init, different training dynamics. That is a significant difference vs [μP §abc parametrization](muP.md#abc-parametrization)
   - Lipschitz, twice-differentiable nonlinearity $`\sigma`$; finite dataset; gradient flow on a finite horizon $`[0, T]`$
 - Two results:
   1. **At init**, $`K_0 \to \Theta_\infty`$, a *deterministic* kernel (Theorem 1). Intuition: each entry of $`K_0`$ is an average over $`n`$ random hidden units → law of large numbers
@@ -64,7 +64,7 @@ Source: [Jacot et al.](https://arxiv.org/pdf/1806.07572), Theorems 1 and 2
       - $`\partial f/\partial a_i = \sigma(w_i^\top x), \Delta a_i = O(\eta)`$, i.e. $`\sqrt n`$ times larger than $`a_i`$'s own init size
       - The output change from that step: <div align="center">
         $`\displaystyle \Delta f(x) = \sum_i \sigma(w_i^\top x)\, \Delta a_i = -\eta \cdot \frac1N \sum_j r_j \underbrace{\sum_{i=1}^n \sigma(w_i^\top x)\, \sigma(w_i^\top x_j)}_{n \text{ terms, nonzero mean}}`$ </div>
-      - So $`\Delta f = O(\eta n)`$. Stability forces $`\eta = O(1/n)`$, and at that LR $`\Delta w_i = O(\eta\, a_i) = O(n^{-3/2})`$: features even more frozen than under NTKP ([μP §SP](muP.md#standard-parametrization-sp))
+      - So $`\Delta f = O(\eta n)`$. Stability forces $`\eta = O(1/n)`$, and at that LR $`\Delta w_i = O(\eta\, a_i) = O(n^{-3/2})`$: features even more frozen than under NTKP ([μP §SP](muP.md#sp-sp-stable-and-ntk-what-goes-wrong))
       - **Init variance $`1/n`$ and a forward multiplier $`1/\sqrt n`$ give the same function at init but different gradients, because the multiplier is in the formula and the variance isn't.** That is the NTK parametrization's trick: move the $`1/\sqrt n`$ into the forward pass so it shows up in every gradient
   - Why the output still moves by $`O(1)`$: neuron $`i`$'s contribution to $`f`$ changes by $`\frac{1}{\sqrt n} \cdot O(n^{-1/2}) = O(1/n)`$, there are $`n`$ of them, and they're **coherent** (each change reduces the same residuals, so they add rather than cancel): $`n \cdot O(1/n) = O(1)`$
 

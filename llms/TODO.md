@@ -17,15 +17,6 @@ Things already read that still need to be written up as notes in `llms/`, ordere
 - [ ] *(to read)* SSM lineage behind DeltaNet: [Mamba (arXiv 2312.00752)](https://arxiv.org/abs/2312.00752), [Mamba-2 / SSD (arXiv 2405.21060)](https://arxiv.org/abs/2405.21060), + the hybrid attention+SSM interleaving pattern → [attention.md](architecture/attention.md)
 - [ ] *(to read)* [YaRN (arXiv 2309.00071)](https://arxiv.org/abs/2309.00071) — the paper behind the queued OLMo 3 mention → [attention.md](architecture/attention.md)
 
-## optimization/
-
-*Scope: what happens in weight space — optimizers, training dynamics, forgetting, scaling laws.*
-
-- [ ] Muon optimizer: [Keller Jordan's post](https://kellerjordan.github.io/posts/muon/), [willccbb thread](https://x.com/willccbb/status/2050038277454143918?lang=en) → [notes.md](optimization/notes.md)
-- [ ] [RL's Razor: Why Online RL Forgets Less (arXiv 2509.04259)](https://arxiv.org/pdf/2509.04259) — RL implicitly favors KL-minimal solutions (bridges to rl/ and post_training/)
-- [ ] [Scaling Laws, Carefully (Lilian Weng, 2026-06)](https://lilianweng.github.io/posts/2026-06-24-scaling-laws/) — pretraining compute/data power laws *(you listed this under post-training; it's classic scaling laws, filed here)*
-- [ ] muP / hyperparameter transfer → [notes.md](optimization/notes.md)
-
 ## data/
 
 - [ ] Pretraining data curation, mixtures, deduplication → [recipe.md](data/recipe.md). (Checked 2026-07: nothing on this exists in the repo yet — the links you remember are not in here; re-locate sources.)
@@ -48,6 +39,8 @@ Things already read that still need to be written up as notes in `llms/`, ordere
 - [ ] [On-Policy Distillation (Thinking Machines)](https://thinkingmachines.ai/blog/on-policy-distillation/) → write the OPD stub in [notes.md](post_training/notes.md)
 - [ ] OPD variants: OPSD, g-OPD, v-OPD → same section
 - [ ] [SFT, RL, and On-Policy Distillation Through a Distributional Lens (nrehiew)](https://nrehiew.github.io/blog/sft_rl_opd/) — how each objective reshapes the distribution / forgetting (cross-ref optimization/ RL's Razor)
+- [ ] [RL's Razor: Why Online RL Forgets Less (arXiv 2509.04259)](https://arxiv.org/pdf/2509.04259) — RL implicitly favors KL-minimal solutions (bridges to rl/ and post_training/)
+- [ ] [OPSD](https://arxiv.org/pdf/2601.18734)
 - [ ] Deepen RLHF/DPO sections; add k2 = ½(log r)² alongside k1/k3 in [rl/kl_divergence.md](rl/kl_divergence.md)
 - [ ] Check DeepSeek V3's reward pipeline for general (non-reasoning) data → §Reward Modeling in [notes.md](post_training/notes.md)
 - [ ] *(to read)* [LIMA (arXiv 2305.11206)](https://arxiv.org/abs/2305.11206) — SFT data quality over quantity → SFT section

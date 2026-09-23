@@ -1,6 +1,6 @@
 # Norms and Steepest Descent
 
-Choosing an optimizer *is* choosing a norm to measure the weight update in (or equivalently, a norm to measure the output feature update in given another choice of input feature norm). Primary source: Bernstein & Newhouse, [Old Optimizer, New Norm: An Anthology](https://arxiv.org/abs/2409.20325). See also [Optimization](notes.md) (Muon), [μP](muP.md) — the width-scaling side of the same question — and [fundamentals/dl/04](../../fundamentals/dl/04_optimization_and_regularization/notes.md) for the classical second-order material this reframes.
+Choosing an optimizer *is* choosing a norm to measure the weight update in (or equivalently, a norm to measure the output feature update in given another choice of input feature norm). Primary source: Bernstein & Newhouse, [Old Optimizer, New Norm: An Anthology](https://arxiv.org/abs/2409.20325). See also [Muon](muon.md), [μP](muP.md) — the width-scaling side of the same question — and [fundamentals/dl/04](../../fundamentals/dl/04_optimization_and_regularization/notes.md) for the classical second-order material this reframes.
 
 ## Induced operator norms
 
@@ -32,7 +32,7 @@ Here's a summary of various optimizers and what they mean:
 | $`\sqrt{\Delta w^{\top}H\,\Delta w}`$ | — | — | ellipsoid aligned to $`H`$ | — | $`H^{-1}\mathbf{g}`$ | [Newton](../../fundamentals/dl/04_optimization_and_regularization/notes.md#second-order-methods) |
 | $`\sqrt{\Delta w^{\top}\mathrm{diag}(H)\,\Delta w}`$ | — | — | axis-aligned ellipsoid | — | $`\mathrm{diag}(H)^{-1}\mathbf{g}`$ | [diagonal preconditioning](../../fundamentals/dl/04_optimization_and_regularization/notes.md#second-order-methods) (Jacobi) |
 | $`\ell_\infty`$ | max entry $`\max_{ij}\lvert\Delta W_{ij}\rvert`$ | $`\ell_1\to\ell_\infty`$ | **cube** | — | $\mathrm{sign}(\mathbf{g})  \;\approx\; \mathrm{diag}(H)^{-1/2}\,\mathbf{g}$ | signSGD, Adam as $`\beta_1,\beta_2,\epsilon\to0`$ |
-| — | spectral ($`S_\infty`$) | $`\ell_2\to\ell_2`$ | — | **cube** | $`UV^{\top}`$ | [Muon](notes.md) w/o momentum, Shampoo w/o accumulation |
+| — | spectral ($`S_\infty`$) | $`\ell_2\to\ell_2`$ | — | **cube** | $`UV^{\top}`$ | [Muon](muon.md) w/o momentum, Shampoo w/o accumulation |
 | — | Schatten-$`p`$, $`2<p<\infty`$ | — | — | between $l_2$ ball and cube | $`U\Sigma^{1/(p-1)}V^{\top}`$ | *approximated by* Shampoo **with** accumulation, SOAP |
 
 - **Reading the "—" entries: induced norms are a strict subset of matrix norms, and steepest descent needs only a norm.**

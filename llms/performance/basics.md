@@ -82,7 +82,7 @@ How memory/bandwidth/compute scale with $`b`$ is covered in [Training vs Inferen
     - Saturates the GPU: more parallel work to fill all compute units
     - Amortizes fixed costs: kernel launch overhead, memory transfers, optimizer step
     - Better memory coalescing: larger contiguous memory accesses are more efficient on GPUs
-  - Batch just needs to be **big enough**: kernels saturate early (at $`s{=}4k`$ even $`b{=}1`$ streams thousands of tokens per weight read) and per-step fixed costs (optimizer step, DP all-reduce) amortize past a few thousand tokens/step — beyond that gains are marginal, and the _global_ batch is set by learning dynamics (critical batch size, with LR scaled to match; see [Optimization](../optimization/notes.md))
+  - Batch just needs to be **big enough**: kernels saturate early (at $`s{=}4k`$ even $`b{=}1`$ streams thousands of tokens per weight read) and per-step fixed costs (optimizer step, DP all-reduce) amortize past a few thousand tokens/step — beyond that gains are marginal, and the _global_ batch is set by learning dynamics (critical batch size, with LR scaled to match; see [Scaling §Critical batch size](../optimization/scaling.md#critical-batch-size))
 - Inference
   - Bigger batch → higher **total** throughput: decode moves up the roofline toward compute-bound
     - Below a saturation batch $`B_{sat}`$, step time is dominated by streaming the weights layer-by-layer from HBM, so it's nearly flat — computing 1 vs 10 tokens can take a similar time; beyond $`B_{sat}`$ the kernels become compute-bound and step time grows roughly with $`b`$ ([Gordić's vLLM deep-dive](https://www.aleksagordic.com/blog/vllm))
