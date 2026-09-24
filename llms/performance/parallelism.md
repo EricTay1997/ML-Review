@@ -1,6 +1,143 @@
 # Parallelism
 
-Primary source: the JAX scaling book — [sharding](https://jax-ml.github.io/scaling-book/sharding/), [training](https://jax-ml.github.io/scaling-book/training/), [applied training](https://jax-ml.github.io/scaling-book/applied-training/), [GPUs](https://jax-ml.github.io/scaling-book/gpus/). Also some from [Lippe's notes](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/overview.html). Inference is a different problem (no backward pass, decode is bandwidth-bound) and has its own sharding rules in [Inference §Sharding for inference](inference.md#sharding-for-inference). See also [Basics](basics.md), [TPUs & Rooflines](tpus.md), [GPUs](gpus.md).
+Primary sources: 
+- The JAX scaling book — [sharding](https://jax-ml.github.io/scaling-book/sharding/)
+- HuggingFace's UltraScale Playbook - [ultrascale](https://huggingface.co/spaces/nanotron/ultrascale-playbook)
+- Also some from [Lippe's notes](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/scaling/JAX/overview.html). 
+- Inference is a different problem (no backward pass, decode is bandwidth-bound) and has its own sharding rules in [Inference §Sharding for inference](inference.md#sharding-for-inference). See also [Basics](basics.md), [TPUs & Rooflines](tpus.md), [GPUs](gpus.md).
+
+## Recipe
+
+### TLDR
+
+Suppose we have a fixed number of GPUs. How do we distribute training to "maximize training throughput" out of our GPUs (Read: utilize all GPUs but be compute-bound)? 
+
+- First, we need to shard appropriately to fit training in memory.
+- After which, suppose we "distribute training" over all our GPUs. 
+- The challenge with this is that with increased parallelism, we increase communication cost (relative to the per-GPU compute).
+- If we end up being bandwidth-bound, we want to employ different sharding strategies to move us to the compute-bound regime. This maximizes the throughput our hardware supports. 
+  - We typically have some [critical batch size](../optimization/scaling.md#critical-batch-size), above which the gradient signal is clean enough such that we are being wasteful by processing more tokens. This sets an upper bound on the global batch size. This is important because otherwise we can just "trivially" increase batch size to remain compute-bound
+
+### Arithmetic Intensity
+
+- Ultimately, we want **work per device per step to exceed $`\alpha = C/W`$** — peak FLOPs/s over the bandwidth of the link the collective runs on.
+- What differs between hardware is only _which_ $`W`$:
+
+| Fabric | $`C`$ (bf16 FLOPs/s) | $`W`$ (bytes/s) | $`\alpha`$ |
+|---|---|---|---|
+| TPU v5p, one ICI axis (bidirectional) | $`4.59 \times 10^{14}`$ | $`1.8 \times 10^{11}`$ | 2550 |
+| TPU v5e, one ICI axis | $`1.97 \times 10^{14}`$ | $`9 \times 10^{10}`$ | ~2200 |
+| TPU v5p, DCN between pods (per slice) | | | ~73,440 |
+| H100, NVLink within a node (per-GPU egress) | $`9.9 \times 10^{14}`$ | $`4.5 \times 10^{11}`$ | 2200 |
+| H100, InfiniBand across nodes (per-node egress) | $`9.9 \times 10^{14}`$ | $`4 \times 10^{11}`$ | 2475 |
+
+- **Takeaway: ~2,200–2,550 tokens per chip on every fabric.** ($`C`$ and $`W`$ have scaled together — except across nodes on B200, where FLOPs rose but IB didn't: $`2.25 \times 10^{15} / 4 \times 10^{11} \approx 5600`$)
+- Multipliers on $`W`$ is where TPUs and GPUs differ:
+  - TPU: giving a collective $`M`$ mesh axes multiplies $`W_{ici}`$ by $`M`$ (the $`M_X, M_Y`$ in [Combining FSDP and TP](#combining-fsdp-and-tp)). A torus has 2–3 axes to spend, and they're uniform — no cliff between "near" and "far" chips until you leave the pod for DCN
+  - GPU: no axis multiplier — past the node there is exactly one 400 GB/s pipe. What you get instead is the $`(n-1)/n`$ ring factor (which often motivates 2 node setups)
+
+### The three questions
+
+Underneath the three steps below are three questions, asked in order:
+
+1. **Does it fit in memory (for the number of GPUs we have)?** This is hard constraint:
+- FSDP, TP, PP and EP divide parameters + optimizer state
+- TP and CP divide activations
+- PP _concentrates_ activations at early stages rather than dividing them
+- Pick the axis that shrinks whatever is too big
+2. **Is every collective compute-bound or bandwidth-bound?** We want to be compute-bound. 
+- The global batch (number of tokens in a batch) is set by optimization. I.e. batch $B$ is a scarce resource (fixed)
+- DP/FSDP is **batch-hungry** ($`B/X > \alpha`$ tokens per device). Shard too much and we're no longer compute-bound.
+  - Intuition: DP moves weights, and this is "amortized" over tokens in a batch.
+- TP and EP are **batch-free** ($`F/Y > \alpha`$ and the $`F_{expert}`$ regimes have no $`B`$ in them). How much we can shard is determined by hidden dimension. 
+  - Intuition: TP/EP moves activations, so this scales with batch.
+- PP needs microbatches, but they come out of the same batch.
+- Batch-free approaches complement batch-hungry ones and allow us to shard more whilst staying compute-bound.
+3. **Which link does each axis run on?** 
+- Per-layer, critical-path traffic (TP, EP's AllToAll, CP's KV ring) goes on the fastest link
+- Once-per-step, per-stage traffic and non-critical path traffic (DP/FSDP, PP) can cross the slow one. 
+- That gives Llama 3's mesh order, innermost → outermost, of TP, CP, PP, DP — TP=8, PP=16, DP=128 on 16k GPUs, with CP=16 switched on only for the 128k-context stages ([Llama 3, arXiv 2407.21783](https://arxiv.org/abs/2407.21783) §3.3), and on TPUs, TP/FSDP inside the pod and DP over DCN
+
+### Step 1: Fit a training step in memory
+
+The minimum number of GPUs for a given microbatch we need is determined by memory constraints.
+
+Terminology: a **replica** is the group of GPUs that jointly processes the same samples — the model-parallel axes (TP, PP, CP) live inside it, and dp counts how many replicas run side by side on different samples. With ZeRO the weights are sharded _across_ replicas, but each replica still computes on its own samples.
+
+Per-GPU memory = bf16 params + fp32 master weights + bf16 grads + optimizer states + activations (see [Basics §Training vs Inference](basics.md#training-vs-inference)). Each axis divides a different term:
+
+| Axis | Weights + optimizer state | Activations |
+|---|---|---|
+| DP | replicated | unchanged at a given mbs — more dp only lets mbs shrink, down to 1 sample |
+| ZeRO-1 / 2 / 3 | optimizer states ÷ dp; ZeRO-2 also grads; ZeRO-3 (= FSDP) also params | same as DP |
+| TP (+SP) | ÷ tp | ÷ tp — along $`F`$ (and heads) inside the matmuls, along $`s`$ in the SP regions (replicated there without SP) |
+| PP | ÷ pp, by layers | ≈ unchanged — each stage keeps ~pp microbatches in flight |
+| CP | unchanged | ÷ cp, along $`s`$ |
+| EP | expert weights ÷ ep; attention and shared weights replicated | unchanged per token |
+
+- **Fitting is a constraint.** Several combinations will fit. Identify what's too big, then pick the axis that shrinks it with the cheapest comms for the batch and links you have (Steps 2–3):
+  - Parameters + optimizer state too big → **ZeRO-3**, if tokens per GPU clear $`\alpha`$ (model-agnostic, off the critical path). If the batch can't feed that many shards → **TP** (batch-free, ≤ ~8-way), then **PP**
+  - One layer's gathered weights too big for HBM → **TP** — ZeRO-3 still materialises a full layer at a time
+  - Activations too big → smaller microbatch + gradient accumulation, recompute, **TP** (÷ tp), or **CP** when sequence length is the cause
+  - MoE → **EP**: the experts are where the parameters are, and DP's threshold inflates by $`E/k`$ ([Data parallelism](#data-parallelism))
+- Worked example: 70B with Adam is ≈ 1.1 TB of state, on 80 GB GPUs. TP=8 → 140 GB per GPU, doesn't fit. TP=8 × PP=2 → 70 GB, fits tightly. TP=8 + ZeRO-3 over ≥ 2 replicas → fits. **Three configurations fit; what distinguishes them is whether tokens per GPU clear α for the ZeRO-3 gathers, and whether you can afford PP's microbatching, which usually rules out ZeRO-3.** 
+- GPU-rich vs GPU-poor (cheatsheet from [ultrascale](https://huggingface.co/spaces/nanotron/ultrascale-playbook)): 
+  - GPU-rich: < 10B → a single technique, TP or ZeRO-3 with full recompute across 8 GPUs; 10–100B → TP=8 + PP, TP=8 + ZeRO-3, or pure ZeRO-3; 512+ GPUs → combine DP with TP or PP; 1024+ → TP=8 + DP (ZeRO-2) + PP. Long context → add CP; MoE → add EP
+  - GPU-poor case: full activation recompute (~⅓ more FLOPs) and gradient accumulation — trade compute and step time for memory
+
+### Step 2: Hit the target global batch size
+
+- GBS is set by optimization dynamics (the critical batch size in the [TLDR](#tldr)); this step is bookkeeping to hit it
+- $`\text{GBS (tokens)} = \text{mbs} \times \text{seq} \times \text{gas} \times \text{dp}`$:
+  - mbs: samples per forward pass, per replica (micro-batch size)
+  - seq: tokens per sample (sequence length)
+  - gas: gradient-accumulation steps, i.e. forward/backward passes per optimizer step
+  - dp: number of replicas. One replica occupies tp·pp·cp GPUs (not ×ep: EP ranks see different tokens, so ep is carved out of dp — see [CP](#context-parallelism-cp)'s `data_parallel_size`)
+- Step 1 caps mbs (the largest microbatch whose activations fit next to the sharded weights); treat it as fixed here, since Step 3 revisits it. The data fixes seq, so the whole step is one equation: <div align="center">
+  $`\displaystyle \text{dp} \times \text{gas} = \frac{\text{GBS}}{\text{mbs} \cdot \text{seq}}`$ </div>
+  - **The number of global samples per replica is split between dp (spends GPUs, same step time) and gas (spends time, same GPUs)**
+- e.g. 1024 sequences of 4096 tokens (≈ 4.2M tokens) at mbs = 1 → dp × gas = 1024. With TP=8, one replica is 8 GPUs:
+  - 1,024 GPUs → dp = 128, gas = 8: same batch, 8× longer step
+  - 8,192 GPUs → dp = 1024, gas = 1: fastest step, but only 512 tokens per GPU < α, so pure DP/FSDP is comms-bound
+  - 16,384 GPUs → dp is capped at GBS / (mbs · seq), so the extra GPUs must go into tp, pp or cp — the playbook's "reduce data parallelism in favor of other parallelization strategies"
+- **Why CP is the knob for long sequences**: CP makes a long sequence look like cp shorter ones to everything but attention, so it shrinks per-GPU activations (Step 1) and multiplies the GPUs a sample can occupy (Step 2) at once.
+- What this step really guards against — naive scaling fails three ways:
+  1. **Comms-bound**: GBS is fixed, so more GPUs → fewer tokens per GPU → below $`\alpha`$ (the 8,192-GPU case).  This motivates batch-free parallelism strategies (TP, EP, PP).
+  2. **Memory-bound**: raising mbs to reach the batch blows activations → use gas instead. Gas is most compatible with DP and ZeRO-1, but difficult with ZeRO-2 and ZeRO-3, which shard gradients (and weights).
+  3. **Idle-bound**: PP bubbles when gas is small relative to pp (≈ $`(pp-1)/\text{gas}`$ of the step idles); EP load imbalance
+
+### Step 3: Optimize throughput
+
+- The conventional path (playbook), in order: **scale TP/EP up to the node size** (EP on a MoE's expert layers; fast intra-node links; it reduces how much of the other axes you need) → **increase DP with ZeRO-3 while holding the target GBS** → **switch to PP when DP's communication becomes the bottleneck** → then **tune mbs** to balance memory, matmul size and comms. This is the three questions in procedure form: TP/EP first because they're batch-free and on the fast link, DP because it's the cheapest to hide, PP when DP hits α
+- **Compute-bound is necessary, not sufficient.** Two configurations can both satisfy $`T_{comms} < T_{math}`$ and still differ in MFU:
+  - _Exposed vs hidden comms_: the ratio says comms are hideable, not hidden. TP/EP's collectives sit on the critical path and are only hidden with async TP or, for EP, by overlapping one microbatch's AllToAll with another's compute; DP/FSDP overlap by construction. At equal ratios, prefer the axis that overlaps
+  - _Bubbles_: PP loses ≈ $`(pp-1)/\text{gas}`$ of the step whatever the comms; zero-bubble schedules shrink it, at a code cost
+  - _Local kernel efficiency_: compute-bound against the network ≠ high utilisation on the SMs. TP slices $`F`$ into thin matmuls, and a small mbs gives small tiles — hence "play with mbs"
+  - _Memory headroom_: near the HBM limit you pay recompute (~⅓ more FLOPs for full checkpointing) or allocator thrash — the playbook's 80B-on-4-nodes example fits but runs badly
+  - _Tails that can't overlap_: the last layer's gradient reduce, PP waiting for its final microbatch, ZeRO-3's first gather
+  - _Simplicity_: ZeRO and PP are model-agnostic; TP needs model-specific sharding (+SP). The playbook's benchmarks saw the TP-vs-PP ranking flip with implementation quality
+- **So the recipe below is the conventional, lowest-risk path to compute-bound; the residual is settled by benchmarking**
+
+### The recipe
+
+- **Relatively small dense model**: aggressive FSDP if you have the batch size (~2500 tokens per device), plus some PP or TP if needed
+  - FSDP's comms are fully off the critical path, so it's the cheapest to hide
+  - TP has little to give a small model — its cap $`F/\alpha`$ is ~4-way at $`F = 11k`$ (7B) and ~2-way at $`F = 5.5k`$ (1B). 
+  - "Plus PP or TP if needed" is for when the batch is too thin for FSDP alone — they shrink the weight bytes each replica gathers. If activations at mbs = 1 don't fit, that's recompute, TP (+SP) or CP; PP doesn't shrink them
+- **Larger dense model**: 1–2-node TP + many-node PP + pure DP. On a TPU: TP/FSDP within the ICI slice, pure DP across pods over DCN
+  - TP, then PP, then DP (Megatron's classic 3D layout). 
+  - TP first: batch-free, shrinks weights _and_ activations, up to its ~8-way cap — which happens to be one node. 
+  - PP second: the only axis that crosses nodes for ~free, eats devices without needing batch, and divides the weight bytes FSDP must gather per replica. 
+  - DP last, in the ZeRO-1 flavour since PP breaks ZeRO-3's amortization. **CP is orthogonal** — add it when sequence length, not parameter count, is the memory problem
+  - Why pure DP across pods, TP/FSDP inside (the [case study](#tpu-v5p)): question 3. 
+    - The slow link gets the traffic that's smallest, least frequent and most overlappable — pure DP reduces gradients once per step, async behind the backward pass, and since the pod already shards the weights internally, each chip only exchanges its own shard with its twin in the other pod. FSDP over DCN would gather weights every layer on the slow link; TP would put critical-path activations on it. =
+- **MoE**: the same, plus EP, which is generally preferred to TP. $`F > 8\,C/W_{node}`$ → lots of multi-node EP; otherwise roughly 2-node EP. Why EP over TP:
+  - Experts have small $`F`$ — DeepSeek-V3's is 2048, below $`\alpha`$ before you split it at all, so TP on an expert is comms-bound. 
+  - EP keeps each expert whole and splits along $`E`$ instead; its comms are the sparse AllToAll (each token's activation moves only to its $`k`$ experts) vs TP's AllGather + ReduceScatter of every token every layer
+  - EP also shards exactly where the parameters live, fixing the $`E/k`$ inflation DP suffers
+- **PP** works well if you can handle the code complexity of zero-bubble schedules and keep batch sizes large enough to avoid DP bottlenecks. It usually rules out ZeRO-3 (which would involve an AllGather per microbatch at every stage, unless weights stay gathered across microbatches) but ZeRO-1/2 are fine
+- **Any model parallelism that spans nodes reduces the FSDP cost** — the reason the mixes above exist
+- Inference ([vLLM](https://www.aleksagordic.com/blog/vllm)): TP within the node → PP across nodes if it still doesn't fit → DP replicas behind a lightweight coordination layer, load balancing across replicas, one or more API servers in front
 
 ## Sharding and collectives
 
@@ -60,111 +197,6 @@ _From [sharding](https://jax-ml.github.io/scaling-book/sharding/). This is the p
 | **AllReduce** (removes a $`\{U_X\}`$) | $`[A_X, B]\{U_Y\} \to [A_X, B]`$ | 2 × AllGather | 2 × AllGather | 2 × AllGather, less with SHARP |
 | **AllToAll** (reshards without replicating) | $`[A, B_X] \to [A_X, B]`$ | AllGather / 4 (bidirectional ring) | $`B / (N \cdot W_{GPU})`$ — AllGather / 8 at $`N{=}8`$ | only the $`(Z-8)/Z`$ of shards on other nodes leaves the node — see [EP](#expert-parallelism-ep) |
 
-## Recipe
-
-> **Intuition first, mechanics later.** This section states the decision procedure up front and leans on results derived further down — the compute-bound conditions in [Strategies](#strategies), the PP / ZeRO-3 interaction in [Pipeline parallelism](#pipeline-parallelism), the two worked runs in the [case study](#case-study-llama-3-70b-on-tpu-pods-vs-h100-clusters). The framing follows the Ultra-Scale Playbook's [Finding the best training configuration](https://huggingface.co/spaces/nanotron/ultrascale-playbook?section=step_1:_fitting_a_training_step_in_memory) — three steps: fit, batch, throughput; its [cheatsheet](https://nanotron-ultrascale-playbook.static.hf.space/assets/images/ultra-cheatsheet.svg) is the one-page version — and the thresholds are the scaling book's ([GPU chapter TLDR](https://jax-ml.github.io/scaling-book/gpus/)). Training only — inference has its own rules in [Inference §Sharding for inference](inference.md#sharding-for-inference).
-
-### Arithmetic Intensity
-
-- Every compute-bound condition in [Strategies](#strategies) is the same inequality: **work per device per step must exceed $`\alpha = C/W`$** — peak FLOPs/s over the bandwidth of the link the collective runs on - the network's arithmetic intensity.
-- What differs between hardware is only _which_ $`W`$, and what multiplies it:
-
-| Fabric | $`C`$ (bf16 FLOPs/s) | $`W`$ (bytes/s) | $`\alpha`$ |
-|---|---|---|---|
-| TPU v5p, one ICI axis (bidirectional) | $`4.59 \times 10^{14}`$ | $`1.8 \times 10^{11}`$ | 2550 |
-| TPU v5e, one ICI axis | $`1.97 \times 10^{14}`$ | $`9 \times 10^{10}`$ | ~2200 |
-| TPU v5p, DCN between pods (per slice) | | | ~73,440 |
-| H100, NVLink within a node (per-GPU egress) | $`9.9 \times 10^{14}`$ | $`4.5 \times 10^{11}`$ | 2200 |
-| H100, InfiniBand across nodes (per-node egress) | $`9.9 \times 10^{14}`$ | $`4 \times 10^{11}`$ | 2475 |
-
-- **Takeaway: ~2,200–2,550 tokens per chip on every fabric.** $`C`$ and $`W`$ have scaled together, so the answer hasn't moved across a hardware generation or across vendors
-- Multipliers on $`W`$ — the one place the topologies genuinely differ:
-  - TPU: giving a collective $`M`$ mesh axes multiplies $`W_{ici}`$ by $`M`$ (the $`M_X, M_Y`$ in [Combining FSDP and TP](#combining-fsdp-and-tp)). A torus has 2–3 axes to spend, and they're uniform — no cliff between "near" and "far" chips until you leave the pod for DCN
-  - GPU: no axis multiplier — past the node there is exactly one 400 GB/s pipe. What you get instead is the $`(n-1)/n`$ ring factor we usually drop: a collective over only 2 nodes moves half the bytes, so its threshold halves
-
-### The three questions
-
-Underneath the three steps below are three questions, asked in order:
-
-1. **Does it fit in memory (for the number of GPUs we have)?** This is hard constraint:
-- FSDP, TP, PP and EP divide parameters + optimizer state
-- TP and CP divide activations
-- PP _concentrates_ activations at early stages rather than dividing them
-- Pick the axis that shrinks whatever is too big
-2. **Is every collective compute-bound or bandwidth-bound?** We want to be compute-bound. 
-- The global batch (number of tokens in a batch) is set by optimization. I.e. batch $B$ is a scarce resource (fixed)
-- DP/FSDP is **batch-hungry** ($`B/X > \alpha`$ tokens per device). Shard too much and we're no longer compute-bound.
-- TP and EP are **batch-free** ($`F/Y > \alpha`$ and the $`F_{expert}`$ regimes have no $`B`$ in them). How much we can shard is determined by hidden dimension. 
-- PP needs microbatches, but they come out of the same batch.
-- Batch-free approaches complement batch-hungry ones and allow us to shard more whilst staying compute-bound.
-3. **Which link does each axis run on?** 
-- Per-layer, critical-path traffic (TP, EP's AllToAll, CP's KV ring) goes on the fastest link
-- Once-per-step, per-stage traffic and non-critical path traffic (DP/FSDP, PP) can cross the slow one. 
-- That gives Llama 3's mesh order, innermost → outermost, of TP, CP, PP, DP — TP=8, PP=16, DP=128 on 16k GPUs, with CP=16 switched on only for the 128k-context stages ([Llama 3, arXiv 2407.21783](https://arxiv.org/abs/2407.21783) §3.3 — verify against source) — and on TPUs, TP/FSDP inside the pod and DP over DCN
-
-### Step 1: Fit a training step in memory
-
-The minimum number of GPUs for a given microbatch we need is determined by memory constraints.
-
-Per-GPU memory = bf16 params + fp32 master weights + fp32 grads + optimizer states + activations — the 16 bytes/param of [Basics §Training vs Inference](basics.md#training-vs-inference), plus activations. Each axis divides a different term:
-
-| Axis | Weights + optimizer state | Activations |
-|---|---|---|
-| DP | replicated | ÷ dp — each replica sees fewer samples |
-| ZeRO-1 / 2 / 3 | optimizer states ÷ dp; ZeRO-2 also grads; ZeRO-3 (= FSDP) also params | same as DP |
-| TP (+SP) | ÷ tp | ÷ tp — along $`D`$ in the matmuls, along $`s`$ in the SP regions |
-| PP | ÷ pp, by layers | ≈ unchanged — each stage keeps ~pp microbatches in flight |
-| CP | unchanged | ÷ cp, along $`s`$ |
-| EP | expert weights ÷ ep; attention and shared weights replicated | unchanged per token |
-
-- **Fitting is a constraint.** Several combinations will fit. Identify what's too big, then pick the axis that shrinks it with the cheapest comms for the batch and links you have (Steps 2–3):
-  - Parameters + optimizer state too big → **ZeRO-3**, if tokens per GPU clear $`\alpha`$ (model-agnostic, off the critical path). If the batch can't feed that many shards → **TP** (batch-free, ≤ ~8-way), then **PP**
-  - One layer's gathered weights too big for HBM → **TP** — ZeRO-3 still materialises a full layer at a time
-  - Activations too big → smaller microbatch + gradient accumulation, recompute, **TP** (÷ tp), or **CP** when sequence length is the cause
-  - MoE → **EP**: the experts are where the parameters are, and DP's threshold inflates by $`E/k`$ ([Data parallelism](#data-parallelism))
-- Worked example: 70B with Adam is ≈ 1.1 TB of state, on 80 GB GPUs. TP=8 → 140 GB per GPU, doesn't fit. TP=8 × PP=2 → 70 GB, fits tightly. TP=8 + ZeRO-3 over ≥ 2 replicas → fits. **Three configurations fit; what separates them is whether tokens per GPU clear α for the ZeRO-3 gathers, and whether you can afford PP's microbatching, which forbids ZeRO-3.** 
-- The playbook's breakpoints, GPU-rich case: < 10B → a single technique, TP or ZeRO-3 across 8 GPUs; 10B+ → TP=8 + PP, TP=8 + ZeRO-3, or pure ZeRO-3; 512+ GPUs → combine DP with TP or PP; 1024+ → TP=8 + DP (ZeRO-2) + PP. Long context → add CP; MoE → add EP
-- GPU-poor case: full activation recompute (~⅓ more FLOPs) and gradient accumulation — trade compute and step time for memory
-
-### Step 2: Hit the target global batch size
-
-- GBS is chosen based on optimization dynamics.
-- $`\text{GBS (tokens)} = \text{mbs} \times \text{gas} \times \text{dp} \times \text{seq}`$. Step 1 pinned tp, pp, cp, ep and mbs, so one replica occupies tp·pp·cp·ep GPUs. Two knobs remain: **dp** (more replicas — more GPUs, same step time) and **gas** (gradient accumulation — same GPUs, longer step)
-- Scale up: more dp or gas. Scale down: less dp, in favour of other axes. **Scaling up via dp means adding GPUs; via gas doesn't**
-- **Why CP is the knob for long sequences**: DP's unit is a _sample_, and each replica needs ≥ 1 per microbatch. At a 1M-token sequence, a 4M-token batch is four samples, so dp ≤ 4 and DP can't absorb more GPUs. CP splits a single sample, so it's the only axis that adds GPUs when the batch arrives as a few long samples — and it's cheap exactly there, because the KV ring overlaps with attention, which dominates compute at long context
-- What this step really guards against — naive scaling fails three ways:
-  1. **Comms-bound**: GBS is fixed, so more GPUs → fewer tokens per DP shard → below $`\alpha`$. The whole reason the batch-free axes (TP, EP, PP) exist
-  2. **Memory-bound**: raising mbs to reach the batch blows activations → use gas instead. Gas is free for DP and ZeRO-1/2 (the reduce happens once per optimizer step, so every accumulated microbatch counts toward α) but _not_ for ZeRO-3, which re-gathers weights every microbatch — the same mechanism that makes PP + ZeRO-3 a bad pair
-  3. **Idle-bound**: PP bubbles when gas is small relative to pp; EP load imbalance
-
-### Step 3: Optimize throughput
-
-- The conventional path (playbook), in order: **scale TP up to the node size** (fast intra-node links; it reduces how much of the other axes you need) → **increase DP with ZeRO-3 while holding the target GBS** → **switch to PP when DP's communication becomes the bottleneck** → then **tune mbs** to balance memory, matmul size and comms. This is the three questions in procedure form: TP first because it's batch-free and on the fast link, DP because it's the cheapest to hide, PP when DP hits α
-- **Compute-bound is necessary, not sufficient.** Two configurations can both satisfy $`T_{comms} < T_{math}`$ and still differ in MFU:
-  - _Exposed vs hidden comms_: the ratio says comms are hideable, not hidden. TP's collectives sit on the critical path and are only hidden with async TP; DP/FSDP overlap by construction. At equal ratios, prefer the axis that overlaps
-  - _Bubbles_: PP loses ≈ $`(pp-1)/\text{gas}`$ of the step whatever the comms; zero-bubble schedules shrink it, at a code cost
-  - _Local kernel efficiency_: compute-bound against the network ≠ high utilisation on the SMs. TP slices $`F`$ into thin matmuls, and a small mbs gives small tiles — hence "play with mbs"
-  - _Memory headroom_: near the HBM limit you pay recompute (~⅓ more FLOPs for full checkpointing) or allocator thrash — the playbook's 80B-on-4-nodes example fits but runs badly
-  - _Tails that can't overlap_: the last layer's gradient reduce, PP waiting for its final microbatch, ZeRO-3's first gather
-  - _Simplicity_: ZeRO and PP are model-agnostic; TP needs model-specific sharding (+SP). The playbook's benchmarks saw the TP-vs-PP ranking flip with implementation quality
-- **So the recipe below is the conventional, lowest-risk path to compute-bound; the residual is settled by benchmarking** — the playbook's own words are "no general recipe, experiment"
-
-### The recipe
-
-- **Relatively small dense model**: aggressive FSDP if you have the batch size (~2500 tokens per device), plus some PP or TP if it doesn't fit
-  - Why FSDP (questions 1 + 2): 16 bytes/param of Adam state doesn't fit one GPU replicated, but sharded over a few dozen it does; FSDP is the only axis whose comms are fully off the critical path, so it's the cheapest to hide; and TP has little to give a small model — its cap $`F/\alpha`$ is ~4-way at $`F = 11k`$ (7B) and ~2-way at $`F = 5.5k`$ (1B). "If you have the batch size" is the one condition. "Plus PP or TP if it doesn't fit" is mostly about activations, which FSDP doesn't shrink
-- **Larger dense model**: 1–2-node TP + many-node PP + pure DP. On a TPU: TP/FSDP within the ICI slice, pure DP across pods over DCN
-  - Why TP, then PP, then DP — the order _is_ the preference (Megatron's classic 3D layout). TP first: batch-free, shrinks weights _and_ activations, up to its ~8-way cap — which happens to be one node. PP second: the only axis that crosses nodes for ~free, eats devices without needing batch, and divides the weight bytes FSDP must gather per replica. DP last, in the ZeRO-1 flavour since PP breaks ZeRO-3's amortization. **CP is orthogonal** — add it when sequence length, not parameter count, is the memory problem
-  - Why pure DP across pods, TP/FSDP inside (the [case study](#tpu-v5p)): question 3. The slow link gets the traffic that's smallest, least frequent and most overlappable — pure DP reduces gradients once per step, async behind the backward pass, and since the pod already shards the weights internally, each chip only exchanges its own shard with its twin in the other pod. FSDP over DCN would gather weights every layer on the slow link; TP would put critical-path activations on it. And you never _need_ model parallelism across pods — a pod already holds the model
-- **MoE**: the same, plus EP, which is generally preferred to TP. $`F > 8\,C/W_{node}`$ → lots of multi-node EP; otherwise roughly 2-node EP
-  - Why EP over TP: experts have small $`F`$ — DeepSeek-V3's is 2048, below $`\alpha`$ before you split it at all, so TP on an expert is comms-bound at $`Y = 1`$ and slices the matmul into thin, low-utilization tiles. EP keeps each expert whole and splits along $`E`$ instead; its comms are the sparse AllToAll (each token's activation moves only to its $`k`$ experts) vs TP's AllGather + ReduceScatter of every token every layer; it's batch-free; and it shards exactly where the parameters live, fixing the $`E/k`$ inflation DP suffers
-- **PP** works well if you can handle the code complexity of zero-bubble schedules and keep batch sizes large enough to avoid DP bottlenecks. It usually rules out ZeRO-3 (an AllGather per pipeline stage) but ZeRO-1 is fine
-- **Any model parallelism that spans nodes reduces the FSDP cost** — the reason the mixes above exist
-- **Would we ever skip TP? Yes.** DeepSeek-V3 trained with 16-way PP, 64-way EP spanning 8 nodes and ZeRO-1 DP — no TP at all, called out in the report as avoiding "costly" tensor parallelism ([arXiv 2412.19437](https://arxiv.org/abs/2412.19437) §3.2 — verify against source). Small dense models skip it for the opposite reason: $`F`$ is too small for TP to help. **TP is the axis for when you must consume devices without batch and cut per-device weight bytes at the lowest latency; if EP + PP + FSDP already fit and clear α with the batch you have, TP buys nothing and charges per-layer critical-path comms**
-  - Why the skip was forced by α, not taste: for a MoE, EP does TP's job — shard the FFN weights — along $`E`$ with whole experts instead of along $`F`$ with per-layer dense collectives. V3's experts have $`F = 2048`$, so TP=8 would leave 256-wide slices against an α in the thousands. Their H800s make it worse: NVLink is 160 GB/s per GPU (V3 report §3.2, vs the H100's 450 in the [α table](#arithmetic-intensity)), so in-node α ≈ 6200 in bf16 and ≈ 12,400 in FP8 — even the dense $`d_{model} = 7168`$ projections sit 7–14× below the line at TP=8, and DualPipe can't hide per-layer critical-path collectives
-  - Memory didn't need it either: 16-way PP × 64-way EP is already 1024-way weight sharding (~650M params per GPU), and the report frames its activation tricks — recompute RMSNorm + MLA up-projections, FP8 activations, EMA on CPU — as what let them train "without costly TP". The dense DeepSeek LLM 67B _did_ use TP (HAI-LLM: DP/TP/SP/1F1B — verify against source); the switch coincides with going MoE
-- Scale-out, serving edition ([vLLM](https://www.aleksagordic.com/blog/vllm)): TP within the node → PP across nodes if it still doesn't fit → DP replicas behind a lightweight coordination layer, load balancing across replicas, one or more API servers in front
-
 ## Strategies
 
 _From [training](https://jax-ml.github.io/scaling-book/training/) and [GPUs](https://jax-ml.github.io/scaling-book/gpus/). For each strategy the same three questions: **what is sharded**, **what is communicated per step**, **at what per-device batch size does it go bandwidth-bound**. Worth keeping the answers in that parallel shape so the summary table below writes itself._
@@ -198,7 +230,7 @@ The strategies below all shard this same toy layer — $`\text{In}[B,D] \to \tex
    $`\displaystyle \text{In}[B, D_Y] \cdot_D W_{in}[D, F_Y] \cdot_F W_{out}[F_Y, D] \to \text{Out}[B, D_Y]`$ </div>
    - **Important intuition**: FSDP moves **weights**, TP moves **activations**.
 4. **Sequence parallelism (SP)**: _extends tensor parallelism to shard the non-matmul ops (LayerNorm, dropout) along the sequence dimension too — only active when TP is, and covers exactly what plain TP leaves redundantly replicated._
-5. **Context parallelism (CP)**: _shards activations along the sequence dimension across all layers (not just the ops SP covers) — the lever for long-context training, targeting attention's KV memory specifically._
+5. **Context parallelism (CP)**: _shards activations along the sequence dimension across all layers (not just the ops SP covers) — the lever for long-context training; attention is the one op that then needs communication (K/V from other chunks)._
 6. **Pipeline parallelism**: _weights sharded along the layer dimension, activations microbatched and rolled along the layer dimension. Communication between pipeline stages is minimal (just moving activations over a single hop)._
 7. **Expert parallelism (EP)**: _shards a MoE model's experts (not activations or a dense weight) across devices; routing tokens to their expert requires an AllToAll rather than an AllGather/ReduceScatter._
 
@@ -239,7 +271,7 @@ Source: [scaling book](https://jax-ml.github.io/scaling-book/training/)
 - **Small rings**: the ring cost is really $`\text{bytes} \cdot (n-1)/n`$ over $`n`$ participants, which we drop for large $`n`$. When the DP axis spans only $`n`$ nodes of a GPU cluster ($`N = 8n`$ GPUs): <div align="center">
   $`\displaystyle T_{comms} = \frac{2 \cdot 2 \cdot 2 \cdot DF \cdot (n-1)}{n \cdot W_{node}} \quad\Rightarrow\quad \frac{B}{N} > \alpha \cdot \frac{n-1}{n}`$ </div>
   - 2-node DP → $`B/N > 1237`$ on H100, half the threshold. **This is why you see 2-way data parallelism so often.** In-network reductions (SHARP) + pure DP shave another ~30%
-- **Takeaway: DP / ZeRO needs ~2500 tokens per device to be compute-bound — on v5p and on H100/B200 alike** (perfect overlap and full FLOPs utilization assumed)
+- **Takeaway: DP / ZeRO needs ~2500 tokens per device to be compute-bound — on v5p, on H100, and on B200 inside a node** (B200 across nodes: $`2.25 \times 10^{15} / 4 \times 10^{11} \approx 5600`$) (perfect overlap and full FLOPs utilization assumed)
 
 ### Fully-sharded data parallelism (FSDP / ZeRO-3)
 
@@ -261,7 +293,7 @@ Source: [scaling book](https://jax-ml.github.io/scaling-book/training/)
 - Syntax: <div align="center">
   $`\displaystyle \text{In}[B, D_Y] \cdot_D W_{in}[D, F_Y] \cdot_F W_{out}[F_Y, D] \to \text{Out}[B, D_Y]`$ </div>
 - Let's reconcile something: Most people also say that TP shards model weights, so why are we sharding activations here? 
-- The equivalence is that by sharding weights in the contradicting dimension, we get partial sums post matrix multiplication, and we need to AllReduce = ReduceScatter + AllGather. If we _snapshot_ at the ReduceScatter step, then we get the syntax above.
+- The equivalence is that by sharding weights in the contracting dimension, we get partial sums post matrix multiplication, and we need to AllReduce = ReduceScatter + AllGather. If we _snapshot_ at the ReduceScatter step, then we get the syntax above.
 - Forward pass. We have to AllGather activations first. Post matrix multiplication, we have a partial sum and have to ReduceScatter. These are both **on the critical path**. 
   - Recall: TP moves **activations**!
 - Backward pass. We have to AllGather activations first. Post matrix multiplication, our derivative wrt the input activations is a partial sum, so we have to ReduceScatter again. These are both **on the critical path**. (Note that we also have to AllGather input activations too, but "this can be skipped by sharing with the Forward pass")
@@ -277,7 +309,7 @@ Source: [scaling book](https://jax-ml.github.io/scaling-book/training/)
 - **Compute-bound** when $`F/Y > C/W = \alpha`$. Note that compared to DP, we only swap out $`B`$ for $`F`$, because for comms, we are moving **activations**! 
 - $`F/Y`$ isn't the most interpretable. Rather, we should say that $`Y < M_Y \cdot F/\alpha`$ to remain compute bound, where $`M_Y`$ is the number of ICI axes (on GPUs, $`M_Y = 1`$ always)
 - **How many ways, in practice**
-  - TPU v5p: $`Y < M_Y \cdot F/2550`$ — at $`F \approx 30k`$ that's ~11-way per ICI axis (the book's rule of thumb is 4–8-way per axis), more if TP is given a second axis
+  - TPU v5p: $`Y < M_Y \cdot F/2550`$ — at $`F \approx 30k`$ that's ~11-way per ICI axis (the book: "for most models this is between 8 and 16-way"), more if TP is given a second axis
   - GPU: $`Y < F/2200`$ inside a node, $`F/2475`$ across nodes. LLaMA-3 ($`F = 28{,}000`$): ~11-way, i.e. rounding down to the node, **8-way TP**. Spanning exactly 2 nodes gets the extra 2× from the small-ring factor, so 16-way TP generally works ($`F > 2475 \cdot (Y - 8)`$), up to ~19-way in theory
   - **Takeaway: on GPUs, TP goes comms-bound past $`Y > F/2475`$ → intra-node TP, or at most 2-node TP.** The torus has no such cliff (ICI is uniform), but lands at the same order of magnitude; on GPUs the only way to keep scaling TP is a bigger NVLink domain (GB200 NVL72: 72 GPUs)
   - Serving systems follow the same rule ([vLLM](https://www.aleksagordic.com/blog/vllm)): if the model doesn't fit one GPU, TP across the node first (TP=8). TP's fine-grained, on-critical-path AllGather/ReduceScatter every block is exactly what needs NVLink's bandwidth and latency
@@ -325,19 +357,19 @@ Source: [scaling book](https://jax-ml.github.io/scaling-book/training/)
 Source: [Megatron parallelisms guide](https://docs.nvidia.com/nemo/megatron-bridge/latest/parallelisms.html)
 
 - Only active when TP is active (`tensor_model_parallel_size > 1`) — it's **TP extended to shard the non-matmul ops too** (LayerNorm, dropout) along the sequence dimension, which plain TP otherwise leaves redundantly replicated on every device
-- Fills the gap TP leaves open: TP shards $`D`$ inside the matmuls, but the LayerNorm/dropout between blocks were still computed redundantly everywhere — SP shards those along sequence instead, removing the redundant compute at ~no extra communication (reuses the AllGather/ReduceScatter boundary TP already pays for at each block)
+- Fills the gap TP leaves open: TP shards $`F`$ inside the matmuls, but the LayerNorm/dropout between blocks still held full activations on every device — SP shards those along sequence instead, cutting their activation memory by tp (the main win; the saved compute is minor) at ~no extra communication (reuses the AllGather/ReduceScatter boundary TP already pays for at each block)
 
 ### Context parallelism (CP)
 
 Source: [Megatron parallelisms guide](https://docs.nvidia.com/nemo/megatron-bridge/latest/parallelisms.html)
 
-- Shards activations along the **sequence** dimension, across *all* layers (unlike SP, which only covers the specific ops TP leaves unsharded) — the lever for **long-context training**, where activation memory (the $`5as^2b`$ term — see [Basics](basics.md#training-vs-inference)) would otherwise dominate
-- Targets attention specifically: each device holds only its sequence chunk's queries, plus only the K/V it needs; during the backward pass, missing KV pairs are exchanged via point-to-point sends around a ring (an AllGather/ReduceScatter reshaped into ring hops) rather than a single AllGather
+- Shards activations along the **sequence** dimension, across *all* layers (unlike SP, which only covers the specific ops TP leaves unsharded) — the lever for **long-context training**, where activation memory would otherwise blow up — flash attention already removes the $`5as^2b`$ term, but the remaining $`34sbh`$ per layer is still linear in $`s`$ (see [Basics](basics.md#training-vs-inference))
+- Targets attention specifically: each device holds only its sequence chunk's queries, plus only the K/V it needs; missing KV pairs are exchanged via point-to-point sends around a ring in the forward pass, and again in the backward (only the local chunk is stored, and dK/dV are reduce-scattered back) (an AllGather/ReduceScatter reshaped into ring hops) rather than a single AllGather
 - Composes with TP/PP/DP as another mesh axis: `data_parallel_size = world_size / (tensor_model_parallel_size × pipeline_model_parallel_size × context_parallel_size)`
 - Two main implementations, differing in _how_ the missing KV reaches each device:
   - **Ring attention** (what the point-to-point description above is): each device keeps only its own KV chunk and passes it to the next device in a ring while computing partial attention on the chunk it currently holds (online-softmax accumulation, P2P — not a collective). Memory stays flat, and comms overlap with compute by construction, at the cost of $`P-1`$ sequential hops
   - **DeepSpeed-Ulysses**: reshard from "sequence-sharded, heads-complete" to "sequence-complete, heads-sharded" via an **AllToAll**, run ordinary (e.g. FlashAttention) attention on the now-complete sequence with a shard of the heads, then AllToAll back. Only 2 communication rounds (vs ring's $`P-1`$) and plays nicely with existing attention kernels, but the AllToAll sits on the critical path rather than overlapping with compute
-  - (A third, simpler option — plain **AllGather-CP**: AllGather K/V across all CP devices, then compute locally — is the easiest to implement but briefly holds the *full* sequence's KV per device, undoing much of CP's memory win)
+  - (A third, simpler option — plain **AllGather-CP**: AllGather K/V across all CP devices, then compute locally — is the easiest to implement but exposes the gather on the critical path and briefly holds one layer's full-sequence K/V. Llama 3 chose it anyway: with GQA the K/V are much smaller than Q, and it handles document masks easily ([arXiv 2407.21783](https://arxiv.org/abs/2407.21783) §3.3.2))
 
 ### Expert parallelism (EP)
 
@@ -352,7 +384,7 @@ Source: [Megatron parallelisms guide](https://docs.nvidia.com/nemo/megatron-brid
   - Two regimes where EP is compute-bound ($`\alpha = C/W_{node}`$):
     - $`k > Z/8`$ (few nodes, every node gets touched): need $`F > \alpha (Z-8)/k`$ → **a small amount of EP, ~2 nodes**, workable even at small $`F`$
     - $`Z \gg k`$: need $`F > 8\alpha`$ → **$`Z`$ arbitrarily large, up to $`E`$-way EP**, if $`F`$ is large enough
-    - Both show up in practice: DeepSeek-V3 (very small per-expert $`F`$) does a small, restricted cross-node EP; large-$`F`$ models do significant cross-node EP alongside TP
+    - Both show up in practice: DeepSeek-V3 (very small per-expert $`F`$) does a restricted cross-node EP — 64-way over 8 nodes, but each token is routed to at most 4 of them; large-$`F`$ models do significant cross-node EP alongside TP
   - **Takeaway: if $`F < 8\,C/W_{node}`$ (≈ 19,800 on H100), EP spans 1–2 nodes at similar (slightly lower) cost to TP; if $`F > 8\,C/W_{node}`$, EP can span up to $`E`$ nodes at relatively low cost**
   - The $`(Z-8)/Z`$ and $`\min(8k/Z, 1)`$ terms are node-structure facts. On a TPU torus there's no node boundary: the AllToAll is just $`B/4W`$, times $`k/N`$ when sparse
 
@@ -382,7 +414,7 @@ Source: [scaling book — GPUs](https://jax-ml.github.io/scaling-book/gpus/)
 
 0. 4,096 H100s, $`F = 28{,}672`$, batch ≈ 4M tokens
 1. Model parallelism: 8-way TP is the most before going comms-bound ($`F/2475 \approx 11`$, rounded down to the node)
-2. Memory: ~700 GB of training state ÷ 8 = 87.5 GB per GPU doesn't fit in 80 GB → ZeRO-3 across the DP axis as well
+2. Memory: ≥ 700 GB of training state (the book counts only bf16 weights + fp32 Adam moments, 10 bytes/param; ~1.1 TB with master weights and grads) ÷ 8 ≥ 87.5 GB per GPU doesn't fit in 80 GB → ZeRO-3 across the DP axis as well
 3. But 8-way TP × 512-way DP leaves $`4M / 4096 = 976`$ tokens per GPU — well under the ~2500 FSDP threshold → comms-bound
-4. The fix is pipelining across nodes: PP divides the per-layer weight AllGather/ReduceScatter by the pipeline depth (fewer weight bytes per replica), pulling FSDP back under threshold. ~40 days at 45% MFU for 15T tokens
+4. The fix is pipelining across nodes: PP divides the per-layer weight AllGather/ReduceScatter by the pipeline depth (fewer weight bytes per replica). With 8-way PP the effective bandwidth is 8 × 400 GB/s, so the threshold drops to 990e12 / 3200e9 ≈ 309 < 976 ✓ (and at TP=8 × PP=8 the state is only ~17 GB per GPU, so ZeRO-1 suffices and the PP + ZeRO-3 problem never arises). ~40 days at 45% MFU for 15T tokens
 - **Takeaway, side by side**: on the torus, TP gets extra ICI axes and DP crosses pods over DCN, which the per-pod batch clears easily. On the GPU cluster TP is capped at the node, so PP across nodes is what buys back the FSDP cost
